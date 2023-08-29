@@ -1,0 +1,13 @@
+description: Physical servers
+actions:
+  list:
+    api-call: admin.ListServers
+    description: List all available servers
+    root-key: Servers
+    fields:
+      - Id
+      - Name
+      - InPool
+      - PowerState
+      - ProvisionState
+      - CreatedAt

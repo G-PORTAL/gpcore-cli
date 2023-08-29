@@ -1,0 +1,10 @@
+description: IP related actions
+actions:
+  history:
+    api-call: admin.ListIPHistories
+    description: List all IP history entries
+    root-key: IpHistories
+    fields:
+      - CreatedAt
+      - User
+      - IPAddress

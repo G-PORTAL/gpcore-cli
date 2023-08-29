@@ -1,0 +1,85 @@
+actions:
+  list:
+    api-call: cloud.ListProjects
+    identifier: nil
+    root-key: Projects
+    fields:
+      - Id
+      - Name
+      - Description
+      - Currency
+      - Environment
+
+  create:
+    api-call: cloud.CreateProject
+    description: Create a new project
+    identifier: nil
+    params:
+      - name: name
+        type: string
+        description: Project name
+        required: true
+      - name: description
+        type: string
+        default: ""
+      - name: environment
+        type: cloudv1.ProjectEnvironment
+        default: cloudv1.PROJECT_ENVIRONMENT_DEVELOPMENT
+        required: true
+      - name: billing_address_id
+        type: string
+        required: true
+
+  delete:
+    api-call: cloud.DeleteProject
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Project ID to delete
+        required: true
+
+  flavours:
+    api-call: cloud.ListProjectFlavours
+    params:
+      - name: datacenter_id
+        description: Datacenter to fetch the flavours from
+        type: string
+        required: true
+
+  # Join/Leave project
+  join:
+    api-call: cloud.JoinProject
+    params:
+      - name: accept
+        type: bool
+        default: false
+  leave:
+    api-call: cloud.LeaveProject
+
+  default-project:
+    api-call: cloud.ChangeDefaultProject
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: New default project ID
+        required: true
+
+  # Project information
+  locks:
+    api-call: cloud.GetProjectLocks
+    description: List all locks in the project
+  usage:
+    api-call: cloud.GetProjectUsage
+    params:
+      - name: detailed
+        type: bool
+        default: false
+  images:
+    api-call: cloud.ListProjectImages
+  ssh-keys:
+    api-call: cloud.ListProjectSSHKeys
+    root-key: Keys
+
+identifier: session.CurrentProject

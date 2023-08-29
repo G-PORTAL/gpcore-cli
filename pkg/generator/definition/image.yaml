@@ -1,0 +1,8 @@
+actions:
+  list:
+    api-call: admin.ListImages
+    root-key: Images
+    fields:
+      - Id
+      - Name
+      - Available

@@ -1,0 +1,3 @@
+actions:
+  ssh-keys:
+    api-call: cloud.ListUserSSHKeys
