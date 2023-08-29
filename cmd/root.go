@@ -41,10 +41,11 @@ func New() *cobra.Command {
 
 			logging.SetBackend(backend)
 
-			session, err := config.ReadSessionConfig()
+			session, err := config.GetSessionConfig()
 			if err != nil {
 				panic(err)
 			}
+			cmd.SetContext(context.WithValue(cmd.Context(), "session", session))
 
 			conn, err := client.NewClient(
 				&auth.ProviderKeycloakClientAuth{

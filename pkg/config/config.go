@@ -8,6 +8,7 @@ import (
 )
 
 var configPath = ""
+var sessionConfig *SessionConfig
 
 func init() {
 	dirname, _ := os.UserHomeDir()
@@ -20,7 +21,10 @@ type SessionConfig struct {
 	CurrentProject *string `yaml:"current_project"`
 }
 
-func ReadSessionConfig() (*SessionConfig, error) {
+func GetSessionConfig() (*SessionConfig, error) {
+	if sessionConfig != nil {
+		return sessionConfig, nil
+	}
 	if os.Getenv("GPCLOUD_CONFIG") != "" {
 		configPath = os.Getenv("GPCLOUD_CONFIG")
 	}
@@ -30,7 +34,7 @@ func ReadSessionConfig() (*SessionConfig, error) {
 		clientID, _ := reader.ReadString('\n')
 		println("Please enter your Client Secret:")
 		clientSecret, _ := reader.ReadString('\n')
-		sessionConfig := &SessionConfig{
+		sessionConfig = &SessionConfig{
 			ClientID:     strings.TrimSpace(clientID),
 			ClientSecret: strings.TrimSpace(clientSecret),
 		}
@@ -43,7 +47,7 @@ func ReadSessionConfig() (*SessionConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	sessionConfig := &SessionConfig{}
+	sessionConfig = &SessionConfig{}
 	if err := yaml.Unmarshal(data, sessionConfig); err != nil {
 		return nil, err
 	}

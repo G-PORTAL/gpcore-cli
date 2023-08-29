@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var gamesCmd = &cobra.Command{
+var listCmd = &cobra.Command{
 	Use:                   "list",
 	Short:                 "Prints a list of supported games",
 	Long:                  `Prints a list of supported games`,
@@ -31,5 +31,5 @@ var gamesCmd = &cobra.Command{
 }
 
 func init() {
-	RootProjectCommand.AddCommand(gamesCmd)
+	RootProjectCommand.AddCommand(listCmd)
 }
