@@ -6,7 +6,7 @@ import (
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client/auth"
 	"github.com/spf13/cobra"
 	"gopkg.in/op/go-logging.v1"
-	"gpcloud-cli/cmd/nodes"
+	"gpcloud-cli/cmd/node"
 	"gpcloud-cli/cmd/project"
 	"gpcloud-cli/pkg/config"
 	"os"
@@ -67,7 +67,7 @@ func New() *cobra.Command {
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
 	rootCmd.AddCommand(
 		project.RootProjectCommand,
-		nodes.RootNodesCommand,
+		node.RootNodesCommand,
 	)
 	return rootCmd
 }

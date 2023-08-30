@@ -11,8 +11,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:                   "list",
-	Short:                 "Prints a list of supported games",
-	Long:                  `Prints a list of supported games`,
+	Short:                 "Prints all available projects",
+	Long:                  "Prints all available projects",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {

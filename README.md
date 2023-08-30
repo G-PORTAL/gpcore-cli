@@ -19,7 +19,7 @@ $ go run gpc.go project use --id <project-id>
 
 After a project was choosen, you can use the nodes commands:
 ```
-$ go run gpc.go nodes list
+$ go run gpc.go node list
 ```
 
 Its more a proof of concept right now to have something to work with when generating the code automatically.

@@ -1,4 +1,4 @@
-package nodes
+package node
 
 // TODO: File needs to be generated instead of being statically defined
 

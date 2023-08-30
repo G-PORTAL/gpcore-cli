@@ -1,4 +1,4 @@
-package nodes
+package node
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 var RootNodesCommand = &cobra.Command{
-	Use:                   "nodes",
+	Use:                   "node",
 	Short:                 "Utility to combine multiple nodes api actions",
 	Long:                  `Utility to combine multiple nodes api actions`,
 	DisableFlagsInUseLine: true,
