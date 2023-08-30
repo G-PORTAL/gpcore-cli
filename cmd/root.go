@@ -62,8 +62,9 @@ func New() *cobra.Command {
 		},
 	}
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose mode")
-	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "./config.yaml", "Define config file location")
-	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "Print version information and quit")
+	dirname, _ := os.UserHomeDir()
+	rootCmd.PersistentFlags().StringVarP(&config.Path, "config", "c", dirname+"/.gpc.yaml", "define config file location")
+	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
 	rootCmd.AddCommand(
 		project.RootProjectCommand,
 		nodes.RootNodesCommand,

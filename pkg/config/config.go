@@ -7,13 +7,13 @@ import (
 	"strings"
 )
 
-var configPath = ""
-var sessionConfig *SessionConfig
+// Path is the path to the config file used to store the session config. The
+// default value is ~/.gpc.yaml. This can be overwritten by setting the
+// environment variable GPCLOUD_CONFIG or by passing the --config flag to the
+// gpc command.
+var Path = ""
 
-func init() {
-	dirname, _ := os.UserHomeDir()
-	configPath = dirname + "/.gpc.yaml"
-}
+var sessionConfig *SessionConfig
 
 type SessionConfig struct {
 	ClientID       string  `yaml:"client_id"`
@@ -26,9 +26,9 @@ func GetSessionConfig() (*SessionConfig, error) {
 		return sessionConfig, nil
 	}
 	if os.Getenv("GPCLOUD_CONFIG") != "" {
-		configPath = os.Getenv("GPCLOUD_CONFIG")
+		Path = os.Getenv("GPCLOUD_CONFIG")
 	}
-	if _, err := os.Stat(configPath); err != nil {
+	if _, err := os.Stat(Path); err != nil {
 		reader := bufio.NewReader(os.Stdin)
 		println("Please enter your Client ID:")
 		clientID, _ := reader.ReadString('\n')
@@ -43,7 +43,7 @@ func GetSessionConfig() (*SessionConfig, error) {
 		}
 		return sessionConfig, nil
 	}
-	data, err := os.ReadFile(configPath)
+	data, err := os.ReadFile(Path)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (c *SessionConfig) Write() error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(configPath, data, 0600)
+	err = os.WriteFile(Path, data, 0600)
 	if err != nil {
 		return err
 	}
