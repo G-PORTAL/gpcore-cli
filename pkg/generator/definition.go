@@ -35,9 +35,10 @@ func (api *APICall) UnmarshalYAML(value *yaml.Node) error {
 }
 
 type SubcommandDefinition struct {
-	Name       string
-	Actions    map[string]Action `yaml:"actions"`
-	Identifier string            `yaml:"identifier"`
+	Name        string
+	Actions     map[string]Action `yaml:"actions"`
+	Identifier  string            `yaml:"identifier"`
+	Description string            `yaml:"description"`
 }
 
 type SubcommandMetadata struct {

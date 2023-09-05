@@ -1,3 +1,4 @@
+description: Country related actions
 actions:
   list:
     api-call: cloud.ListCountries

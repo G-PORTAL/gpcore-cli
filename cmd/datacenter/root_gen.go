@@ -5,16 +5,16 @@
 // before or after the command is executed, use a hook. See the usage_hook.go
 // as an example.
 
-package {{.Name}}
+package datacenter
 
 import (
 	"github.com/spf13/cobra"
 )
 
-var Root{{.Name|Title}}Command = &cobra.Command{
-	Use:                   "{{.Name}}",
-	Short:                 "{{.Description}}",
-	Long:                  "{{.Description}}",
+var RootDatacenterCommand = &cobra.Command{
+	Use:                   "datacenter",
+	Short:                 "",
+	Long:                  "",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
