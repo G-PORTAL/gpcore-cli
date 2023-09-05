@@ -1,0 +1,3 @@
+actions:
+  list:
+    api-call: cloud.ListDatacenters

@@ -6,7 +6,7 @@ import (
 	"gpcloud-cli/pkg/config"
 )
 
-var RootNodesCommand = &cobra.Command{
+var RootNodeCommand = &cobra.Command{
 	Use:                   "node",
 	Short:                 "Utility to combine multiple nodes api actions",
 	Long:                  `Utility to combine multiple nodes api actions`,

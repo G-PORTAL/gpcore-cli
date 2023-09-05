@@ -1,19 +1,20 @@
 package cmd
 
 import (
+	authv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/auth/v1"
+	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"context"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client/auth"
 	"github.com/spf13/cobra"
 	"gopkg.in/op/go-logging.v1"
-	"gpcloud-cli/cmd/node"
-	"gpcloud-cli/cmd/project"
 	"gpcloud-cli/pkg/config"
+	"log"
 	"os"
 )
 
 func New() *cobra.Command {
-	var rootCmd = &cobra.Command{
+	rootCmd := cobra.Command{
 		Use:   "gpc",
 		Short: "gpc is the command line tool for interacting with the GPCore API",
 		Long:  "gpc is the command line tool for interacting with the GPCore API\nAuthenticate using the 'gpc auth' command.",
@@ -48,26 +49,46 @@ func New() *cobra.Command {
 			}
 			cmd.SetContext(context.WithValue(cmd.Context(), "session", session))
 
+			// Override endpoint if GPCLOUD_ENDPOINT is set
+			if os.Getenv("GPCLOUD_ENDPOINT") != "" {
+				endpoint = os.Getenv("GPCLOUD_ENDPOINT")
+			}
+
 			conn, err := client.NewClient(
 				&auth.ProviderKeycloakClientAuth{
 					ClientID:     session.ClientID,     // Set your Client ID
 					ClientSecret: session.ClientSecret, // Set your Client Secret
 				},
+				client.EndpointOverrideOption(endpoint),
 			)
 			if err != nil {
 				panic(err)
 			}
 			cmd.SetContext(context.WithValue(cmd.Context(), "conn", conn))
 
+			if verbose {
+				resp, err := conn.AuthClient().GetUser(cmd.Context(), &authv1.GetUserRequest{})
+				if err != nil {
+					panic(err)
+				}
+				if resp.GetUser().Type == cloudv1.UserType_USER_TYPE_SERVICE_ACCOUNT {
+					log.Println("Logged in with a service account")
+				} else {
+					// TODO: Print user metadata
+				}
+			}
 		},
 	}
+
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose mode")
+	rootCmd.PersistentFlags().StringVarP(&endpoint, "endpoint", "e", client.DefaultEndpoint, "set API endpoint")
+
 	dirname, _ := os.UserHomeDir()
 	rootCmd.PersistentFlags().StringVarP(&config.Path, "config", "c", dirname+"/.gpc.yaml", "define config file location")
+
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
-	rootCmd.AddCommand(
-		project.RootProjectCommand,
-		node.RootNodesCommand,
-	)
-	return rootCmd
+
+	AddGeneratedCommands(&rootCmd)
+
+	return &rootCmd
 }

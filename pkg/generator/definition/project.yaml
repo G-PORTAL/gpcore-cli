@@ -1,0 +1,23 @@
+actions:
+  # Join/Leave project
+  join:
+    api-call: cloud.JoinProject
+    params:
+      accept: bool
+  leave:
+    api-call: cloud.LeaveProject
+
+  # Project information
+  locks:
+    api-call: cloud.GetProjectLocks
+    description: List all locks in the project
+  usage:
+    api-call: cloud.GetProjectUsage
+    params:
+      detailed: bool
+  images:
+    api-call: cloud.ListProjectImages
+  ssh-keys:
+    api-call: cloud.ListProjectSSHKeys
+
+identifier: session.CurrentProject

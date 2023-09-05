@@ -1,0 +1,5 @@
+actions:
+  list:
+    api-call: cloud.ListNodes
+    description: List all nodes in the project
+identifier: session.CurrentProject

@@ -11,13 +11,16 @@ import (
 )
 
 var id string
+var name string
 var useCmd = &cobra.Command{
 	Use:                   "use",
 	Short:                 "Selects a project to use",
-	Long:                  `Selects a project to use`,
+	Long:                  "Selects a project to use",
 	DisableFlagsInUseLine: true,
-	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
+	Args:                  cobra.MatchAll(cobra.MinimumNArgs(1), cobra.OnlyValidArgs),
+	ValidArgs:             []string{"name"},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		print(name)
 		conn := cmd.Context().Value("conn").(*client.Client)
 		session := cmd.Context().Value("session").(*config.SessionConfig)
 		resp, err := conn.CloudClient().ListProjects(cmd.Context(), &cloudv1.ListProjectsRequest{})
