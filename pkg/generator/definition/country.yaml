@@ -3,3 +3,4 @@ actions:
   list:
     api-call: cloud.ListCountries
     description: List all available countries
+    root-key: Countries

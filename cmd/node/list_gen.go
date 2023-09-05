@@ -32,13 +32,19 @@ var listCmd = &cobra.Command{
 		}
 
 		// TODO: Call hook if exist
-
-		// TODO: Only Output response as json if requests with --json flag,
-		// Otherwise, output a human readable table
-		jsonData, err := json.MarshalIndent(resp, "", "  ")
+		// Format list
+		jsonData, err := json.MarshalIndent(resp.Nodes, "", "  ")
 		if err != nil {
 			return err
 		}
+
+		// TODO: Set the header from the child elements
+		// TODO: Append rows from the child elements
+		// TODO: Render the table
+		// TODO: Handle nested structures
+
+		// TODO: Only Output response as json if requests with --json flag,
+		// Otherwise, output a human readable table
 		cmd.Println(string(jsonData))
 
 		return nil

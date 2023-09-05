@@ -3,6 +3,7 @@
 package main
 
 import (
+	"github.com/gertd/go-pluralize"
 	"github.com/stoewer/go-strcase"
 	"gopkg.in/yaml.v3"
 	"gpcloud-cli/pkg/generator"
@@ -18,12 +19,15 @@ func main() {
 
 	log.Println("Generate subcommands ...")
 
+	pl := pluralize.NewClient()
 	templateFuncMap := template.FuncMap{
-		"Title":   strings.Title,
-		"ToLower": strings.ToLower,
-		"ToKebab": strcase.KebabCase,
-		"ToSnake": strcase.SnakeCase,
-		"ToCamel": strcase.LowerCamelCase,
+		"Title":     strings.Title,
+		"ToLower":   strings.ToLower,
+		"ToKebab":   strcase.KebabCase,
+		"ToSnake":   strcase.SnakeCase,
+		"ToCamel":   strcase.LowerCamelCase,
+		"Pluralize": pl.Plural,
+		"HasPrefix": strings.HasPrefix,
 	}
 
 	// Read in the template files

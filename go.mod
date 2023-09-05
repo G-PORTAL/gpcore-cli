@@ -13,6 +13,7 @@ require (
 require (
 	buf.build/gen/go/gportal/gportal-cloud/grpc/go v1.3.0-20230828075926-3366de6a7541.1 // indirect
 	github.com/Nerzal/gocloak/v13 v13.8.0 // indirect
+	github.com/gertd/go-pluralize v0.2.1 // indirect
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

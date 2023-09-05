@@ -19,5 +19,6 @@ actions:
     api-call: cloud.ListProjectImages
   ssh-keys:
     api-call: cloud.ListProjectSSHKeys
+    root-key: Keys
 
 identifier: session.CurrentProject

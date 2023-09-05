@@ -13,6 +13,7 @@ type Action struct {
 	APICall     APICall           `yaml:"api-call"`
 	Params      map[string]string `yaml:"params"`
 	Description string            `yaml:"description"`
+	RootKey     string            `yaml:"root-key"`
 }
 
 type APICall struct {

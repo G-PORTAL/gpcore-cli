@@ -2,4 +2,5 @@ actions:
   list:
     api-call: cloud.ListNodes
     description: List all nodes in the project
+    root-key: Nodes
 identifier: session.CurrentProject

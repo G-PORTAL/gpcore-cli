@@ -39,3 +39,4 @@ file to ```cmd/```. The file name will be the name of the subcommand.
 * Add mandatory params (in addition to optional ones)
 * Gitlab build pipeline
 * Auto-Update command to update to tool itself
+* Pagination support for long lists

@@ -51,12 +51,28 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 
 		// TODO: Call hook if exist
 
-		// TODO: Only Output response as json if requests with --json flag,
-		// Otherwise, output a human readable table
-		jsonData, err := json.MarshalIndent(resp, "", "  ")
+        {{- if HasPrefix .Action.APICall.Endpoint "List" }}
+        // Format list
+		{{- if eq .Action.RootKey ""}}
+		jsonData, err := json.MarshalIndent(resp.{{.Name|Pluralize|ToCamel|Title}}, "", "  ")
+		{{- else}}
+		jsonData, err := json.MarshalIndent(resp.{{.Action.RootKey}}, "", "  ")
+        {{- end}}
 		if err != nil {
 			return err
 		}
+		{{- else}}
+		jsonData, err := json.MarshalIndent(resp, "", "  ")
+		{{- end}}
+
+
+		// TODO: Set the header from the child elements
+		// TODO: Append rows from the child elements
+		// TODO: Render the table
+		// TODO: Handle nested structures
+
+		// TODO: Only Output response as json if requests with --json flag,
+		// Otherwise, output a human readable table
 		cmd.Println(string(jsonData))
 
 		return nil

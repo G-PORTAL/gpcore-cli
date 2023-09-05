@@ -1,3 +1,4 @@
 actions:
   list:
     api-call: cloud.ListDatacenters
+    root-key: Datacenters

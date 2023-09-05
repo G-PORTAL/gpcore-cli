@@ -39,13 +39,15 @@ var joinCmd = &cobra.Command{
 		}
 
 		// TODO: Call hook if exist
+		jsonData, err := json.MarshalIndent(resp, "", "  ")
+
+		// TODO: Set the header from the child elements
+		// TODO: Append rows from the child elements
+		// TODO: Render the table
+		// TODO: Handle nested structures
 
 		// TODO: Only Output response as json if requests with --json flag,
 		// Otherwise, output a human readable table
-		jsonData, err := json.MarshalIndent(resp, "", "  ")
-		if err != nil {
-			return err
-		}
 		cmd.Println(string(jsonData))
 
 		return nil
