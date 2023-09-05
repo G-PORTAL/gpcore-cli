@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gpcloud-cli/cmd/county"
+	"gpcloud-cli/cmd/country"
 	"gpcloud-cli/cmd/datacenter"
 	"gpcloud-cli/cmd/node"
 	"gpcloud-cli/cmd/project"
@@ -14,7 +14,7 @@ import (
 )
 
 func AddGeneratedCommands(cmd *cobra.Command) {
-	cmd.AddCommand(county.RootCountyCommand)
+	cmd.AddCommand(country.RootCountryCommand)
 	cmd.AddCommand(datacenter.RootDatacenterCommand)
 	cmd.AddCommand(node.RootNodeCommand)
 	cmd.AddCommand(project.RootProjectCommand)

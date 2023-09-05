@@ -7,6 +7,7 @@ import (
 )
 
 //go:generate go run ./pkg/generator/generator.go
+//go:generate gofmt -s -w ./cmd/
 
 func main() {
 	cmd := command.New()
