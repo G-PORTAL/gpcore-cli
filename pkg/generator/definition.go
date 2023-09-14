@@ -10,12 +10,19 @@ import (
 type Action struct {
 	Name        string
 	Client      string
-	APICall     APICall           `yaml:"api-call"`
-	Params      map[string]string `yaml:"params"`
-	Description string            `yaml:"description"`
-	RootKey     string            `yaml:"root-key"`
-	Identifier  string            `yaml:"identifier"`
-	Fields      []string          `yaml:"fields"`
+	APICall     APICall  `yaml:"api-call"`
+	Params      []Param  `yaml:"params"`
+	Description string   `yaml:"description"`
+	RootKey     string   `yaml:"root-key"`
+	Identifier  string   `yaml:"identifier"`
+	Fields      []string `yaml:"fields"`
+}
+
+type Param struct {
+	Name        string `yaml:"name"`
+	Type        string `yaml:"type"`
+	Description string `yaml:"description"`
+	Required    bool   `yaml:"required"`
 }
 
 type APICall struct {

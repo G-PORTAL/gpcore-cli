@@ -13,7 +13,8 @@ actions:
   join:
     api-call: cloud.JoinProject
     params:
-      accept: bool
+      - name: accept
+        type: bool
   leave:
     api-call: cloud.LeaveProject
 
@@ -21,7 +22,10 @@ actions:
     api-call: cloud.ChangeDefaultProject
     identifier: nil
     params:
-      id: string
+      - name: id
+        type: string
+        description: New default project ID
+        required: true
 
   # Project information
   locks:
@@ -30,7 +34,8 @@ actions:
   usage:
     api-call: cloud.GetProjectUsage
     params:
-      detailed: bool
+      - name: detailed
+        type: bool
   images:
     api-call: cloud.ListProjectImages
   ssh-keys:

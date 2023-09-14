@@ -22,8 +22,8 @@ import (
 	"gpcloud-cli/pkg/config"
 )
 {{- $subcommand := .Name}}
-{{range $key, $value := .Action.Params}}
-var {{$subcommand|ToCamel}}{{$key|ToCamel|Title}} {{$value}}
+{{range $i, $param := .Action.Params}}
+var {{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}} {{$param.Type}}
 {{- end}}
 
 var {{.Name|ToCamel}}Cmd = &cobra.Command{
@@ -67,8 +67,8 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
                 Id:       *{{.Definition.Identifier}},
                 {{- end}}
 		    {{- end}}
-	        {{- range $key, $value := .Action.Params}}
-	        {{$key|Title}}: {{$subcommand|ToCamel}}{{$key|ToCamel|Title}},
+	        {{- range $i, $param := .Action.Params}}
+	        {{$param.Name|Title}}: {{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}},
 	        {{- end}}
 		})
 		if err != nil {
@@ -165,19 +165,25 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 }
 
 func init() {
-    {{- range $key, $value := .Action.Params}}
+    {{- range $i, $param := .Action.Params}}
     {{- $datatypeDefaultValue := "nil"}}
-    {{- if eq $value "string"}}
+    {{- if eq $param.Type "string"}}
       {{- $datatypeDefaultValue = `""`}}
     {{- end}}
-    {{- if eq $value "bool"}}
+    {{- if eq $param.Type "bool"}}
       {{- $datatypeDefaultValue = `false`}}
     {{- end}}
-    {{- if eq $value "int"}}
+    {{- if eq $param.Type "int"}}
       {{- $datatypeDefaultValue = `0`}}
     {{- end}}
-    {{$subcommand|ToCamel}}Cmd.Flags().{{$value|Title}}Var(&{{$subcommand|ToCamel}}{{$key|ToCamel|Title}}, "{{$key}}", {{$datatypeDefaultValue}}, "TODO: Add description")
+
+    {{$subcommand|ToCamel}}Cmd.Flags().{{$param.Type|Title}}Var(&{{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}}, "{{$param.Name}}", {{$datatypeDefaultValue}}, "{{$param.Description}}")
+
+    {{- if $param.Required}}
+    {{$subcommand|ToCamel}}Cmd.MarkFlagRequired("{{$param.Name}}")
     {{- end}}
+    {{- end}}
+
 
 	Root{{.Definition.Name|Title}}Command.AddCommand({{$subcommand|ToCamel}}Cmd)
 }
