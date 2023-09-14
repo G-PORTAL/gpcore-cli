@@ -66,11 +66,13 @@ func New() *cobra.Command {
 			}
 			cobraCmd.SetContext(context.WithValue(cobraCmd.Context(), "conn", conn))
 
+			// Set user
+			resp, err := conn.AuthClient().GetUser(cobraCmd.Context(), &authv1.GetUserRequest{})
+			if err != nil {
+				panic(err)
+			}
+			cobraCmd.SetContext(context.WithValue(cobraCmd.Context(), "user", resp.GetUser()))
 			if verbose {
-				resp, err := conn.AuthClient().GetUser(cobraCmd.Context(), &authv1.GetUserRequest{})
-				if err != nil {
-					panic(err)
-				}
 				if resp.GetUser().Type == cloudv1.UserType_USER_TYPE_SERVICE_ACCOUNT {
 					log.Println("Logged in with a service account")
 				} else {

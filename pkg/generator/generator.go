@@ -28,6 +28,13 @@ func main() {
 		"ToCamel":   strcase.LowerCamelCase,
 		"Pluralize": pl.Plural,
 		"HasPrefix": strings.HasPrefix,
+		"HasHook": func(command string, subcommand string, hookType string) bool {
+			if _, err := os.Stat("./cmd/" + command + "/" + subcommand + "_" + hookType + ".go"); !os.IsNotExist(err) {
+				log.Printf("  Include hook %s/%s for type %s", command, subcommand, hookType)
+				return true
+			}
+			return false
+		},
 	}
 
 	// Read in the template files

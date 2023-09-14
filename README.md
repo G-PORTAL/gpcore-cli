@@ -35,10 +35,15 @@ file to ```cmd/```. The file name will be the name of the subcommand.
 
 # TODOs
 
-* Add more subcommands
-* Auto-Update command to update to tool itself
-* Gitlab build pipeline
-
-* Add hooks to subcommands (pre/post)
 * Add mandatory params (in addition to optional ones)
+* Add more subcommands
+
+* Gitlab build pipeline -> GoReleaser : 2023.9.[version]
+* Auto-Update command to update to tool itself 
+
 * Pagination support for long lists
+* Custom description for subcommand flags
+* No "usage" output on API error
+* LiveLogs as a command
+* Event log -> return when node ready
+* Project Log watcher

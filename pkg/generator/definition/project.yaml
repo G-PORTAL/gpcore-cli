@@ -1,4 +1,14 @@
 actions:
+  list:
+    api-call: cloud.ListProjects
+    identifier: nil
+    root-key: Projects
+    fields:
+      - Id
+      - Name
+      - Description
+      - Currency
+
   # Join/Leave project
   join:
     api-call: cloud.JoinProject
@@ -6,6 +16,12 @@ actions:
       accept: bool
   leave:
     api-call: cloud.LeaveProject
+
+  default-project:
+    api-call: cloud.ChangeDefaultProject
+    identifier: nil
+    params:
+      id: string
 
   # Project information
   locks:

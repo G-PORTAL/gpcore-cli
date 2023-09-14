@@ -21,8 +21,9 @@ import (
 	"github.com/spf13/cobra"
 	"gpcloud-cli/pkg/config"
 )
+{{- $subcommand := .Name}}
 {{range $key, $value := .Action.Params}}
-var {{$key}} {{$value}}
+var {{$subcommand|ToCamel}}{{$key|ToCamel|Title}} {{$value}}
 {{- end}}
 
 var {{.Name|ToCamel}}Cmd = &cobra.Command{
@@ -39,22 +40,44 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 	{{end}}
 	RunE: func(cmd *cobra.Command, args []string) error {
 		conn := cmd.Context().Value("conn").(*client.Client)
-		{{- if ne .Definition.Identifier "" }}
+
+        {{- if ne .Action.Identifier ""}}
+            {{- if ne .Action.Identifier "nil"}}
 		session := cmd.Context().Value("session").(*config.SessionConfig)
-        {{- end}}
+            {{- end}}
+        {{- else}}
+            {{- if ne .Definition.Identifier ""}}
+		session := cmd.Context().Value("session").(*config.SessionConfig)
+            {{- end}}
+		{{- end}}
+
+		{{- if HasHook .Definition.Name $subcommand "pre"}}
+		{{ $subcommand|ToCamel|Title }}HookPre(resp, cmd)
+		{{- end}}
+
 		resp, err := conn.{{.Action.APICall.Client|Title}}Client().{{.Action.APICall.Endpoint}}(cmd.Context(), &cloudv1.{{.Action.APICall.Endpoint}}Request{
-		    {{- if ne .Definition.Identifier "" }}
-		    Id:       *{{.Definition.Identifier}},
+            {{- if ne .Action.Identifier ""}}
+                {{- if ne .Action.Identifier "nil"}}
+                // Custom identifier
+                Id: *{{.Action.Identifier}},
+                {{- end}}
+            {{- else}}
+                // Default identifier
+                {{- if ne .Definition.Identifier ""}}
+                Id:       *{{.Definition.Identifier}},
+                {{- end}}
 		    {{- end}}
 	        {{- range $key, $value := .Action.Params}}
-	        {{$key|Title}}: {{$key}},
+	        {{$key|Title}}: {{$subcommand|ToCamel}}{{$key|ToCamel|Title}},
 	        {{- end}}
 		})
 		if err != nil {
 			return err
 		}
 
-		// TODO: Call hook if exist
+		{{- if HasHook .Definition.Name $subcommand "post"}}
+		{{ $subcommand|ToCamel|Title }}HookPost(resp, cmd)
+		{{- end}}
 
         {{- if HasPrefix .Action.APICall.Endpoint "List" }}
         // Remove root key
@@ -142,7 +165,6 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 }
 
 func init() {
-    {{- $subcommand := .Name}}
     {{- range $key, $value := .Action.Params}}
     {{- $datatypeDefaultValue := "nil"}}
     {{- if eq $value "string"}}
@@ -154,7 +176,7 @@ func init() {
     {{- if eq $value "int"}}
       {{- $datatypeDefaultValue = `0`}}
     {{- end}}
-    {{$subcommand}}Cmd.Flags().{{$value|Title}}Var(&{{$key}}, "{{$key}}", {{$datatypeDefaultValue}}, "TODO: Add description")
+    {{$subcommand|ToCamel}}Cmd.Flags().{{$value|Title}}Var(&{{$subcommand|ToCamel}}{{$key|ToCamel|Title}}, "{{$key}}", {{$datatypeDefaultValue}}, "TODO: Add description")
     {{- end}}
 
 	Root{{.Definition.Name|Title}}Command.AddCommand({{$subcommand|ToCamel}}Cmd)

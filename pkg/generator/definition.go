@@ -14,6 +14,7 @@ type Action struct {
 	Params      map[string]string `yaml:"params"`
 	Description string            `yaml:"description"`
 	RootKey     string            `yaml:"root-key"`
+	Identifier  string            `yaml:"identifier"`
 	Fields      []string          `yaml:"fields"`
 }
 
