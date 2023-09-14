@@ -13,6 +13,13 @@ import (
 // gpc command.
 var Path = ""
 
+// JSONOutput is a global flag that can be used to output the result of a command
+// as JSON. This can be enabled by passing the --json flag to the gpc command.
+var JSONOutput = false
+
+// CSVOutput is a global flag that can be used to output the result of a command
+// as CSV. This can be enabled by passing the --csv flag to the gpc command.
+var CSVOutput = false
 var sessionConfig *SessionConfig
 
 type SessionConfig struct {

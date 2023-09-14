@@ -10,11 +10,16 @@ package {{.Definition.Name}}
 import (
 	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"encoding/json"
+    {{- if HasPrefix .Action.APICall.Endpoint "List" }}
+	"github.com/jedib0t/go-pretty/v6/table"
+	{{- if eq (len .Action.Fields) 0}}
+	"reflect"
+	{{- end}}
+	"os"
+	{{- end}}
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/spf13/cobra"
-    {{- if ne .Definition.Identifier "" }}
 	"gpcloud-cli/pkg/config"
-	{{- end}}
 )
 {{range $key, $value := .Action.Params}}
 var {{$key}} {{$value}}
@@ -52,28 +57,85 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		// TODO: Call hook if exist
 
         {{- if HasPrefix .Action.APICall.Endpoint "List" }}
-        // Format list
+        // Remove root key
+        {{ $rootKey := .Action.RootKey }}
 		{{- if eq .Action.RootKey ""}}
-		jsonData, err := json.MarshalIndent(resp.{{.Name|Pluralize|ToCamel|Title}}, "", "  ")
-		{{- else}}
-		jsonData, err := json.MarshalIndent(resp.{{.Action.RootKey}}, "", "  ")
+        {{ $rootKey = .Name|Pluralize|ToCamel|Title}}
         {{- end}}
-		if err != nil {
-			return err
+
+		respData := resp.{{$rootKey}}
+
+		// Build the table
+		// TODO: Handle nested structures
+		headerRow := table.Row{}
+
+		tbl := table.NewWriter()
+		tbl.SetStyle(table.StyleRounded)
+		tbl.SetOutputMirror(os.Stdout)
+
+		{{- if eq (len .Action.Fields) 0}}
+		for j, entry := range respData {
+			// Use all fields
+			c := reflect.ValueOf(*entry)
+			//row := make([]table.Row, c.NumField())
+			row := table.Row{}
+
+			for i := 0; i < c.NumField(); i++ {
+				// Skip all unexported fields
+				if c.Type().Field(i).IsExported() {
+					row = append(row, c.Field(i).Interface())
+
+					if j == 0 {
+						headerRow = append(headerRow, c.Type().Field(i).Name)
+					}
+				}
+			}
+			tbl.AppendRow(row)
 		}
-		{{- else}}
-		jsonData, err := json.MarshalIndent(resp, "", "  ")
+
+        {{- range $key, $value := .Action.Fields}}
+        headerRow = append(headerRow, "{{$value|Title}}")
+        {{- end}}
+		tbl.AppendHeader(headerRow)
+
+		{{- else }}
+		// Only use whitelist fields
+		for i, entry := range respData {
+            row := make([]interface{}, 0)
+
+            {{- range $key, $value := .Action.Fields}}
+            row = append(row, entry.{{$value|Title}})
+            if i == 0 {
+                headerRow = append(headerRow, "{{$value|Title}}")
+            }
+            {{- end}}
+
+            tbl.AppendRow(row)
+        }
+		tbl.AppendHeader(headerRow)
 		{{- end}}
 
+		if config.CSVOutput {
+            tbl.RenderCSV()
+            return nil
+        }
 
-		// TODO: Set the header from the child elements
-		// TODO: Append rows from the child elements
-		// TODO: Render the table
-		// TODO: Handle nested structures
+		if !config.JSONOutput {
+            tbl.Render()
+        }
 
-		// TODO: Only Output response as json if requests with --json flag,
-		// Otherwise, output a human readable table
-		cmd.Println(string(jsonData))
+		{{- else}}
+		// Single response
+		respData := resp
+        {{- end}}
+
+		if config.JSONOutput {
+			jsonData, err := json.MarshalIndent(respData, "", "  ")
+			if err != nil {
+				return err
+			}
+			cmd.Println(string(jsonData))
+		}
 
 		return nil
 	},

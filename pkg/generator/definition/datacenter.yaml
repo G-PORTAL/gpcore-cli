@@ -2,3 +2,7 @@ actions:
   list:
     api-call: cloud.ListDatacenters
     root-key: Datacenters
+    fields:
+      - Short
+      - Name
+      - Status

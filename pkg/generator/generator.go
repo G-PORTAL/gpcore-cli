@@ -45,7 +45,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	addcoommandsTemplate, err := template.
+	addcommandsTemplate, err := template.
 		New("addcommands.tmpl").
 		Funcs(templateFuncMap).
 		ParseFiles("./pkg/generator/template/addcommands.tmpl")
@@ -138,7 +138,7 @@ func main() {
 		subcommandName := strings.TrimSuffix(definitionFile.Name(), filepath.Ext(definitionFile.Name()))
 		commandList = append(commandList, subcommandName)
 	}
-	err = addcoommandsTemplate.Funcs(templateFuncMap).Execute(targetFile, commandList)
+	err = addcommandsTemplate.Funcs(templateFuncMap).Execute(targetFile, commandList)
 	if err != nil {
 		log.Fatal(err)
 	}

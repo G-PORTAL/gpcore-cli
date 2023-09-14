@@ -14,6 +14,7 @@ type Action struct {
 	Params      map[string]string `yaml:"params"`
 	Description string            `yaml:"description"`
 	RootKey     string            `yaml:"root-key"`
+	Fields      []string          `yaml:"fields"`
 }
 
 type APICall struct {

@@ -18,16 +18,16 @@ func New() *cobra.Command {
 		Use:   "gpc",
 		Short: "gpc is the command line tool for interacting with the GPCore API",
 		Long:  "gpc is the command line tool for interacting with the GPCore API\nAuthenticate using the 'gpc auth' command.",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cobraCmd *cobra.Command, args []string) error {
 			if version {
-				cmd.Print(GetVersionDisplay())
+				cobraCmd.Print(GetVersionDisplay())
 				return nil
 			}
-			cmd.Println(cmd.UsageString())
+			cobraCmd.Println(cobraCmd.UsageString())
 			return nil
 		},
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			cmd.SetOut(cmd.OutOrStdout())
+		PersistentPreRun: func(cobraCmd *cobra.Command, args []string) {
+			cobraCmd.SetOut(cobraCmd.OutOrStdout())
 
 			var format = logging.MustStringFormatter(
 				`%{color}%{time:15:04:05} %{shortfunc} [%{level:.4s}]%{color:reset} %{message}`,
@@ -47,7 +47,7 @@ func New() *cobra.Command {
 			if err != nil {
 				panic(err)
 			}
-			cmd.SetContext(context.WithValue(cmd.Context(), "session", session))
+			cobraCmd.SetContext(context.WithValue(cobraCmd.Context(), "session", session))
 
 			// Override endpoint if GPCLOUD_ENDPOINT is set
 			if os.Getenv("GPCLOUD_ENDPOINT") != "" {
@@ -64,10 +64,10 @@ func New() *cobra.Command {
 			if err != nil {
 				panic(err)
 			}
-			cmd.SetContext(context.WithValue(cmd.Context(), "conn", conn))
+			cobraCmd.SetContext(context.WithValue(cobraCmd.Context(), "conn", conn))
 
 			if verbose {
-				resp, err := conn.AuthClient().GetUser(cmd.Context(), &authv1.GetUserRequest{})
+				resp, err := conn.AuthClient().GetUser(cobraCmd.Context(), &authv1.GetUserRequest{})
 				if err != nil {
 					panic(err)
 				}
@@ -85,6 +85,9 @@ func New() *cobra.Command {
 
 	dirname, _ := os.UserHomeDir()
 	rootCmd.PersistentFlags().StringVarP(&config.Path, "config", "c", dirname+"/.gpc.yaml", "define config file location")
+
+	rootCmd.PersistentFlags().BoolVarP(&config.JSONOutput, "json", "j", false, "output as JSON")
+	rootCmd.PersistentFlags().BoolVarP(&config.CSVOutput, "csv", "x", false, "output as CSV")
 
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
 
