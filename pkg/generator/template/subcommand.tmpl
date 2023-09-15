@@ -7,7 +7,19 @@
 
 package {{.Definition.Name|EscapePackage}}
 
+{{- $identifierPath := ""}}
+{{- if ne .Action.Identifier ""}}
+    {{- if ne .Action.Identifier "nil"}}
+        {{- $identifierPath = .Action.Identifier}}
+    {{- end}}
+{{- else}}
+    {{- if ne .Definition.Identifier ""}}
+        {{- $identifierPath = .Definition.Identifier}}
+    {{- end}}
+{{- end}}
+
 import (
+    {{- if ne $identifierPath nil }}"fmt"{{- end}}
 	{{.Action.APICall.Client}}{{.Action.APICall.Version}} "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/{{.Action.APICall.Client}}/{{.Action.APICall.Version}}"
 	"encoding/json"
     {{- if HasPrefix .Action.APICall.Endpoint "List" }}
@@ -20,12 +32,12 @@ import (
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/spf13/cobra"
 	"gpcloud-cli/pkg/config"
-
 	{{- range $i, $param := .Action.Params}}
     {{- if IsEnumType $param.Type}}
     "strings"
     {{- end}}
     {{- end}}
+
 )
 
 {{- $subcommand := .Name}}
@@ -68,17 +80,24 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 	},
 	{{end}}
 	RunE: func(cmd *cobra.Command, args []string) error {
+	    if false {
+	    fmt.Println("{{.Name}}")
+	    }
 		conn := cmd.Context().Value("conn").(*client.Client)
+		if conn == nil {
+		    return fmt.Errorf("no connection")
+		}
 
-        {{- if ne .Action.Identifier ""}}
-            {{- if ne .Action.Identifier "nil"}}
+		{{/* identifier path: If there is a co */}}
+        {{- if ne $identifierPath ""}}
 		session := cmd.Context().Value("session").(*config.SessionConfig)
-            {{- end}}
-        {{- else}}
-            {{- if ne .Definition.Identifier ""}}
-		session := cmd.Context().Value("session").(*config.SessionConfig)
-            {{- end}}
-		{{- end}}
+		if session == nil {
+		    return fmt.Errorf("No session config in context")
+		}
+		if {{$identifierPath}} == nil {
+		    return fmt.Errorf("Identifier not found in session config; ensure there is a project selected")
+		}
+        {{- end}}
 
 		{{- if HasHook .Definition.Name $subcommand "pre"}}
 		{{ $subcommand|ToCamel|Title }}HookPre(resp, cmd)

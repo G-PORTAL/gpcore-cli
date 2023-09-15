@@ -39,6 +39,14 @@ actions:
         description: Project ID to delete
         required: true
 
+  flavours:
+    api-call: cloud.ListProjectFlavours
+    params:
+      - name: datacenter_id
+        description: Datacenter to fetch the flavours from
+        type: string
+        required: true
+
   # Join/Leave project
   join:
     api-call: cloud.JoinProject

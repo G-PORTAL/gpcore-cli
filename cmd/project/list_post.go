@@ -12,7 +12,7 @@ func ListHookPost(resp *cloudv1.ListProjectsResponse, cmd *cobra.Command) {
 
 	for i := range resp.Projects {
 		// Mark active project
-		if resp.Projects[i].Id == *session.CurrentProject {
+		if session.CurrentProject != nil && resp.Projects[i].Id == *session.CurrentProject {
 			name := "*" + resp.Projects[i].Name
 			resp.Projects[i].Name = name
 		}
