@@ -5,7 +5,7 @@
 // before or after the command is executed, use a hook. See the usage_hook.go
 // as an example.
 
-package {{.Name}}
+package {{.Name|EscapePackage}}
 
 import (
 	"github.com/spf13/cobra"

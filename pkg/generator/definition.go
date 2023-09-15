@@ -19,15 +19,17 @@ type Action struct {
 }
 
 type Param struct {
-	Name        string `yaml:"name"`
-	Type        string `yaml:"type"`
-	Description string `yaml:"description"`
-	Required    bool   `yaml:"required"`
+	Name        string      `yaml:"name"`
+	Type        string      `yaml:"type"`
+	Description string      `yaml:"description"`
+	Required    bool        `yaml:"required"`
+	Default     interface{} `yaml:"default"`
 }
 
 type APICall struct {
 	Client   string
 	Endpoint string
+	Version  string
 }
 
 func (api *APICall) UnmarshalYAML(value *yaml.Node) error {
@@ -40,6 +42,16 @@ func (api *APICall) UnmarshalYAML(value *yaml.Node) error {
 
 	api.Client = matches[1]
 	api.Endpoint = matches[2]
+	api.Version = "v1"
+	if len(matches) == 4 {
+		versionRegex := regexp.MustCompile(`.*\/(v[0-9])`)
+
+		versionMatches := versionRegex.FindStringSubmatch(api.Endpoint)
+		if len(versionMatches) == 2 {
+			api.Version = versionMatches[1]
+			api.Endpoint = api.Endpoint[:len(api.Endpoint)-len(versionMatches[1])-1]
+		}
+	}
 
 	return nil
 }

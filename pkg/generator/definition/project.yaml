@@ -21,8 +21,10 @@ actions:
         required: true
       - name: description
         type: string
+        default: ""
       - name: environment
         type: cloudv1.ProjectEnvironment
+        default: cloudv1.PROJECT_ENVIRONMENT_DEVELOPMENT
         required: true
       - name: billing_address_id
         type: string
@@ -43,6 +45,7 @@ actions:
     params:
       - name: accept
         type: bool
+        default: false
   leave:
     api-call: cloud.LeaveProject
 
@@ -64,6 +67,7 @@ actions:
     params:
       - name: detailed
         type: bool
+        default: false
   images:
     api-call: cloud.ListProjectImages
   ssh-keys:

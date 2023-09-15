@@ -3,6 +3,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gertd/go-pluralize"
 	"github.com/stoewer/go-strcase"
 	"gopkg.in/yaml.v3"
@@ -21,7 +22,9 @@ func main() {
 
 	pl := pluralize.NewClient()
 	templateFuncMap := template.FuncMap{
-		"Title":     strings.Title,
+		"Title": func(s string) string {
+			return strings.Title(strcase.LowerCamelCase(s))
+		},
 		"ToLower":   strings.ToLower,
 		"ToUpper":   strings.ToUpper,
 		"ToKebab":   strcase.KebabCase,
@@ -43,6 +46,9 @@ func main() {
 			parts := strings.Split(s, ".")
 			return parts[1]
 		},
+		"EscapePackage": func(s string) string {
+			return strings.Replace(strings.Replace(s, ".", "_", -1), "-", "_", -1)
+		},
 		"EnumToProto": func(enumType string, value string) string {
 			// cloudv1.ProjectEnvironment -> ProjectEnvironment_PROJECT_ENVIRONMENT_[VALUE]
 			parts := strings.Split(enumType, ".")
@@ -52,6 +58,49 @@ func main() {
 			// PROJECT_ENVIRONMENT_[VALUE] -> VALUE
 			parts := strings.Split(enumType, "_")
 			return parts[len(parts)-1]
+		},
+		"DefaultValue": func(param generator.Param) string {
+			if param.Default == nil {
+				switch param.Type {
+				case "string":
+					return "\"\""
+				case "bool":
+					return "false"
+				case "int":
+					return "false"
+				}
+			} else {
+				switch param.Type {
+				case "string":
+					return fmt.Sprintf("\"%s\"", param.Default)
+				case "bool":
+					return fmt.Sprintf("%t", param.Default)
+				case "int":
+					return fmt.Sprintf("%d", param.Default)
+				default: // enum
+					if strings.Contains(param.Default.(string), ".") {
+						parts := strings.Split(param.Default.(string), "_")
+						return fmt.Sprintf("\"%s\"", parts[len(parts)-1])
+					}
+				}
+			}
+
+			return "nil"
+		},
+		"ParameterDescription": func(param generator.Param) string {
+			flags := []string{}
+			if param.Default == nil {
+				if param.Required {
+					flags = append(flags, "required")
+				}
+			} else {
+				flags = append(flags, fmt.Sprintf("default:\\\"%v\\\"", param.Default))
+			}
+
+			if len(flags) > 0 {
+				return fmt.Sprintf("%s (%s)", param.Description, strings.Join(flags, ", "))
+			}
+			return param.Description
 		},
 	}
 
@@ -98,7 +147,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		subcommandName := strings.TrimSuffix(definitionFile.Name(), filepath.Ext(definitionFile.Name()))
+		subcommandName := strings.Replace(strings.TrimSuffix(definitionFile.Name(), filepath.Ext(definitionFile.Name())), "-", "_", -1)
 		metadata.Name = subcommandName
 
 		// Create directory if not exist

@@ -1,0 +1,50 @@
+actions:
+  list:
+    api-call: payment.ListBillingProfiles
+    description: List billing profiles
+    root-key: BillingProfiles
+    fields:
+      - Id
+      - Name
+      - Street
+      - City
+      - Postcode
+      - Company
+  create:
+    api-call: payment.CreateBillingProfile
+    description: Create a new billing profile
+    identifier: nil
+    params:
+      - name: name
+        type: string
+        description: Full name
+        required: true
+      - name: company
+        description: Company name
+        type: string
+      - name: vat_id
+        description: Vat ID (e.g. DE123456789)
+        type: string
+      - name: country_code
+        description: Country Code (e.g. DE)
+        type: string
+        required: true
+      - name: state
+        description: State
+        type: string
+      - name: street
+        description: Street (e.g. Some Road 123)
+        type: string
+        required: true
+      - name: city
+        description: City
+        type: string
+        required: true
+      - name: postcode
+        description: Post Code
+        type: string
+        required: true
+      - name: billing_email
+        description: Defines the billing email address
+        type: string
+        default: ""

@@ -5,10 +5,10 @@
 // before or after the command is executed, use a hook. See the usage_hook.go
 // as an example.
 
-package {{.Definition.Name}}
+package {{.Definition.Name|EscapePackage}}
 
 import (
-	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
+	{{.Action.APICall.Client}}{{.Action.APICall.Version}} "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/{{.Action.APICall.Client}}/{{.Action.APICall.Version}}"
 	"encoding/json"
     {{- if HasPrefix .Action.APICall.Endpoint "List" }}
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -84,7 +84,7 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		{{ $subcommand|ToCamel|Title }}HookPre(resp, cmd)
 		{{- end}}
 
-		resp, err := conn.{{.Action.APICall.Client|Title}}Client().{{.Action.APICall.Endpoint}}(cmd.Context(), &cloudv1.{{.Action.APICall.Endpoint}}Request{
+		resp, err := conn.{{.Action.APICall.Client|Title}}Client().{{.Action.APICall.Endpoint}}(cmd.Context(), &{{.Action.APICall.Client}}{{.Action.APICall.Version}}.{{.Action.APICall.Endpoint}}Request{
             {{- if ne .Action.Identifier ""}}
                 {{- if ne .Action.Identifier "nil"}}
                 // Custom identifier
@@ -101,7 +101,7 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 	          {{- if IsEnumType $param.Type}}
                 {{$param.Name|ToCamel|Title}}: {{$param.Type|StripPackage|}}ToProto({{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}}{{")"}},
               {{- else }}
-	            {{$param.Name|ToCamel|Title}}: {{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}},
+	            {{$param.Name|ToCamel|Title}}: {{ if and (not $param.Required) (eq $param.Default nil) }}&{{end}}{{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}},
               {{- end}}
 	        {{- end}}
 		})
@@ -200,24 +200,13 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 
 func init() {
     {{- range $i, $param := .Action.Params}}
-    {{- $datatypeDefaultValue := "nil"}}
+    {{- $datatypeDefaultValue := $param|DefaultValue}}
     {{- $datatype := $param.Type|Title}}
-
-    {{- if eq $param.Type "string"}}
-      {{- $datatypeDefaultValue = `""`}}
-    {{- end}}
-    {{- if eq $param.Type "bool"}}
-      {{- $datatypeDefaultValue = "false"}}
-    {{- end}}
-    {{- if eq $param.Type "int"}}
-      {{- $datatypeDefaultValue = "0"}}
-    {{- end}}
     {{- if IsEnumType $param.Type}}
-      {{- $datatypeDefaultValue = `""`}}
-      {{- $datatype = "String"}}
+      {{$datatype = "String"}}
     {{- end}}
 
-    {{$subcommand|ToCamel}}Cmd.Flags().{{$datatype}}Var(&{{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}}, "{{$param.Name|ToKebab}}", {{$datatypeDefaultValue}}, "{{$param.Description}}")
+    {{$subcommand|ToCamel}}Cmd.Flags().{{$datatype}}Var(&{{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}}, "{{$param.Name|ToKebab}}", {{$datatypeDefaultValue}}, "{{$param|ParameterDescription}}")
 
     {{- if $param.Required}}
     {{$subcommand|ToCamel}}Cmd.MarkFlagRequired("{{$param.Name}}")

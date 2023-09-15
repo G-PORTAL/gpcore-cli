@@ -6,11 +6,11 @@ package cmd
 
 import (
     "github.com/spf13/cobra"
-    {{range .}}"gpcloud-cli/cmd/{{.}}"
+    {{range .}}"gpcloud-cli/cmd/{{.|EscapePackage}}"
     {{end}}
 )
 
 func AddGeneratedCommands(cmd *cobra.Command) {
-    {{range .}}cmd.AddCommand({{.}}.Root{{.|Title}}Command)
+    {{range .}}cmd.AddCommand({{.|EscapePackage}}.Root{{.|Title}}Command)
     {{end}}
 }
