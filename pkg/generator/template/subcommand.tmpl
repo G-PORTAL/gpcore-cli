@@ -20,10 +20,39 @@ import (
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/spf13/cobra"
 	"gpcloud-cli/pkg/config"
+
+	{{- range $i, $param := .Action.Params}}
+    {{- if IsEnumType $param.Type}}
+    "strings"
+    {{- end}}
+    {{- end}}
 )
+
 {{- $subcommand := .Name}}
+
+{{- if HasHook .Definition.Name $subcommand "pre"}}
+{{ $subcommand|ToCamel|Title }}HookPost(resp, cmd)
+{{- end}}
+
 {{range $i, $param := .Action.Params}}
-var {{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}} {{$param.Type}}
+  {{- $datatype := $param.Type}}
+  {{- if IsEnumType $param.Type}}
+    {{- $datatype = "string"}}
+  {{- end}}
+var {{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}} {{$datatype}}
+{{- end}}
+
+{{- range $i, $param := .Action.Params}}
+  {{- if IsEnumType $param.Type }}
+  func {{$param.Type|StripPackage}}ToProto(a string) {{ $param.Type }} {
+      for k, v := range {{ $param.Type}}_name {
+          if v == "{{$param.Type|StripPackage|ToSnake|ToUpper}}_" + strings.ToUpper(a) {
+              return {{ $param.Type}}(k)
+          }
+      }
+      return {{ EnumToProto $param.Type "UNSPECIFIED" }}
+  }
+  {{- end}}
 {{- end}}
 
 var {{.Name|ToCamel}}Cmd = &cobra.Command{
@@ -34,7 +63,7 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 	Args:                  cobra.OnlyValidArgs,
 	{{- if gt (len .Action.Params) 0}}
 	ValidArgs: []string{
-	    {{range $key, $value := .Action.Params}}"{{$key}}",
+	    {{range $key, $value := .Action.Params}}"{{$value.Name|ToKebab}}",
 	    {{- end}}
 	},
 	{{end}}
@@ -67,8 +96,13 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
                 Id:       *{{.Definition.Identifier}},
                 {{- end}}
 		    {{- end}}
+
 	        {{- range $i, $param := .Action.Params}}
-	        {{$param.Name|Title}}: {{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}},
+	          {{- if IsEnumType $param.Type}}
+                {{$param.Name|ToCamel|Title}}: {{$param.Type|StripPackage|}}ToProto({{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}}{{")"}},
+              {{- else }}
+	            {{$param.Name|ToCamel|Title}}: {{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}},
+              {{- end}}
 	        {{- end}}
 		})
 		if err != nil {
@@ -167,17 +201,23 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 func init() {
     {{- range $i, $param := .Action.Params}}
     {{- $datatypeDefaultValue := "nil"}}
+    {{- $datatype := $param.Type|Title}}
+
     {{- if eq $param.Type "string"}}
       {{- $datatypeDefaultValue = `""`}}
     {{- end}}
     {{- if eq $param.Type "bool"}}
-      {{- $datatypeDefaultValue = `false`}}
+      {{- $datatypeDefaultValue = "false"}}
     {{- end}}
     {{- if eq $param.Type "int"}}
-      {{- $datatypeDefaultValue = `0`}}
+      {{- $datatypeDefaultValue = "0"}}
+    {{- end}}
+    {{- if IsEnumType $param.Type}}
+      {{- $datatypeDefaultValue = `""`}}
+      {{- $datatype = "String"}}
     {{- end}}
 
-    {{$subcommand|ToCamel}}Cmd.Flags().{{$param.Type|Title}}Var(&{{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}}, "{{$param.Name}}", {{$datatypeDefaultValue}}, "{{$param.Description}}")
+    {{$subcommand|ToCamel}}Cmd.Flags().{{$datatype}}Var(&{{$subcommand|ToCamel}}{{$param.Name|ToCamel|Title}}, "{{$param.Name|ToKebab}}", {{$datatypeDefaultValue}}, "{{$param.Description}}")
 
     {{- if $param.Required}}
     {{$subcommand|ToCamel}}Cmd.MarkFlagRequired("{{$param.Name}}")

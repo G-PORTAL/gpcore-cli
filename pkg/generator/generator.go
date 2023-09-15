@@ -23,6 +23,7 @@ func main() {
 	templateFuncMap := template.FuncMap{
 		"Title":     strings.Title,
 		"ToLower":   strings.ToLower,
+		"ToUpper":   strings.ToUpper,
 		"ToKebab":   strcase.KebabCase,
 		"ToSnake":   strcase.SnakeCase,
 		"ToCamel":   strcase.LowerCamelCase,
@@ -34,6 +35,23 @@ func main() {
 				return true
 			}
 			return false
+		},
+		"IsEnumType": func(s string) bool {
+			return strings.Contains(s, ".")
+		},
+		"StripPackage": func(s string) string {
+			parts := strings.Split(s, ".")
+			return parts[1]
+		},
+		"EnumToProto": func(enumType string, value string) string {
+			// cloudv1.ProjectEnvironment -> ProjectEnvironment_PROJECT_ENVIRONMENT_[VALUE]
+			parts := strings.Split(enumType, ".")
+			return parts[0] + "." + parts[1] + "_" + strcase.UpperSnakeCase(parts[1]) + "_" + strings.ToUpper(value)
+		},
+		"EnumToValue": func(enumType string) string {
+			// PROJECT_ENVIRONMENT_[VALUE] -> VALUE
+			parts := strings.Split(enumType, "_")
+			return parts[len(parts)-1]
 		},
 	}
 

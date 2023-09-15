@@ -8,6 +8,34 @@ actions:
       - Name
       - Description
       - Currency
+      - Environment
+
+  create:
+    api-call: cloud.CreateProject
+    description: Create a new project
+    identifier: nil
+    params:
+      - name: name
+        type: string
+        description: Project name
+        required: true
+      - name: description
+        type: string
+      - name: environment
+        type: cloudv1.ProjectEnvironment
+        required: true
+      - name: billing_address_id
+        type: string
+        required: true
+
+  delete:
+    api-call: cloud.DeleteProject
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Project ID to delete
+        required: true
 
   # Join/Leave project
   join:
