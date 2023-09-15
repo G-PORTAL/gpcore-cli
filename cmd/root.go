@@ -13,6 +13,23 @@ import (
 	"os"
 )
 
+type interactiveSession struct {
+	config *config.SessionConfig
+	user   *cloudv1.User
+	conn   *client.Client
+}
+
+// ContextWithSession returns a context with the session, connection and user set
+func (i *interactiveSession) ContextWithSession(ctx context.Context) context.Context {
+	ctx = context.WithValue(ctx, "session", i.config)
+	ctx = context.WithValue(ctx, "user", i.user)
+	ctx = context.WithValue(ctx, "conn", i.conn)
+	return ctx
+
+}
+
+var activeSession *interactiveSession
+
 func New() *cobra.Command {
 	rootCmd := cobra.Command{
 		Use:   "gpc",
@@ -27,6 +44,11 @@ func New() *cobra.Command {
 			return nil
 		},
 		PersistentPreRun: func(cobraCmd *cobra.Command, args []string) {
+			if activeSession != nil {
+				cobraCmd.SetContext(activeSession.ContextWithSession(cobraCmd.Context()))
+				return
+			}
+			activeSession = &interactiveSession{}
 			cobraCmd.SetOut(cobraCmd.OutOrStdout())
 
 			var format = logging.MustStringFormatter(
@@ -47,7 +69,7 @@ func New() *cobra.Command {
 			if err != nil {
 				panic(err)
 			}
-			cobraCmd.SetContext(context.WithValue(cobraCmd.Context(), "session", session))
+			activeSession.config = session
 
 			// Override endpoint if GPCLOUD_ENDPOINT is set
 			if os.Getenv("GPCLOUD_ENDPOINT") != "" {
@@ -64,14 +86,13 @@ func New() *cobra.Command {
 			if err != nil {
 				panic(err)
 			}
-			cobraCmd.SetContext(context.WithValue(cobraCmd.Context(), "conn", conn))
-
+			activeSession.conn = conn
 			// Set user
 			resp, err := conn.AuthClient().GetUser(cobraCmd.Context(), &authv1.GetUserRequest{})
 			if err != nil {
 				panic(err)
 			}
-			cobraCmd.SetContext(context.WithValue(cobraCmd.Context(), "user", resp.GetUser()))
+			activeSession.user = resp.GetUser()
 			if verbose {
 				if resp.GetUser().Type == cloudv1.UserType_USER_TYPE_SERVICE_ACCOUNT {
 					log.Println("Logged in with a service account")
@@ -79,6 +100,8 @@ func New() *cobra.Command {
 					// TODO: Print user metadata
 				}
 			}
+			// Set context from activeSession
+			cobraCmd.SetContext(activeSession.ContextWithSession(cobraCmd.Context()))
 		},
 	}
 
