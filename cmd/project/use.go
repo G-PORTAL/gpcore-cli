@@ -17,10 +17,8 @@ var useCmd = &cobra.Command{
 	Short:                 "Selects a project to use",
 	Long:                  "Selects a project to use",
 	DisableFlagsInUseLine: true,
-	Args:                  cobra.MatchAll(cobra.MinimumNArgs(1), cobra.OnlyValidArgs),
-	ValidArgs:             []string{"name"},
+	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		print(name)
 		conn := cmd.Context().Value("conn").(*client.Client)
 		session := cmd.Context().Value("session").(*config.SessionConfig)
 		resp, err := conn.CloudClient().ListProjects(cmd.Context(), &cloudv1.ListProjectsRequest{})
@@ -28,12 +26,12 @@ var useCmd = &cobra.Command{
 			return err
 		}
 		for _, project := range resp.Projects {
-			if project.Id == id {
+			if project.Id == id || project.Name == name {
 				session.CurrentProject = &id
 				if err := session.Write(); err != nil {
 					return err
 				}
-				cmd.Println("Project set to: " + project.Name)
+				cmd.Println("Active project is now: " + project.Name)
 				return nil
 			}
 		}
@@ -44,4 +42,5 @@ var useCmd = &cobra.Command{
 func init() {
 	RootProjectCommand.AddCommand(useCmd)
 	useCmd.PersistentFlags().StringVarP(&id, "id", "", "", "Specify ID of Project to use")
+	useCmd.PersistentFlags().StringVarP(&name, "name", "", "", "Specify name of Project to use")
 }
