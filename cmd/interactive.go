@@ -44,8 +44,8 @@ project > list > ` + "\033[31m...\033[0m" + `            # move up two levels (e
 			var reader = bufio.NewReader(os.Stdin)
 			for {
 				command, _ := reader.ReadString('\n')
-				messageParts := append(currentPrefixArgs, strings.Split(strings.TrimSpace(command), " ")...)
-				//cmd.Printf("Current command: %+v\n", messageParts)
+				messageParts := append(currentPrefixArgs, splitCommand(command)...)
+				cmd.Printf("Current command: %+v\n", messageParts)
 
 				if len(messageParts) == 0 || messageParts[0] == "" {
 					rootCmd.Usage()
@@ -73,7 +73,7 @@ project > list > ` + "\033[31m...\033[0m" + `            # move up two levels (e
 				for _, subCmd := range rootCmd.Commands() {
 					if subCmd.Use == messageParts[0] {
 						found = true
-						rootCmd.SetArgs(append(messageParts, currentPrefixArgs...))
+						rootCmd.SetArgs(messageParts)
 						if err := subCmd.Execute(); err != nil {
 							cmd.Printf("Error executing command %s: %s\n", subCmd.Use, err)
 						}
@@ -89,4 +89,29 @@ project > list > ` + "\033[31m...\033[0m" + `            # move up two levels (e
 			return nil
 		},
 	})
+}
+
+func splitCommand(input string) []string {
+	var parts []string
+	inQuotes := false
+	currentPart := ""
+
+	for _, char := range input {
+		if char == '"' {
+			inQuotes = !inQuotes
+		} else if char == ' ' && !inQuotes {
+			if currentPart != "" {
+				parts = append(parts, currentPart)
+				currentPart = ""
+			}
+		} else {
+			currentPart += string(char)
+		}
+	}
+
+	if currentPart != "" {
+		parts = append(parts, strings.TrimSpace(currentPart))
+	}
+
+	return parts
 }
