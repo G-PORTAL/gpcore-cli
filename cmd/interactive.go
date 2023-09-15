@@ -45,7 +45,7 @@ project > list > ` + "\033[31m...\033[0m" + `            # move up two levels (e
 			for {
 				command, _ := reader.ReadString('\n')
 				messageParts := append(currentPrefixArgs, strings.Split(strings.TrimSpace(command), " ")...)
-				cmd.Printf("Current command: %+v\n", messageParts)
+				//cmd.Printf("Current command: %+v\n", messageParts)
 
 				if len(messageParts) == 0 || messageParts[0] == "" {
 					rootCmd.Usage()
