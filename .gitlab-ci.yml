@@ -5,6 +5,8 @@ stages:
 
 build:
   stage: build
+  tags:
+    - docker
   image: golang:1.21
   script:
     - go generate
