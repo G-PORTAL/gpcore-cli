@@ -16,4 +16,4 @@ build:
       - gpc
   script:
     - go generate
-    - go build -o ./gpc ./gpc.go
+    - go build -ldflags="-X cmd.Commit=$(git rev-parse HEAD)" -o ./gpc ./gpc.go
