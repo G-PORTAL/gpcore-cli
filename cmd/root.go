@@ -116,6 +116,7 @@ func New() *cobra.Command {
 
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
 	InteractiveCLICommand(&rootCmd)
+	SelfupdateCommand(&rootCmd)
 	AddGeneratedCommands(&rootCmd)
 
 	return &rootCmd

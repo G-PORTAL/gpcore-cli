@@ -126,6 +126,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	secretsTemplate, err := template.
+		New("secrets.tmpl").
+		Funcs(templateFuncMap).
+		ParseFiles("./pkg/generator/template/secrets.tmpl")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	var targetFile *os.File
 
@@ -213,6 +220,21 @@ func main() {
 		commandList = append(commandList, subcommandName)
 	}
 	err = addcommandsTemplate.Funcs(templateFuncMap).Execute(targetFile, commandList)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = targetFile.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Generate the secrets file
+	targetFile, err = os.Create("./cmd/secrets" + generatedFileSuffix + ".go")
+	if err != nil {
+		log.Fatal(err)
+	}
+	secret := os.Getenv("GITLAB_PRIVATE_TOKEN")
+	err = secretsTemplate.Funcs(templateFuncMap).Execute(targetFile, secret)
 	if err != nil {
 		log.Fatal(err)
 	}
