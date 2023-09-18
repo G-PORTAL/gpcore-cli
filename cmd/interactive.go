@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"bufio"
+	"io"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"os"
 )
 
-var currentPrefixArgs = []string{}
+var currentPrefixArgs []string
 
 func printPathFormatted(cmd *cobra.Command) {
 	if len(currentPrefixArgs) == 0 {
@@ -42,15 +43,14 @@ project > list > ` + "\033[31m...\033[0m" + `            # move up two levels (e
 			cmd.Print("\033[33mCLI mode enabled\033[0m\n")
 			cmd.Printf("> ")
 			var reader = bufio.NewReader(os.Stdin)
+			var readError error
+			var command string
 			for {
-				command, _ := reader.ReadString('\n')
-				messageParts := append(currentPrefixArgs, splitCommand(command)...)
-				cmd.Printf("Current command: %+v\n", messageParts)
-
-				if len(messageParts) == 0 || messageParts[0] == "" {
-					rootCmd.Usage()
-					printPathFormatted(cmd)
-					continue
+				// TODO: Command History :)
+				command, readError = reader.ReadString('\n')
+				// Handle CTRL+D
+				if readError == io.EOF {
+					break
 				}
 
 				if strings.HasPrefix(command, ".") {
@@ -69,6 +69,22 @@ project > list > ` + "\033[31m...\033[0m" + `            # move up two levels (e
 					continue
 				}
 
+				messageParts := append(currentPrefixArgs, splitCommand(command)...)
+				if len(messageParts) == 0 || messageParts[0] == "" || messageParts[0] == "help" {
+					rootCmd.Usage()
+					printPathFormatted(cmd)
+					continue
+				}
+
+				// Do not use interactive command INSIDE interactive command
+				if messageParts[0] == "interactive" {
+					cmd.Printf("You are already in interactive mode\n")
+					printPathFormatted(cmd)
+					continue
+				}
+
+				cmd.Printf("Current command: %+v\n", messageParts)
+
 				found := false
 				for _, subCmd := range rootCmd.Commands() {
 					if subCmd.Use == messageParts[0] {
@@ -86,7 +102,12 @@ project > list > ` + "\033[31m...\033[0m" + `            # move up two levels (e
 
 				printPathFormatted(cmd)
 			}
-			return nil
+
+			if readError == io.EOF {
+				return nil
+			} else {
+				return readError
+			}
 		},
 	})
 }
