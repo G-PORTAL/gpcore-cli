@@ -16,10 +16,10 @@ GitLab token to download the latest build from the GitLab CI.
 $ TOKEN=glpat-xxxxxxxxxxxxxxxxxxxxxxxxx ./install.sh
 ```
 
-To update the too, use the autoupdate command:
+To update the tool itself, use the selfupdate command:
 
 ```
-$ gpc autoupdate
+$ gpc selfupdate
 ```
 
 ## Basic usage
