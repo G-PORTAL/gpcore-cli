@@ -16,4 +16,4 @@ build:
       - gpc
   script:
     - go generate
-    - go build --ldflags="-X cmd.GitCommit=$(git rev-parse HEAD)" -o ./gpc ./gpc.go
+    - go build --ldflags="-s -w -X gpcloud-cli/cmd.GitCommit=$(git rev-parse HEAD)" -o ./gpc ./gpc.go
