@@ -6,25 +6,41 @@ in a config file. To create a new oauth client for the credentials, go to
 https://panel.g-portal.cloud/user/settings/clients. The default config path is
 located at `~/.gpc.yaml`.
 
+## Install and update
+
+Use the install.sh script to install the latest version of the tool. It will
+download the latest release from github and install it to ~/bin. Specify a
+GitLab token to download the latest build from the GitLab CI.
+
+```
+$ TOKEN=glpat-xxxxxxxxxxxxxxxxxxxxxxxxx ./install.sh
+```
+
+To update the too, use the autoupdate command:
+
+```
+$ gpc autoupdate
+```
+
 ## Basic usage
 First you can list the projects you have access to:
 ```
-$ go run gpc.go project list
+$ gpc project list
 ```
 
 Then you can select the project you want to work with:
 ```
-$ go run gpc.go project use --id <project-id>
+$ gpc project use --id <project-id>
 ```
 
 After a project was chosen, you can use the nodes commands:
 ```
-$ go run gpc.go node list
+$ gpc node list
 ```
 
 Enums will be specified without the prefix:
 ```
-$ go run gpc.go project create --environment staging --name "New Project"
+$ gpc project create --environment staging --name "New Project"
 ```
 
 ## Development
@@ -38,13 +54,10 @@ them himself. This is done to avoid merge conflicts.
 You can always add custom subcommands without generating it. Just add a new
 file to ```cmd/```. The file name will be the name of the subcommand.
 
+
 # TODOs
 
-* Gitlab build pipeline -> GoReleaser : 2023.9.[version]
-* Auto-Update command to update to tool itself 
-
 * Pagination support for long lists
-* Custom description for subcommand flags
 * No "usage" output on API error
 * LiveLogs as a command
 * Event log -> return when node ready
