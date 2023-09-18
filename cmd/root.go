@@ -115,7 +115,7 @@ func New() *cobra.Command {
 	rootCmd.PersistentFlags().BoolVarP(&config.CSVOutput, "csv", "x", false, "output as CSV")
 
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
-	RegisterCLICommand(&rootCmd)
+	InteractiveCLICommand(&rootCmd)
 	AddGeneratedCommands(&rootCmd)
 
 	return &rootCmd

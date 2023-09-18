@@ -10,6 +10,10 @@ stages:
 build:
   stage: build
   image: golang:1.21
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - gpc
   script:
     - go generate
     - go build -o ./gpc ./gpc.go

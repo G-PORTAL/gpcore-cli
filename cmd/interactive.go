@@ -23,7 +23,7 @@ func printPathFormatted(cmd *cobra.Command) {
 	cmd.Print(currentPathPretty)
 }
 
-func RegisterCLICommand(rootCmd *cobra.Command) {
+func InteractiveCLICommand(rootCmd *cobra.Command) {
 	rootCmd.AddCommand(&cobra.Command{
 		Use:   "interactive",
 		Short: "Interactive mode",
