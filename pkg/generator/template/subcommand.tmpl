@@ -24,20 +24,20 @@ import (
 	"encoding/json"
     {{- if HasPrefix .Action.APICall.Endpoint "List" }}
 	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/charmbracelet/ssh"
 	{{- if eq (len .Action.Fields) 0}}
 	"reflect"
 	{{- end}}
-	"os"
 	{{- end}}
-	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
+	api "github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/spf13/cobra"
 	"gpcloud-cli/pkg/config"
+	"gpcloud-cli/pkg/client"
 	{{- range $i, $param := .Action.Params}}
     {{- if IsEnumType $param.Type}}
     "strings"
     {{- end}}
     {{- end}}
-
 )
 
 {{- $subcommand := .Name}}
@@ -79,18 +79,16 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 	    {{- end}}
 	},
 	{{end}}
-	RunE: func(cmd *cobra.Command, args []string) error {
-	    if false {
-	    fmt.Println("{{.Name}}")
-	    }
-		conn := cmd.Context().Value("conn").(*client.Client)
+	RunE: func(cobraCmd *cobra.Command, args []string) error {
+        ctx := client.ExtractContext(cobraCmd)
+		conn := ctx.Value("conn").(*api.Client)
 		if conn == nil {
 		    return fmt.Errorf("no connection")
 		}
 
 		{{/* identifier path: If there is a co */}}
         {{- if ne $identifierPath ""}}
-		session := cmd.Context().Value("session").(*config.SessionConfig)
+		session := ctx.Value("config").(*config.SessionConfig)
 		if session == nil {
 		    return fmt.Errorf("No session config in context")
 		}
@@ -100,10 +98,10 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
         {{- end}}
 
 		{{- if HasHook .Definition.Name $subcommand "pre"}}
-		{{ $subcommand|ToCamel|Title }}HookPre(resp, cmd)
+		{{ $subcommand|ToCamel|Title }}HookPre(resp, cobraCmd)
 		{{- end}}
 
-		resp, err := conn.{{.Action.APICall.Client|Title}}Client().{{.Action.APICall.Endpoint}}(cmd.Context(), &{{.Action.APICall.Client}}{{.Action.APICall.Version}}.{{.Action.APICall.Endpoint}}Request{
+		resp, err := conn.{{.Action.APICall.Client|Title}}Client().{{.Action.APICall.Endpoint}}(cobraCmd.Context(), &{{.Action.APICall.Client}}{{.Action.APICall.Version}}.{{.Action.APICall.Endpoint}}Request{
             {{- if ne .Action.Identifier ""}}
                 {{- if ne .Action.Identifier "nil"}}
                 // Custom identifier
@@ -129,10 +127,11 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		}
 
 		{{- if HasHook .Definition.Name $subcommand "post"}}
-		{{ $subcommand|ToCamel|Title }}HookPost(resp, cmd)
+		{{ $subcommand|ToCamel|Title }}HookPost(resp, cobraCmd)
 		{{- end}}
 
         {{- if HasPrefix .Action.APICall.Endpoint "List" }}
+		sshSession := ctx.Value("ssh").(*ssh.Session)
         // Remove root key
         {{ $rootKey := .Action.RootKey }}
 		{{- if eq .Action.RootKey ""}}
@@ -147,7 +146,8 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 
 		tbl := table.NewWriter()
 		tbl.SetStyle(table.StyleRounded)
-		tbl.SetOutputMirror(os.Stdout)
+		tbl.SetOutputMirror(*sshSession)
+		cobraCmd.SetOut(*sshSession)
 
 		{{- if eq (len .Action.Fields) 0}}
 		for j, entry := range respData {
@@ -210,7 +210,7 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			cmd.Println(string(jsonData))
+			cobraCmd.Println(string(jsonData))
 		}
 
 		return nil

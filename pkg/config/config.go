@@ -26,6 +26,12 @@ type SessionConfig struct {
 	ClientID       string  `yaml:"client_id"`
 	ClientSecret   string  `yaml:"client_secret"`
 	CurrentProject *string `yaml:"current_project"`
+	PublicKey      string  `yaml:"public_key"`
+}
+
+func init() {
+	dirname, _ := os.UserHomeDir()
+	Path = dirname + "/.gpc.yaml"
 }
 
 func GetSessionConfig() (*SessionConfig, error) {
@@ -45,6 +51,7 @@ func GetSessionConfig() (*SessionConfig, error) {
 			ClientID:     strings.TrimSpace(clientID),
 			ClientSecret: strings.TrimSpace(clientSecret),
 		}
+		// TODO: Ask for user/password or better: access token/refresh token
 		if err := sessionConfig.Write(); err != nil {
 			return nil, err
 		}

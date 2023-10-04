@@ -5,8 +5,9 @@ package project
 import (
 	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"fmt"
-	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
+	api "github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/spf13/cobra"
+	"gpcloud-cli/pkg/client"
 	"gpcloud-cli/pkg/config"
 )
 
@@ -18,20 +19,21 @@ var useCmd = &cobra.Command{
 	Long:                  "Selects a project to use",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		conn := cmd.Context().Value("conn").(*client.Client)
-		session := cmd.Context().Value("session").(*config.SessionConfig)
-		resp, err := conn.CloudClient().ListProjects(cmd.Context(), &cloudv1.ListProjectsRequest{})
+	RunE: func(cobraCmd *cobra.Command, args []string) error {
+		ctx := client.ExtractContext(cobraCmd)
+		conn := ctx.Value("conn").(*api.Client)
+		config := ctx.Value("config").(*config.SessionConfig)
+		resp, err := conn.CloudClient().ListProjects(cobraCmd.Context(), &cloudv1.ListProjectsRequest{})
 		if err != nil {
 			return err
 		}
 		for _, project := range resp.Projects {
 			if project.Id == id || project.Name == name {
-				session.CurrentProject = &id
-				if err := session.Write(); err != nil {
+				config.CurrentProject = &id
+				if err := config.Write(); err != nil {
 					return err
 				}
-				cmd.Println("Active project is now: " + project.Name)
+				cobraCmd.Println("Active project is now: " + project.Name)
 				return nil
 			}
 		}

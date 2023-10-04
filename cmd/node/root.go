@@ -12,18 +12,18 @@ var RootNodeCommand = &cobra.Command{
 	Long:                  `Utility to combine multiple nodes api actions`,
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PersistentPreRunE: func(cobraCmd *cobra.Command, args []string) error {
 		// Context is not set in PersistentPreRunE, so we need to get the session config manually
-		session, err := config.GetSessionConfig()
+		config, err := config.GetSessionConfig()
 		if err != nil {
 			return err
 		}
-		if session.CurrentProject == nil {
+		if config.CurrentProject == nil {
 			return fmt.Errorf("no project selected")
 		}
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return cmd.Usage()
+	RunE: func(cobraCmd *cobra.Command, args []string) error {
+		return cobraCmd.Usage()
 	},
 }
