@@ -1,6 +1,7 @@
 package agent
 
 import (
+	authv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/auth/v1"
 	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"context"
 	"errors"
@@ -67,7 +68,7 @@ func StartServer() {
 		endpoint = os.Getenv("GPCLOUD_ENDPOINT")
 	}
 
-	log.Infof("Connect to GPClout API ...")
+	log.Infof("Connect to GPCloud API ...")
 	conn, err := client.NewClient(
 		&auth.ProviderKeycloakClientAuth{
 			ClientID:     session.config.ClientID,     // Set your Client ID
@@ -79,13 +80,6 @@ func StartServer() {
 		panic(err)
 	}
 	session.conn = conn
-
-	// Set user
-	//resp, err := conn.AuthClient().GetUser(rootCmd.Context(), &authv1.GetUserRequest{})
-	//if err != nil {
-	//	panic(err)
-	//}
-	//session.user = resp.GetUser()
 
 	server, err := wish.NewServer(
 		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
@@ -128,10 +122,19 @@ func StartServer() {
 					session.ssh = &s
 					ctx := session.ContextWithSession(context.Background())
 
+
 					if err := rootCmd.ExecuteContext(ctx); err != nil {
 						_ = s.Exit(1)
 						return
 					}
+
+					// Set user
+					resp, err := conn.AuthClient().GetUser(rootCmd.Context(), &authv1.GetUserRequest{})
+					if err != nil {
+						panic(err)
+					}
+					session.user = resp.GetUser()
+
 					next(s)
 				}
 			},

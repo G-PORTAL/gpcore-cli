@@ -5,7 +5,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// https://github.com/spf13/cobra/issues/1469
+// ExtractContext extracts the context from a cobra command in respect to the
+// parent commands. This is needed because cobra does not pass the context
+// down to the subcommands. See https://github.com/spf13/cobra/issues/1469
+// for more detail.
 func ExtractContext(cmd *cobra.Command) context.Context {
 	if cmd == nil {
 		return nil

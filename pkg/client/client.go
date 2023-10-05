@@ -8,6 +8,8 @@ import (
 	"os"
 )
 
+// NewClient creates a new ssh client to execute commands. For key verification
+// we use a fixed private key from the config.
 func NewClient() (*goph.Client, error) {
 	if _, err := os.Stat(GetPrivateKeyFilepath()); err != nil {
 		log.Errorf("SSH keypair not found. Please run 'gpc agent start' first.")
@@ -43,6 +45,8 @@ func NewClient() (*goph.Client, error) {
 	return client, nil
 }
 
+// Execute executes a command on the agent and prints the result to stdout. If
+// there is an error, it will panic.
 func Execute(client *goph.Client, command string) {
 	res, err := client.Run(command)
 	if err != nil {
