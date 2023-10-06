@@ -9,7 +9,6 @@ require (
 	github.com/charmbracelet/log v0.2.1
 	github.com/charmbracelet/ssh v0.0.0-20221117183211-483d43d97103
 	github.com/charmbracelet/wish v1.1.1
-	github.com/google/martian v2.1.0+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.4.7
 	github.com/melbahja/goph v1.3.1
 	github.com/shirou/gopsutil/v3 v3.23.8
