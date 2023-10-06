@@ -26,6 +26,7 @@ require (
 	github.com/caarlos0/sshmarshal v0.1.0 // indirect
 	github.com/charmbracelet/keygen v0.4.2 // indirect
 	github.com/charmbracelet/lipgloss v0.7.1 // indirect
+	github.com/gertd/go-pluralize v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-resty/resty/v2 v2.8.0 // indirect
@@ -47,6 +48,7 @@ require (
 	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stoewer/go-strcase v1.3.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
