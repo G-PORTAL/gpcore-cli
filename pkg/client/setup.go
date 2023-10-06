@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 	"github.com/charmbracelet/log"
 	"golang.org/x/crypto/ssh"
 	"gpcloud-cli/pkg/config"
@@ -26,8 +27,8 @@ const SSHKeyPassword = "G^cSH@aGHz8*T74KC^!8mKj&#5iH6j%zvQwH" // Randomly genera
 // config. The private key is secured with the SSHKeyPassword password.
 func Setup() {
 	// Check if we already created the keypair
-	filePath := GetPrivateKeyFilepath()
-	if filePath != "" {
+	filePath, err := GetPrivateKeyFilepath()
+	if err == nil {
 		log.Printf("SSH keypair already exists (%s)", filePath)
 		return
 	}
@@ -73,18 +74,18 @@ func Setup() {
 
 // GetPrivateKeyFilepath returns the path to the private key file. if it does
 // not exist or the user home dir can not be found, an empty string is returned.
-func GetPrivateKeyFilepath() string {
+func GetPrivateKeyFilepath() (string, error) {
 	homedir, err := os.UserHomeDir()
 	if err != nil {
 		log.Printf("Can not find user home dir: %v", err)
-		return ""
+		return "", err
 	}
 	filePath := path.Join(homedir, ".ssh", SSHKeyFile)
 
 	if _, err := os.Stat(filePath); err != nil {
 		log.Printf("SSH keypair not found (%s)", filePath)
-		return ""
+		return filePath, errors.New("SSH keypair not found")
 	}
 
-	return filePath
+	return filePath, nil
 }

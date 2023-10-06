@@ -11,7 +11,8 @@ import (
 // NewClient creates a new ssh client to execute commands. For key verification
 // we use a fixed private key from the config.
 func NewClient() (*goph.Client, error) {
-	if _, err := os.Stat(GetPrivateKeyFilepath()); err != nil {
+	keyPath, err := GetPrivateKeyFilepath()
+	if _, err := os.Stat(keyPath); err != nil {
 		log.Errorf("SSH keypair not found. Please run 'gpc agent start' first.")
 		return nil, err
 	}
@@ -20,7 +21,6 @@ func NewClient() (*goph.Client, error) {
 	// without it. So we use the private key from the config and the public key
 	// from the config to verify the host key. This is not the best solution,
 	// but makes it compatible with windows.
-	keyPath := GetPrivateKeyFilepath()
 	auth, err := goph.Key(keyPath, SSHKeyPassword)
 
 	config := &goph.Config{
