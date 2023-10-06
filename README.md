@@ -58,7 +58,6 @@ file to ```cmd/```. The file name will be the name of the subcommand.
 # TODOs
 
 * Pagination support for long lists
-* No "usage" output on API error
 * LiveLogs as a command
 * Event log -> return when node ready
 * Project Log watcher

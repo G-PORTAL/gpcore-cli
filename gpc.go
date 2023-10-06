@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/google/martian/log"
+	"github.com/charmbracelet/log"
 	"github.com/shirou/gopsutil/v3/process"
+	"gopkg.in/op/go-logging.v1"
 	"gpcloud-cli/pkg/agent"
 	"gpcloud-cli/pkg/client"
 	"net"
@@ -15,8 +16,30 @@ import (
 //go:generate go run ./pkg/generator/generator.go
 //go:generate gofmt -s -w ./cmd/
 
+// GPCloud CLI (gpc in short) is a command line interface for the G-Portal Cloud
+// API. It is written in Go and uses the Cobra framework. The commands are auto
+// generated from definition files in the pkg/generator/definition directory
+// (the generated files get the _gen postfix). Custom commands can be added in
+// the cmd/ directory and will not be overwritten. If there is a <command>_pre.go
+// or a <command>_post.go file in the cmd/ directory, it will be executed before
+// or after the command. This can be used to modify the response or to add some
+// additional logic.
+//
+// The client and the agent communicate via SSH. The agent is a SSH server that
+// executes commands on the G-Portal Cloud API. The client is a SSH client that
+// connects to the agent and executes commands on the agent. The agent is only
+// listening on localhost and the SSH keypair is stored in the users home
+// directory. The private key is secured with a password. This client/server
+// architecture is used to leave the connection open and to avoid the need to
+// authenticate on every request. The agent is started in the background if it
+// is not already running.
 func main() {
-	log.SetLevel(log.Info)
+	// Initialize logger
+	var format = logging.MustStringFormatter(`%{color}%{time:15:04:05} %{shortfunc} [%{level:.4s}]%{color:reset} %{message}`)
+	var backend = logging.AddModuleLevel(logging.NewBackendFormatter(logging.NewLogBackend(os.Stderr, "", 0), format))
+	backend.SetLevel(logging.ERROR, "")
+	logging.SetBackend(backend)
+
 
 	// TODO: Put these in cobra commands
 	// If we are in agent mode, start the agent

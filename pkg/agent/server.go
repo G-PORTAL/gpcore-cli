@@ -12,7 +12,6 @@ import (
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	"github.com/spf13/cobra"
-	"gopkg.in/op/go-logging.v1"
 	command "gpcloud-cli/cmd"
 	"gpcloud-cli/pkg/config"
 	"net/http"
@@ -35,7 +34,6 @@ type Session struct {
 	ssh    *ssh.Session
 }
 
-// TODO: Make it possible to use a different session for different connections
 var session Session
 
 func (s *Session) ContextWithSession(ctx context.Context) context.Context {
@@ -47,12 +45,6 @@ func (s *Session) ContextWithSession(ctx context.Context) context.Context {
 }
 
 func StartServer() {
-	// Initialize logger
-	var format = logging.MustStringFormatter(`%{color}%{time:15:04:05} %{shortfunc} [%{level:.4s}]%{color:reset} %{message}`)
-	var backend = logging.AddModuleLevel(logging.NewBackendFormatter(logging.NewLogBackend(os.Stderr, "", 0), format))
-	backend.SetLevel(logging.ERROR, "")
-	logging.SetBackend(backend)
-
 	// Initialize a new session
 	config, err := config.GetSessionConfig()
 	if err != nil {
@@ -70,13 +62,16 @@ func StartServer() {
 
 	log.Infof("Connect to GPCloud API ...")
 	conn, err := client.NewClient(
-		&auth.ProviderKeycloakClientAuth{
-			ClientID:     session.config.ClientID,     // Set your Client ID
-			ClientSecret: session.config.ClientSecret, // Set your Client Secret
+		&auth.ProviderKeycloakUserPassword{
+			ClientID:     session.config.ClientID, // admin-cli
+			ClientSecret: session.config.ClientSecret, // ???
+			Username:     session.config.Username, // aaron.fischer@g-portal.cloud
+			Password:     session.config.Password, // siehe config
 		},
 		client.EndpointOverrideOption(endpoint),
 	)
 	if err != nil {
+		log.Fatalf("Can not connect to GPCloud API: %v", err)
 		panic(err)
 	}
 	session.conn = conn
@@ -122,18 +117,10 @@ func StartServer() {
 					session.ssh = &s
 					ctx := session.ContextWithSession(context.Background())
 
-
 					if err := rootCmd.ExecuteContext(ctx); err != nil {
 						_ = s.Exit(1)
 						return
 					}
-
-					// Set user
-					resp, err := conn.AuthClient().GetUser(rootCmd.Context(), &authv1.GetUserRequest{})
-					if err != nil {
-						panic(err)
-					}
-					session.user = resp.GetUser()
 
 					next(s)
 				}
@@ -149,6 +136,14 @@ func StartServer() {
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	log.Infof("Starting server on %s:%d", host, port)
 	go func() {
+		// Set user
+		resp, err := conn.AuthClient().GetUser(context.Background(), &authv1.GetUserRequest{})
+		if err != nil {
+			log.Fatalf("Can not get user: %v", err)
+		}
+		session.user = resp.GetUser()
+		log.Infof("Logged in as user: %+v", session.user.Username)
+
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("Can not start ssh server: %v", err)
 			done <- nil

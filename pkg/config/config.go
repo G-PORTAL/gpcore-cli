@@ -25,6 +25,8 @@ var sessionConfig *SessionConfig
 type SessionConfig struct {
 	ClientID       string  `yaml:"client_id"`
 	ClientSecret   string  `yaml:"client_secret"`
+	Username       string  `yaml:"username"`
+	Password       string  `yaml:"password"` // TODO: Encrypt
 	CurrentProject *string `yaml:"current_project"`
 	PublicKey      string  `yaml:"public_key"`
 }
@@ -47,11 +49,16 @@ func GetSessionConfig() (*SessionConfig, error) {
 		clientID, _ := reader.ReadString('\n')
 		println("Please enter your Client Secret:")
 		clientSecret, _ := reader.ReadString('\n')
+		println("Please enter your Username:")
+		username, _ := reader.ReadString('\n')
+		println("Please enter your Password:")
+		password, _ := reader.ReadString('\n')
 		sessionConfig = &SessionConfig{
 			ClientID:     strings.TrimSpace(clientID),
 			ClientSecret: strings.TrimSpace(clientSecret),
+			Username:     strings.TrimSpace(username),
+			Password:     strings.TrimSpace(password),
 		}
-		// TODO: Ask for user/password or better: access token/refresh token
 		if err := sessionConfig.Write(); err != nil {
 			return nil, err
 		}
