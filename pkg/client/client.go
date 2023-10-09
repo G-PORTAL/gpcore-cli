@@ -50,6 +50,7 @@ func NewClient() (*goph.Client, error) {
 func Execute(client *goph.Client, command string) {
 	res, err := client.Run(command)
 	if err != nil {
+		log.Errorf("Error executing command: %s", err)
 		panic(err)
 	}
 

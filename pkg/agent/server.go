@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/auth/v1/authv1grpc"
 	authv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/auth/v1"
 	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"context"
@@ -12,6 +13,7 @@ import (
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 	command "gpcloud-cli/cmd"
 	"gpcloud-cli/pkg/config"
 	"net/http"
@@ -30,7 +32,7 @@ var rootCmd *cobra.Command
 type Session struct {
 	config *config.SessionConfig
 	user   *cloudv1.User
-	conn   *client.Client
+	conn   *grpc.ClientConn
 	ssh    *ssh.Session
 }
 
@@ -39,8 +41,8 @@ var session Session
 func (s *Session) ContextWithSession(ctx context.Context) context.Context {
 	ctx = context.WithValue(ctx, "config", s.config)
 	ctx = context.WithValue(ctx, "user", s.user)
-	ctx = context.WithValue(ctx, "conn", s.conn)
 	ctx = context.WithValue(ctx, "ssh", s.ssh)
+	ctx = context.WithValue(ctx, "conn", s.conn)
 	return ctx
 }
 
@@ -54,27 +56,30 @@ func StartServer() {
 		config: config,
 	}
 
-	// Connect to the API
+	// Endpoint
 	endpoint := client.DefaultEndpoint
 	if os.Getenv("GPCLOUD_ENDPOINT") != "" {
 		endpoint = os.Getenv("GPCLOUD_ENDPOINT")
 	}
 
-	log.Infof("Connect to GPCloud API ...")
-	conn, err := client.NewClient(
-		&auth.ProviderKeycloakUserPassword{
-			ClientID:     session.config.ClientID, // admin-cli
-			ClientSecret: session.config.ClientSecret, // ???
-			Username:     session.config.Username, // aaron.fischer@g-portal.cloud
-			Password:     session.config.Password, // siehe config
-		},
+	// Credentials
+	// TODO: Encrypt password or whole config file
+	credentials := &auth.ProviderKeycloakUserPassword{
+		ClientID:     session.config.ClientID,
+		ClientSecret: session.config.ClientSecret,
+		Username:     session.config.Username,
+		Password:     session.config.Password,
+	}
+
+	// Open new connection
+	session.conn, err = NewGRPCConnection(
+		credentials,
 		client.EndpointOverrideOption(endpoint),
 	)
 	if err != nil {
 		log.Fatalf("Can not connect to GPCloud API: %v", err)
 		panic(err)
 	}
-	session.conn = conn
 
 	server, err := wish.NewServer(
 		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
@@ -137,7 +142,8 @@ func StartServer() {
 	log.Infof("Starting server on %s:%d", host, port)
 	go func() {
 		// Set user
-		resp, err := conn.AuthClient().GetUser(context.Background(), &authv1.GetUserRequest{})
+		authClient := authv1grpc.NewAuthServiceClient(session.conn)
+		resp, err := authClient.GetUser(context.Background(), &authv1.GetUserRequest{})
 		if err != nil {
 			log.Fatalf("Can not get user: %v", err)
 		}

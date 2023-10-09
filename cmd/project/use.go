@@ -3,10 +3,11 @@ package project
 // TODO: File needs to be generated instead of being statically defined
 
 import (
+	"buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/cloud/v1/cloudv1grpc"
 	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"fmt"
-	api "github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 	"gpcloud-cli/pkg/client"
 	"gpcloud-cli/pkg/config"
 )
@@ -21,9 +22,10 @@ var useCmd = &cobra.Command{
 	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
 	RunE: func(cobraCmd *cobra.Command, args []string) error {
 		ctx := client.ExtractContext(cobraCmd)
-		conn := ctx.Value("conn").(*api.Client)
+		grpcConn := ctx.Value("conn").(*grpc.ClientConn)
+		client := cloudv1grpc.NewCloudServiceClient(grpcConn)
 		config := ctx.Value("config").(*config.SessionConfig)
-		resp, err := conn.CloudClient().ListProjects(cobraCmd.Context(), &cloudv1.ListProjectsRequest{})
+		resp, err := client.ListProjects(cobraCmd.Context(), &cloudv1.ListProjectsRequest{})
 		if err != nil {
 			return err
 		}

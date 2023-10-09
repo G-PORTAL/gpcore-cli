@@ -19,8 +19,10 @@ package {{.Definition.Name|EscapePackage}}
 {{- end}}
 
 import (
-    {{- if ne $identifierPath nil }}"fmt"{{- end}}
+    {{- if ne $identifierPath "" }}"fmt"{{- end}}
+	"buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/{{.Action.APICall.Client}}/{{.Action.APICall.Version}}/{{.Action.APICall.Client}}{{.Action.APICall.Version}}grpc"
 	{{.Action.APICall.Client}}{{.Action.APICall.Version}} "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/{{.Action.APICall.Client}}/{{.Action.APICall.Version}}"
+	"google.golang.org/grpc"
 	"encoding/json"
     {{- if HasPrefix .Action.APICall.Endpoint "List" }}
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -29,7 +31,6 @@ import (
 	"reflect"
 	{{- end}}
 	{{- end}}
-	api "github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/spf13/cobra"
 	"gpcloud-cli/pkg/config"
 	"gpcloud-cli/pkg/client"
@@ -81,12 +82,7 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 	{{end}}
 	RunE: func(cobraCmd *cobra.Command, args []string) error {
         ctx := client.ExtractContext(cobraCmd)
-		conn := ctx.Value("conn").(*api.Client)
-		if conn == nil {
-		    return fmt.Errorf("no connection")
-		}
 
-		{{/* identifier path: If there is a co */}}
         {{- if ne $identifierPath ""}}
 		session := ctx.Value("config").(*config.SessionConfig)
 		if session == nil {
@@ -101,7 +97,9 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		{{ $subcommand|ToCamel|Title }}HookPre(resp, cobraCmd)
 		{{- end}}
 
-		resp, err := conn.{{.Action.APICall.Client|Title}}Client().{{.Action.APICall.Endpoint}}(cobraCmd.Context(), &{{.Action.APICall.Client}}{{.Action.APICall.Version}}.{{.Action.APICall.Endpoint}}Request{
+        grpcConn := ctx.Value("conn").(*grpc.ClientConn)
+        client := {{.Action.APICall.Client}}v1grpc.New{{.Action.APICall.Client|Title}}ServiceClient(grpcConn)
+		resp, err := client.{{.Action.APICall.Endpoint}}(cobraCmd.Context(), &{{.Action.APICall.Client}}{{.Action.APICall.Version}}.{{.Action.APICall.Endpoint}}Request{
             {{- if ne .Action.Identifier ""}}
                 {{- if ne .Action.Identifier "nil"}}
                 // Custom identifier
