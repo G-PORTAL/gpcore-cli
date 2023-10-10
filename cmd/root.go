@@ -6,6 +6,8 @@ import (
 	"gpcloud-cli/pkg/config"
 )
 
+var version = false
+
 func New() *cobra.Command {
 	rootCmd := cobra.Command{
 		Use:   "gpc",
@@ -21,16 +23,18 @@ func New() *cobra.Command {
 		},
 	}
 
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose mode")
-	rootCmd.PersistentFlags().StringVarP(&endpoint, "endpoint", "e", client.DefaultEndpoint, "set API endpoint")
+	// Application information
+	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
 
-	//dirname, _ := os.UserHomeDir()
-	//rootCmd.PersistentFlags().StringVarP(&config.Path, "config", "c", dirname+"/.gpc.yaml", "define config file location")
+	// GPCloud API
+	// TODO: Will set on first run (when agent starts),the following client calls will ignore these.
+	rootCmd.PersistentFlags().StringVarP(&config.Endpoint, "endpoint", "e", client.DefaultEndpoint, "set API endpoint")
 
+	// Output formats and verbosity
+	rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "v", false, "verbose mode")
 	rootCmd.PersistentFlags().BoolVarP(&config.JSONOutput, "json", "j", false, "output as JSON")
 	rootCmd.PersistentFlags().BoolVarP(&config.CSVOutput, "csv", "x", false, "output as CSV")
 
-	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
 	InteractiveCLICommand(&rootCmd)
 	SelfupdateCommand(&rootCmd)
 	LiveLogCommand(&rootCmd)

@@ -41,7 +41,8 @@ func main() {
 	logging.SetBackend(backend)
 
 
-	// TODO: Put these in cobra commands
+	// TODO: Put these in cobra commands?
+
 	// If we are in agent mode, start the agent
 	if len(os.Args) > 2 && os.Args[1] == "agent" {
 		// Stop running agent(s)

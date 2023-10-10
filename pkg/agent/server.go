@@ -48,16 +48,16 @@ func (s *Session) ContextWithSession(ctx context.Context) context.Context {
 
 func StartServer() {
 	// Initialize a new session
-	config, err := config.GetSessionConfig()
+	sessionConfig, err := config.GetSessionConfig()
 	if err != nil {
 		panic(err)
 	}
 	session = Session{
-		config: config,
+		config: sessionConfig,
 	}
 
 	// Endpoint
-	endpoint := client.DefaultEndpoint
+	endpoint := config.Endpoint
 	if os.Getenv("GPCLOUD_ENDPOINT") != "" {
 		endpoint = os.Getenv("GPCLOUD_ENDPOINT")
 	}
@@ -100,6 +100,11 @@ func StartServer() {
 					rootCmd.SetErr(s.Stderr())
 					rootCmd.CompletionOptions.DisableDefaultCmd = true
 
+					//log.Printf("Verbose: %t", config.Verbose)
+					//if config.Verbose {
+					//	log.SetLevel(log.DebugLevel)
+					//}
+
 					session.ssh = &s
 					ctx := session.ContextWithSession(context.Background())
 					if err := rootCmd.ExecuteContext(ctx); err != nil {
@@ -114,7 +119,7 @@ func StartServer() {
 			func(next ssh.Handler) ssh.Handler {
 				return func(s ssh.Session) {
 					log.Infof("Logged in")
-					publicKey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(config.PublicKey))
+					publicKey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(sessionConfig.PublicKey))
 					if err != nil {
 						log.Fatalf("Can not parse public key: %v", err)
 						return

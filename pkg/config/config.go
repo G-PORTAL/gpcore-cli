@@ -2,6 +2,7 @@ package config
 
 import (
 	"bufio"
+	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"gopkg.in/yaml.v3"
 	"os"
 	"strings"
@@ -20,11 +21,16 @@ var JSONOutput = false
 // CSVOutput is a global flag that can be used to output the result of a command
 // as CSV. This can be enabled by passing the --csv flag to the gpc command.
 var CSVOutput = false
+
+var Verbose = false
+
+var Endpoint = client.DefaultEndpoint
+
 var sessionConfig *SessionConfig
 
 type SessionConfig struct {
 	ClientID       string  `yaml:"client_id"`
-	ClientSecret   string  `yaml:"client_secret"`
+	ClientSecret   string  `yaml:"client_secret"` // TODO: Encrypt
 	Username       string  `yaml:"username"`
 	Password       string  `yaml:"password"` // TODO: Encrypt
 	CurrentProject *string `yaml:"current_project"`
