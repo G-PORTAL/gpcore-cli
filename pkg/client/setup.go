@@ -29,12 +29,12 @@ func Setup() {
 	// Check if we already created the keypair
 	filePath, err := GetPrivateKeyFilepath()
 	if err == nil {
-		log.Printf("SSH keypair already exists (%s)", filePath)
+		log.Debugf("SSH keypair already exists (%s)", filePath)
 		return
 	}
 
 	// Generate keypair
-	log.Printf("Generating new SSH keypair ...")
+	log.Debug("Generating new SSH keypair ...")
 	privateKey, err := rsa.GenerateKey(rand.Reader, 4096)
 	if err != nil {
 		panic(err)
@@ -51,7 +51,7 @@ func Setup() {
 	}
 
 	// Write private key to disk
-	log.Printf("Store private key to disk (%s) ...", filePath)
+	log.Debug("Store private key to disk (%s) ...", filePath)
 
 	err = os.WriteFile(filePath, pem.EncodeToMemory(block), 0600)
 	if err != nil {
@@ -59,7 +59,7 @@ func Setup() {
 	}
 
 	// Store public key in config
-	log.Printf("Storing public key in config ...")
+	log.Debug("Storing public key in config ...")
 	cfg, err := config.GetSessionConfig()
 	publicKey, err := ssh.NewPublicKey(&privateKey.PublicKey)
 	if err != nil {
@@ -77,13 +77,13 @@ func Setup() {
 func GetPrivateKeyFilepath() (string, error) {
 	homedir, err := os.UserHomeDir()
 	if err != nil {
-		log.Printf("Can not find user home dir: %v", err)
+		log.Debugf("Can not find user home dir: %v", err)
 		return "", err
 	}
 	filePath := path.Join(homedir, ".ssh", SSHKeyFile)
 
 	if _, err := os.Stat(filePath); err != nil {
-		log.Printf("SSH keypair not found (%s)", filePath)
+		log.Debugf("SSH keypair not found (%s)", filePath)
 		return filePath, errors.New("SSH keypair not found")
 	}
 

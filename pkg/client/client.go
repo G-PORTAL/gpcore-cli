@@ -5,6 +5,7 @@ import (
 	"github.com/melbahja/goph"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
+	"io"
 	"net"
 	"os"
 	"os/signal"
@@ -67,7 +68,7 @@ func Execute(client *goph.Client, command string) {
 	}
 	defer func(session *ssh.Session) {
 		err := session.Close()
-		if err != nil {
+		if err != nil && err != io.EOF {
 			log.Errorf("Error closing session: %s", err)
 		}
 	}(session)
