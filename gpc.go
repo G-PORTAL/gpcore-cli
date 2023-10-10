@@ -98,6 +98,7 @@ func main() {
 
 	// Start the client
 	c, err := client.NewClient()
+	defer c.Close()
 	if err != nil {
 		log.Errorf("Failed to create client: %s", err.Error())
 	}

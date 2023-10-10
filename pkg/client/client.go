@@ -4,8 +4,11 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/melbahja/goph"
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 // NewClient creates a new ssh client to execute commands. For key verification
@@ -45,17 +48,48 @@ func NewClient() (*goph.Client, error) {
 	return client, nil
 }
 
-// Execute executes a command on the agent and prints the result to stdout. If
-// there is an error, it will panic.
-func Execute(client *goph.Client, command string) {
-	res, err := client.Run(command)
+func AskPassword() string {
+	pass, err := terminal.ReadPassword(0)
 	if err != nil {
-		log.Errorf("Error executing command: %s", err)
 		panic(err)
 	}
 
-	_, err = os.Stdout.Write(res)
+	return string(pass)
+}
+
+// Execute executes a command on the agent and prints the result to stdout. If
+// there is an error, it will panic.
+func Execute(client *goph.Client, command string) {
+	session, err := client.NewSession()
 	if err != nil {
-		return
+		log.Errorf("Error creating session: %s", err)
+		panic(err)
+	}
+	defer func(session *ssh.Session) {
+		err := session.Close()
+		if err != nil {
+			log.Errorf("Error closing session: %s", err)
+		}
+	}(session)
+
+	// Handle CTRL+D
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig)
+	go func() {
+		s := <-sig
+		if s == syscall.SIGTERM || s == syscall.SIGINT {
+			log.Printf("Closing connection ...")
+			session.SendRequest("break", true, nil)
+			client.Close()
+			os.Exit(0)
+			return
+		}
+	}()
+
+	session.Stdout = os.Stdout
+	err = session.Run(command)
+	if err != nil {
+		log.Errorf("Error executing command: %s", err)
+		panic(err)
 	}
 }

@@ -88,25 +88,6 @@ func StartServer() {
 			return true
 		}),
 		wish.WithMiddleware(
-			// Auth
-			func(next ssh.Handler) ssh.Handler {
-				return func(s ssh.Session) {
-					log.Infof("Logged in as: %s", s.User())
-					publicKey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(config.PublicKey))
-					if err != nil {
-						log.Fatalf("Can not parse public key: %v", err)
-						return
-					}
-
-					if !ssh.KeysEqual(publicKey, s.PublicKey()) {
-						log.Fatalf("Invalid key")
-						return
-					}
-
-					next(s)
-				}
-			},
-
 			// Cobra I/O
 			func(next ssh.Handler) ssh.Handler {
 				return func(s ssh.Session) {
@@ -121,9 +102,26 @@ func StartServer() {
 
 					session.ssh = &s
 					ctx := session.ContextWithSession(context.Background())
-
 					if err := rootCmd.ExecuteContext(ctx); err != nil {
 						_ = s.Exit(1)
+						return
+					}
+
+					next(s)
+				}
+			},
+			// Auth
+			func(next ssh.Handler) ssh.Handler {
+				return func(s ssh.Session) {
+					log.Infof("Logged in")
+					publicKey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(config.PublicKey))
+					if err != nil {
+						log.Fatalf("Can not parse public key: %v", err)
+						return
+					}
+
+					if !ssh.KeysEqual(publicKey, s.PublicKey()) {
+						log.Fatalf("Invalid key")
 						return
 					}
 
@@ -158,9 +156,9 @@ func StartServer() {
 
 	<-done
 	log.Info("Stopping server")
-	ctx, cancal := context.WithTimeout(context.Background(), 5)
+	ctx, cancel := context.WithTimeout(context.Background(), 5)
 	defer func() {
-		cancal()
+		cancel()
 	}()
 	if err := server.Shutdown(ctx); err != nil && !errors.Is(err, ssh.ErrServerClosed) {
 		log.Fatalf("Can not shutdown ssh server: %v", err)
