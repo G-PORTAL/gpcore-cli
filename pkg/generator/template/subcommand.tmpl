@@ -151,7 +151,6 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		for j, entry := range respData {
 			// Use all fields
 			c := reflect.ValueOf(*entry)
-			//row := make([]table.Row, c.NumField())
 			row := table.Row{}
 
 			for i := 0; i < c.NumField(); i++ {
