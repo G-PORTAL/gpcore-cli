@@ -91,6 +91,7 @@ func StartServer() {
 			// Cobra I/O
 			func(next ssh.Handler) ssh.Handler {
 				return func(s ssh.Session) {
+					// FIXME: The --help command sometimes "locks" all following commands
 					log.Infof("Command: %s", s.Command())
 					rootCmd = command.New()
 
@@ -99,11 +100,6 @@ func StartServer() {
 					rootCmd.SetIn(s)
 					rootCmd.SetErr(s.Stderr())
 					rootCmd.CompletionOptions.DisableDefaultCmd = true
-
-					//log.Printf("Verbose: %t", config.Verbose)
-					//if config.Verbose {
-					//	log.SetLevel(log.DebugLevel)
-					//}
 
 					session.ssh = &s
 					ctx := session.ContextWithSession(context.Background())
@@ -118,7 +114,7 @@ func StartServer() {
 			// Auth
 			func(next ssh.Handler) ssh.Handler {
 				return func(s ssh.Session) {
-					log.Infof("Logged in")
+					log.Info("User logged in")
 					publicKey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(sessionConfig.PublicKey))
 					if err != nil {
 						log.Fatalf("Can not parse public key: %v", err)

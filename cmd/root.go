@@ -27,7 +27,7 @@ func New() *cobra.Command {
 	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
 
 	// GPCloud API
-	// TODO: Will set on first run (when agent starts),the following client calls will ignore these.
+	// TODO: Will set on first run (when agent starts),the following client calls will ignore these, so, move this to the agent only or reconnect the API on every change
 	rootCmd.PersistentFlags().StringVarP(&config.Endpoint, "endpoint", "e", client.DefaultEndpoint, "set API endpoint")
 
 	// Output formats and verbosity

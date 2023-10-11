@@ -22,8 +22,14 @@ var JSONOutput = false
 // as CSV. This can be enabled by passing the --csv flag to the gpc command.
 var CSVOutput = false
 
+// Verbose enable verbose mode. This can be enabled by passing the --verbose flag
+// to the gpc command.
 var Verbose = false
 
+// Endpoint is the API endpoint used by the client. This can be overwritten by
+// setting the environment variable GPCLOUD_ENDPOINT or by passing the --endpoint
+// flag to the gpc command. This will "lock in" on the agent once set and can
+// not be changes for subsequent client calls (because the connection is open).
 var Endpoint = client.DefaultEndpoint
 
 var sessionConfig *SessionConfig
@@ -51,6 +57,10 @@ func GetSessionConfig() (*SessionConfig, error) {
 	}
 	if _, err := os.Stat(Path); err != nil {
 		reader := bufio.NewReader(os.Stdin)
+
+		// TODO: Refactor this to go-pretty inputs
+		// TODO: Validate inputs
+		// TODO: Check if one of these is missing in the config and ask them individually
 		println("Please enter your Client ID:")
 		clientID, _ := reader.ReadString('\n')
 		println("Please enter your Client Secret:")
