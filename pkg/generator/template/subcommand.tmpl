@@ -18,12 +18,17 @@ package {{.Definition.Name|EscapePackage}}
     {{- end}}
 {{- end}}
 
+{{- $subcommand := .Name}}
+
 import (
-    {{- if ne $identifierPath "" }}"fmt"{{- end}}
+    {{- if or (ne $identifierPath "") (HasHook .Definition.Name $subcommand "post") }}"fmt"{{- end}}
 	"buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/{{.Action.APICall.Client}}/{{.Action.APICall.Version}}/{{.Action.APICall.Client}}{{.Action.APICall.Version}}grpc"
 	{{.Action.APICall.Client}}{{.Action.APICall.Version}} "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/{{.Action.APICall.Client}}/{{.Action.APICall.Version}}"
 	"google.golang.org/grpc"
 	"encoding/json"
+	{{- if HasHook .Definition.Name $subcommand "post"}}
+	"time"
+	{{- end}}
     {{- if HasPrefix .Action.APICall.Endpoint "List" }}
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/charmbracelet/ssh"
@@ -41,10 +46,9 @@ import (
     {{- end}}
 )
 
-{{- $subcommand := .Name}}
 
 {{- if HasHook .Definition.Name $subcommand "pre"}}
-{{ $subcommand|ToCamel|Title }}HookPost(resp, cmd)
+{{ $subcommand|ToCamel|Title }}HookPre(resp, cmd)
 {{- end}}
 
 {{range $i, $param := .Action.Params}}
@@ -185,8 +189,22 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
                 // We do have a custom hook field
                 row = append(row, v)
             } else {
-                // Else, the field from the res
-                row = append(row, entry.{{$value|Title}})
+                // The field from the res
+                val := fmt.Sprintf("%v", entry.{{$value|Title}})
+
+                // Custom fields?
+                if "{{$value|Title}}" == "CreatedAt" {
+                    t := time.Unix(entry.CreatedAt.GetSeconds(), 0)
+                    val = t.Format("2006-01-02 15:04:05")
+                }
+                if "{{$value|Title}}" == "Currency" {
+                    val = val[9:]
+                }
+                if "{{$value|Title}}" == "Environment" {
+                    val = val[20:]
+                }
+
+                row = append(row, val)
             }
             {{- else}}
             row = append(row, entry.{{$value|Title}})
