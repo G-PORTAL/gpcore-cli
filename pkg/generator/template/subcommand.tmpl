@@ -125,7 +125,10 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		}
 
 		{{- if HasHook .Definition.Name $subcommand "post"}}
-		{{ $subcommand|ToCamel|Title }}HookPost(resp, cobraCmd)
+		respHook, err := {{ $subcommand|ToCamel|Title }}HookPost(resp, cobraCmd)
+		if err != nil {
+		    return err
+		}
 		{{- end}}
 
         {{- if HasPrefix .Action.APICall.Endpoint "List" }}
@@ -139,7 +142,6 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		respData := resp.{{$rootKey}}
 
 		// Build the table
-		// TODO: Handle nested structures
 		headerRow := table.Row{}
 
 		tbl := table.NewWriter()
@@ -173,11 +175,22 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 
 		{{- else }}
 		// Only use whitelist fields
+		{{- $name := .Definition.Name}}
 		for i, entry := range respData {
             row := make([]interface{}, 0)
 
             {{- range $key, $value := .Action.Fields}}
+		    {{- if HasHook $name $subcommand "post"}}
+            if v, ok := respHook[i]["{{$value|Title}}"]; ok {
+                // We do have a custom hook field
+                row = append(row, v)
+            } else {
+                // Else, the field from the res
+                row = append(row, entry.{{$value|Title}})
+            }
+            {{- else}}
             row = append(row, entry.{{$value|Title}})
+            {{- end}}
             if i == 0 {
                 headerRow = append(headerRow, "{{$value|Title}}")
             }

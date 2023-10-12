@@ -1,0 +1,17 @@
+description: Flavours (images/sizes) the customer can choose from
+actions:
+  list:
+    api-call: admin.ListFlavours
+    description: List all available flavours
+    root-key: Flavours
+    fields:
+      - Id
+      - Name
+      - Cpu
+      - CpuAmount
+      - CpuCores
+      - CpuThreads
+      - Memory
+      - Disk
+      - Network
+      - Traffic
