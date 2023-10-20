@@ -6,7 +6,7 @@ import (
 	"gpcloud-cli/pkg/config"
 )
 
-var version = false
+var printVersion = false
 
 func New() *cobra.Command {
 	rootCmd := cobra.Command{
@@ -14,7 +14,7 @@ func New() *cobra.Command {
 		Short: "gpc is the command line tool for interacting with the GPCore API",
 		Long:  "gpc is the command line tool for interacting with the GPCore API\nAuthenticate using the 'gpc auth' command.",
 		RunE: func(cobraCmd *cobra.Command, args []string) error {
-			if version {
+			if printVersion {
 				cobraCmd.Print(GetVersionDisplay())
 				return nil
 			}
@@ -24,7 +24,7 @@ func New() *cobra.Command {
 	}
 
 	// Application information
-	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "print version information and quit")
+	rootCmd.Flags().BoolVarP(&printVersion, "version", "V", false, "print version information and quit")
 
 	// GPCloud API
 	// TODO: Will set on first run (when agent starts),the following client calls will ignore these.

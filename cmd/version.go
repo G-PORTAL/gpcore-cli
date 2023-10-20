@@ -2,49 +2,32 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
-)
-
-// The git commit that was compiled. This will be filled in by the compiler.
-var (
-	GitCommit   string
-	GitDescribe string
-
-	// Version is main version number that is being run at the moment.
-	Version = "2023.9.2"
-
-	// VersionPrerelease is a pre-release marker for the version. If this is "" (empty string)
-	// then it means that it is a final release. Otherwise, this is a pre-release
-	// such as "dev" (in development), "beta", "rc1", etc.
-	VersionPrerelease = "dev"
 )
 
 // ProductName is the name of the product
-const ProductName = "gpc"
+const ProductName = "gpcloud"
+
+var (
+	Version = "dev"
+	Commit  = ""
+	Date    = ""
+)
 
 // GetVersionDisplay composes the parts of the version in a way that's suitable
 // for displaying to humans.
 func GetVersionDisplay() string {
-	return fmt.Sprintf("%s version %s\n", ProductName, getHumanVersion())
+	return fmt.Sprintf("%s - %s\n", ProductName, getHumanVersion())
 }
 
 func getHumanVersion() string {
-	version := Version
-	if GitDescribe != "" {
-		version = GitDescribe
+	info := fmt.Sprintf("Version %s", Version)
+	if Commit != "" {
+		info += fmt.Sprintf(" (%s)", Commit)
 	}
-
-	release := VersionPrerelease
-	if //goland:noinspection GoBoolExpressions
-	release != "" {
-		if !strings.Contains(version, release) {
-			version += fmt.Sprintf("-%s", release)
-		}
-		if GitCommit != "" {
-			version += fmt.Sprintf(" (%s)", GitCommit)
-		}
+	if Date != "" {
+		info += fmt.Sprintf(" - build on %s", Date)
 	}
 
 	// Strip off any single quotes added by the git information.
-	return strings.Replace(version, "'", "", -1)
+	return info
 }

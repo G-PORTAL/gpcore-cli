@@ -9,6 +9,7 @@ require (
 	github.com/charmbracelet/log v0.2.5
 	github.com/charmbracelet/ssh v0.0.0-20230822194956-1a051f898e09
 	github.com/charmbracelet/wish v1.1.1
+	github.com/creativeprojects/go-selfupdate v1.1.1
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/jedib0t/go-pretty/v6 v6.4.8
 	github.com/melbahja/goph v1.4.0
@@ -22,6 +23,8 @@ require (
 )
 
 require (
+	code.gitea.io/sdk/gitea v0.15.1 // indirect
+	github.com/Masterminds/semver/v3 v3.2.0 // indirect
 	github.com/Nerzal/gocloak/v13 v13.8.0 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
@@ -32,6 +35,11 @@ require (
 	github.com/go-resty/resty/v2 v2.10.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/go-github/v30 v30.1.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.2 // indirect
+	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
@@ -50,11 +58,16 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
+	github.com/ulikunitz/xz v0.5.11 // indirect
+	github.com/xanzy/go-gitlab v0.80.2 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/oauth2 v0.11.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/time v0.3.0 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231016165738-49dd2c1f3d0b // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 )

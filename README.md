@@ -1,4 +1,4 @@
-# GPCloud CLI
+# GPORTAL Cloud CLI
 
 Just run `go run gpc.go` to see the help menu.
 On first run, it asks for credentials (client-id, client-secret) and saves them

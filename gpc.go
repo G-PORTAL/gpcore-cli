@@ -40,7 +40,6 @@ func main() {
 	backend.SetLevel(logging.ERROR, "")
 	logging.SetBackend(backend)
 
-
 	// TODO: Put these in cobra commands?
 
 	// If we are in agent mode, start the agent
@@ -99,9 +98,10 @@ func main() {
 
 	// Start the client
 	c, err := client.NewClient()
-	defer c.Close()
 	if err != nil {
-		log.Errorf("Failed to create client: %s", err.Error())
+		log.Fatalf("Failed to create client: %s", err.Error())
 	}
+
+	defer c.Close()
 	client.Execute(c, strings.Join(os.Args[1:], " "))
 }
