@@ -6,10 +6,10 @@ import (
 	"buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/cloud/v1/cloudv1grpc"
 	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"fmt"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
-	"gpcloud-cli/pkg/client"
-	"gpcloud-cli/pkg/config"
 )
 
 var id string

@@ -2,8 +2,8 @@ package node
 
 import (
 	"fmt"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
 	"github.com/spf13/cobra"
-	"gpcloud-cli/pkg/config"
 )
 
 var RootNodeCommand = &cobra.Command{

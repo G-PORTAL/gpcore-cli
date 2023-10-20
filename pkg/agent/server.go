@@ -7,6 +7,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	command "github.com/G-PORTAL/gpcloud-cli/cmd"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client/auth"
 	"github.com/charmbracelet/log"
@@ -14,17 +17,10 @@ import (
 	"github.com/charmbracelet/wish"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
-	command "gpcloud-cli/cmd"
-	"gpcloud-cli/pkg/config"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-)
-
-const (
-	host = "localhost"
-	port = 9001
 )
 
 var rootCmd *cobra.Command
@@ -82,7 +78,7 @@ func StartServer() {
 	}
 
 	server, err := wish.NewServer(
-		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
+		wish.WithAddress(fmt.Sprintf("%s:%d", consts.AgentHost, consts.AgentPort)),
 		wish.WithPublicKeyAuth(func(ctx ssh.Context, key ssh.PublicKey) bool {
 			// We use a middleware handler for that
 			return true
@@ -142,7 +138,7 @@ func StartServer() {
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-	log.Infof("Starting server on %s:%d", host, port)
+	log.Infof("Starting server on %s:%d", consts.AgentHost, consts.AgentPort)
 	go func() {
 		// Set user
 		authClient := authv1grpc.NewAuthServiceClient(session.conn)

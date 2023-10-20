@@ -1,6 +1,7 @@
 package client
 
 import (
+	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
 	"github.com/charmbracelet/log"
 	"github.com/melbahja/goph"
 	"golang.org/x/crypto/ssh"
@@ -30,8 +31,8 @@ func NewClient() (*goph.Client, error) {
 	config := &goph.Config{
 		Auth:    auth,
 		User:    "cli",
-		Addr:    "localhost",
-		Port:    9001,
+		Addr:    consts.AgentHost,
+		Port:    consts.AgentPort,
 		Timeout: goph.DefaultTimeout,
 		Callback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			// We do not need to verify the host key for now, because there is

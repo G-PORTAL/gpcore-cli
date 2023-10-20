@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
 )
 
 // ProductName is the name of the product
-const ProductName = "gpcloud"
 
 var (
 	Version = "dev"
@@ -16,7 +16,7 @@ var (
 // GetVersionDisplay composes the parts of the version in a way that's suitable
 // for displaying to humans.
 func GetVersionDisplay() string {
-	return fmt.Sprintf("%s - %s\n", ProductName, getHumanVersion())
+	return fmt.Sprintf("%s - %s\n", consts.BinaryName, getHumanVersion())
 }
 
 func getHumanVersion() string {

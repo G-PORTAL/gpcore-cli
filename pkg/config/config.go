@@ -5,6 +5,7 @@ import (
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"gopkg.in/yaml.v3"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -38,8 +39,12 @@ type SessionConfig struct {
 }
 
 func init() {
-	dirname, _ := os.UserHomeDir()
-	Path = dirname + "/.gpc.yaml"
+	dirname, err := os.UserConfigDir()
+	if err != nil {
+		panic(err)
+	}
+
+	Path = path.Join(dirname, ".gpc.yaml")
 }
 
 func GetSessionConfig() (*SessionConfig, error) {

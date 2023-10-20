@@ -6,14 +6,14 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
 	"github.com/charmbracelet/log"
 	"golang.org/x/crypto/ssh"
-	"gpcloud-cli/pkg/config"
 	"os"
 	"path"
 )
 
-const SSHKeyFile = "gpc"
+const SSHKeyFile = "gpcloud"
 
 // SSHKeyPassword is a random generated password for the private key. This is
 // shared between client and agent. This is not the ultimate security solution,

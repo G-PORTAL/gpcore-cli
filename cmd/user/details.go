@@ -3,11 +3,11 @@ package user
 import (
 	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"encoding/json"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
 	"github.com/charmbracelet/ssh"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"gpcloud-cli/pkg/client"
-	"gpcloud-cli/pkg/config"
 )
 
 var detailsCmd = &cobra.Command{

@@ -1,9 +1,9 @@
 package project
 
 import (
+	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
 	"github.com/spf13/cobra"
-	"gpcloud-cli/pkg/client"
-	"gpcloud-cli/pkg/config"
 )
 
 var RootProjectCommand = &cobra.Command{

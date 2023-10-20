@@ -6,7 +6,7 @@ package cmd
 
 import (
     "github.com/spf13/cobra"
-    {{range .}}"gpcloud-cli/cmd/{{.|EscapePackage}}"
+    {{range .}}"github.com/G-PORTAL/gpcloud-cli/cmd/{{.|EscapePackage}}"
     {{end}}
 )
 

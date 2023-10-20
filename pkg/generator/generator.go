@@ -4,10 +4,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/generator"
 	"github.com/gertd/go-pluralize"
 	"github.com/stoewer/go-strcase"
 	"gopkg.in/yaml.v3"
-	"gpcloud-cli/pkg/generator"
 	"log"
 	"os"
 	"path/filepath"

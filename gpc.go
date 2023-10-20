@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/agent"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
 	"github.com/charmbracelet/log"
 	"github.com/shirou/gopsutil/v3/process"
 	"gopkg.in/op/go-logging.v1"
-	"gpcloud-cli/pkg/agent"
-	"gpcloud-cli/pkg/client"
 	"net"
 	"os"
 	"os/exec"
@@ -57,7 +59,7 @@ func main() {
 					panic(err)
 					return
 				}
-				if name == "gpc" {
+				if name == consts.BinaryName {
 					err := p.Kill()
 					if err != nil {
 						panic(err)
@@ -80,17 +82,17 @@ func main() {
 
 	// Launch agent in the background if not already running. To do that, we
 	// try to connect to it.
-	conn, err := net.DialTimeout("tcp", "localhost:9001", 3*time.Second)
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%v", consts.AgentHost, consts.AgentPort), 3*time.Second)
 	if err != nil {
 		log.Infof("Starting agent in background ...")
-		err := exec.Command(os.Args[0], "agent", "start").Start()
+		err = exec.Command(os.Args[0], "agent", "start").Start()
 		if err != nil {
 			panic(err)
 		}
 		// Give the agent some time to start
 		time.Sleep(2 * time.Second)
 	} else {
-		err := conn.Close()
+		err = conn.Close()
 		if err != nil {
 			return
 		}

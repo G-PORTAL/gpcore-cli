@@ -1,18 +1,20 @@
 package cmd
 
 import (
+	"fmt"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/spf13/cobra"
-	"gpcloud-cli/pkg/config"
 )
 
 var printVersion = false
 
 func New() *cobra.Command {
 	rootCmd := cobra.Command{
-		Use:   "gpc",
-		Short: "gpc is the command line tool for interacting with the GPCore API",
-		Long:  "gpc is the command line tool for interacting with the GPCore API\nAuthenticate using the 'gpc auth' command.",
+		Use:   consts.BinaryName,
+		Short: fmt.Sprintf("%s is the command line tool for interacting with the GP Cloud API", consts.BinaryName),
+		Long:  fmt.Sprintf("%s is the command line tool for interacting with the GPCore API\nAuthenticate using the '%s auth' command.", consts.BinaryName, consts.BinaryName),
 		RunE: func(cobraCmd *cobra.Command, args []string) error {
 			if printVersion {
 				cobraCmd.Print(GetVersionDisplay())

@@ -1,4 +1,4 @@
-module gpcloud-cli
+module github.com/G-PORTAL/gpcloud-cli
 
 go 1.21
 
