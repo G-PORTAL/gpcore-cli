@@ -31,11 +31,15 @@ var Endpoint = client.DefaultEndpoint
 
 var sessionConfig *SessionConfig
 
+const configFileName = "config.yaml"
+
 type SessionConfig struct {
 	ClientID       string  `yaml:"client_id"`
-	ClientSecret   string  `yaml:"client_secret"` // TODO: Encrypt
 	CurrentProject *string `yaml:"current_project"`
 	PublicKey      string  `yaml:"public_key"`
+
+	// TODO: Use https://github.com/99designs/keyring instead!
+	ClientSecret string `yaml:"client_secret"`
 }
 
 func init() {
@@ -44,7 +48,7 @@ func init() {
 		panic(err)
 	}
 
-	Path = path.Join(dirname, ".config", consts.BinaryName, "config.yaml")
+	Path = path.Join(dirname, ".config", consts.BinaryName, configFileName)
 }
 
 func GetSessionConfig() (*SessionConfig, error) {
@@ -82,23 +86,34 @@ func GetSessionConfig() (*SessionConfig, error) {
 	return sessionConfig, nil
 }
 
-func (c *SessionConfig) Write() error {
+func (c *SessionConfig) GetConfigDirectory() (string, error) {
 	// check if directory exists, if not create it recursively
 	directory := path.Dir(Path)
 	if _, err := os.Stat(directory); os.IsNotExist(err) {
 		log.Debugf("Creating directory %s", directory)
 		if err := os.MkdirAll(directory, 0700); err != nil {
-			return err
+			return "", err
 		}
+	}
+
+	return directory, nil
+}
+
+func (c *SessionConfig) Write() error {
+	configDir, err := c.GetConfigDirectory()
+	if err != nil {
+		return err
 	}
 
 	data, err := yaml.Marshal(c)
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(Path, data, 0600)
+
+	err = os.WriteFile(path.Join(configDir, configFileName), data, 0600)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

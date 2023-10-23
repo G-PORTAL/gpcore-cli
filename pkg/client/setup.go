@@ -21,17 +21,29 @@ const SSHKeyFile = "gpcloud"
 // We could use the ssh-agent, but we want to be able to use the client without
 // it to be compatible with windows.
 
-// TODO: use github.com/zalando/go-keyring instead!
+// TODO: use https://github.com/99designs/keyring instead!
 const SSHKeyPassword = "G^cSH@aGHz8*T74KC^!8mKj&#5iH6j%zvQwH" // Randomly generated
 
 // Setup generates a new SSH keypair if it does not exist yet. The private key
 // is stored in the users home directory and the public key is stored in the
 // config. The private key is secured with the SSHKeyPassword password.
 func Setup() {
+	cfg, err := config.GetSessionConfig()
+	if err != nil {
+		log.Errorf("Can not get session config: %v", err)
+		return
+	}
+
+	configDir, err := cfg.GetConfigDirectory()
+	if err != nil {
+		log.Errorf("Can not get config directory: %v", err)
+		return
+	}
+
 	// Check if we already created the keypair
 	filePath, err := GetPrivateKeyFilepath()
 	if err == nil {
-		log.Debugf("SSH keypair already exists (%s)", filePath)
+		log.Errorf("SSH keypair already exists (%s)", filePath)
 		return
 	}
 
@@ -55,14 +67,13 @@ func Setup() {
 	// Write private key to disk
 	log.Debug("Store private key to disk (%s) ...", filePath)
 
-	err = os.WriteFile(filePath, pem.EncodeToMemory(block), 0600)
+	err = os.WriteFile(path.Join(configDir, "id_rsa"), pem.EncodeToMemory(block), 0600)
 	if err != nil {
 		panic(err)
 	}
 
 	// Store public key in config
 	log.Debug("Storing public key in config ...")
-	cfg, err := config.GetSessionConfig()
 	publicKey, err := ssh.NewPublicKey(&privateKey.PublicKey)
 	if err != nil {
 		panic(err)
