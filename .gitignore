@@ -2,3 +2,4 @@
 *.iml
 *_gen.go
 dist/
+/id_ed25519*

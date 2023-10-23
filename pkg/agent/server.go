@@ -60,12 +60,12 @@ func StartServer() {
 
 	// Credentials
 	// TODO: Encrypt password or whole config file
-	credentials := &auth.ProviderKeycloakUserPassword{
+	credentials := &auth.ProviderKeycloakClientAuth{
 		ClientID:     session.config.ClientID,
 		ClientSecret: session.config.ClientSecret,
-		Username:     session.config.Username,
-		Password:     session.config.Password,
 	}
+
+	// TODO: optional check if we need to use auth auth.ProviderKeycloakUserPassword{}
 
 	// Open new connection
 	session.conn, err = NewGRPCConnection(
@@ -147,7 +147,7 @@ func StartServer() {
 			log.Fatalf("Can not get user: %v", err)
 		}
 		session.user = resp.GetUser()
-		log.Infof("Logged in as user: %+v", session.user.Username)
+		log.Infof("Logged in as user ID %q", resp.User.Id)
 
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("Can not start ssh server: %v", err)

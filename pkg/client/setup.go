@@ -20,6 +20,8 @@ const SSHKeyFile = "gpcloud"
 // but to ask for a password on every client connection is not very ergonomic.
 // We could use the ssh-agent, but we want to be able to use the client without
 // it to be compatible with windows.
+
+// TODO: use github.com/zalando/go-keyring instead!
 const SSHKeyPassword = "G^cSH@aGHz8*T74KC^!8mKj&#5iH6j%zvQwH" // Randomly generated
 
 // Setup generates a new SSH keypair if it does not exist yet. The private key
@@ -80,6 +82,7 @@ func GetPrivateKeyFilepath() (string, error) {
 		log.Debugf("Can not find user home dir: %v", err)
 		return "", err
 	}
+
 	filePath := path.Join(homedir, ".ssh", SSHKeyFile)
 
 	if _, err := os.Stat(filePath); err != nil {

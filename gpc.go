@@ -82,7 +82,7 @@ func main() {
 
 	// Launch agent in the background if not already running. To do that, we
 	// try to connect to it.
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%v", consts.AgentHost, consts.AgentPort), 3*time.Second)
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%v", consts.AgentHost, consts.AgentPort), 30*time.Second)
 	if err != nil {
 		log.Infof("Starting agent in background ...")
 		err = exec.Command(os.Args[0], "agent", "start").Start()
@@ -90,7 +90,7 @@ func main() {
 			panic(err)
 		}
 		// Give the agent some time to start
-		time.Sleep(2 * time.Second)
+		time.Sleep(5 * time.Second)
 	} else {
 		err = conn.Close()
 		if err != nil {
@@ -103,6 +103,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create client: %s", err.Error())
 	}
+
+	fmt.Println(os.Args[1:])
 
 	defer c.Close()
 	client.Execute(c, strings.Join(os.Args[1:], " "))

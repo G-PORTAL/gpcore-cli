@@ -89,6 +89,7 @@ func Execute(client *goph.Client, command string) {
 	}()
 
 	session.Stdout = os.Stdout
+	session.Stderr = os.Stderr
 	err = session.Run(command)
 	if err != nil {
 		log.Errorf("Error executing command: %s", err)
