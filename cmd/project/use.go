@@ -24,7 +24,7 @@ var useCmd = &cobra.Command{
 		ctx := client.ExtractContext(cobraCmd)
 		grpcConn := ctx.Value("conn").(*grpc.ClientConn)
 		client := cloudv1grpc.NewCloudServiceClient(grpcConn)
-		cfg := ctx.Value("cfg").(*config.SessionConfig)
+		cfg := ctx.Value("config").(*config.SessionConfig)
 		resp, err := client.ListProjects(cobraCmd.Context(), &cloudv1.ListProjectsRequest{})
 		if err != nil {
 			return err

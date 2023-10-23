@@ -14,7 +14,7 @@ var RootProjectCommand = &cobra.Command{
 	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
 	RunE: func(cobraCmd *cobra.Command, args []string) error {
 		ctx := client.ExtractContext(cobraCmd)
-		cfg := ctx.Value("cfg").(*config.SessionConfig)
+		cfg := ctx.Value("config").(*config.SessionConfig)
 		if cfg.CurrentProject != nil {
 			cobraCmd.Printf("Current project: %s\n\n", *cfg.CurrentProject)
 		} else {

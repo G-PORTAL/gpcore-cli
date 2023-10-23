@@ -9,7 +9,7 @@ import (
 
 func ListHookPost(resp *cloudv1.ListProjectsResponse, cobraCmd *cobra.Command) {
 	ctx := client.ExtractContext(cobraCmd)
-	cfg := ctx.Value("cfg").(*config.SessionConfig)
+	cfg := ctx.Value("config").(*config.SessionConfig)
 	user := ctx.Value("user").(*cloudv1.User)
 
 	for i := range resp.Projects {
