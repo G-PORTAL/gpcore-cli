@@ -59,5 +59,5 @@ file to ```cmd/```. The file name will be the name of the subcommand.
 
 * Pagination support for long lists
 * Encrypt config file with a password
-* Add more commands (especially admin commands, "mirror" ACP functionality) -> edge cases
 * Separate admin and non admin commands (or check if the user is an admin?)
+* Migrate code generation to jennifer?
