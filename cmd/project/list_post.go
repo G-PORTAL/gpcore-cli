@@ -9,12 +9,12 @@ import (
 
 func ListHookPost(resp *cloudv1.ListProjectsResponse, cobraCmd *cobra.Command) {
 	ctx := client.ExtractContext(cobraCmd)
-	config := ctx.Value("config").(*config.SessionConfig)
+	cfg := ctx.Value("cfg").(*config.SessionConfig)
 	user := ctx.Value("user").(*cloudv1.User)
 
 	for i := range resp.Projects {
 		// Mark active project
-		if config.CurrentProject != nil && resp.Projects[i].Id == *config.CurrentProject {
+		if cfg.CurrentProject != nil && resp.Projects[i].Id == *cfg.CurrentProject {
 			name := "*" + resp.Projects[i].Name
 			resp.Projects[i].Name = name
 		}

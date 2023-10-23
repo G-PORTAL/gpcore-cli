@@ -24,15 +24,15 @@ var useCmd = &cobra.Command{
 		ctx := client.ExtractContext(cobraCmd)
 		grpcConn := ctx.Value("conn").(*grpc.ClientConn)
 		client := cloudv1grpc.NewCloudServiceClient(grpcConn)
-		config := ctx.Value("config").(*config.SessionConfig)
+		cfg := ctx.Value("cfg").(*config.SessionConfig)
 		resp, err := client.ListProjects(cobraCmd.Context(), &cloudv1.ListProjectsRequest{})
 		if err != nil {
 			return err
 		}
 		for _, project := range resp.Projects {
 			if project.Id == id || project.Name == name {
-				config.CurrentProject = &id
-				if err := config.Write(); err != nil {
+				cfg.CurrentProject = &id
+				if err := cfg.Write(); err != nil {
 					return err
 				}
 				cobraCmd.Println("Active project is now: " + project.Name)
