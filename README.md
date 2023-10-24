@@ -58,6 +58,6 @@ file to ```cmd/```. The file name will be the name of the subcommand.
 # TODOs
 
 * Pagination support for long lists
-* Event log -> return when node ready
-* Project Log watcher
+* Encrypt config file with a password
 * Separate admin and non admin commands (or check if the user is an admin?)
+* Migrate code generation to jennifer?

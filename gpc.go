@@ -103,9 +103,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create client: %s", err.Error())
 	}
-
-	fmt.Println(os.Args[1:])
-
 	defer c.Close()
-	client.Execute(c, strings.Join(os.Args[1:], " "))
+
+	command := strings.Join(os.Args[1:], " ")
+	if command == "" {
+		command = "help"
+	}
+
+	client.Execute(c, command)
 }

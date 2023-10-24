@@ -1,5 +1,4 @@
 .idea
 *.iml
 *_gen.go
-dist/
-/id_ed25519*
+/gpc

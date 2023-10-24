@@ -18,17 +18,23 @@ package {{.Definition.Name|EscapePackage}}
     {{- end}}
 {{- end}}
 
+{{- $subcommand := .Name}}
+
 import (
-    {{- if ne $identifierPath "" }}"fmt"{{- end}}
+    {{- if or (ne $identifierPath "") (HasPrefix .Action.APICall.Endpoint "List") }}"fmt"{{- end}}
 	"buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/{{.Action.APICall.Client}}/{{.Action.APICall.Version}}/{{.Action.APICall.Client}}{{.Action.APICall.Version}}grpc"
 	{{.Action.APICall.Client}}{{.Action.APICall.Version}} "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/{{.Action.APICall.Client}}/{{.Action.APICall.Version}}"
 	"google.golang.org/grpc"
 	"encoding/json"
+	{{- if HasHook .Definition.Name $subcommand "post"}}
+	{{- end}}
     {{- if HasPrefix .Action.APICall.Endpoint "List" }}
+	"reflect"
+	"time"
+	"fmt"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/charmbracelet/ssh"
 	{{- if eq (len .Action.Fields) 0}}
-	"reflect"
 	{{- end}}
 	{{- end}}
 	"github.com/spf13/cobra"
@@ -41,10 +47,9 @@ import (
     {{- end}}
 )
 
-{{- $subcommand := .Name}}
 
 {{- if HasHook .Definition.Name $subcommand "pre"}}
-{{ $subcommand|ToCamel|Title }}HookPost(resp, cmd)
+{{ $subcommand|ToCamel|Title }}HookPre(resp, cmd)
 {{- end}}
 
 {{range $i, $param := .Action.Params}}
@@ -125,7 +130,10 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		}
 
 		{{- if HasHook .Definition.Name $subcommand "post"}}
-		{{ $subcommand|ToCamel|Title }}HookPost(resp, cobraCmd)
+		respHook, err := {{ $subcommand|ToCamel|Title }}HookPost(resp, cobraCmd)
+		if err != nil {
+		    return err
+		}
 		{{- end}}
 
         {{- if HasPrefix .Action.APICall.Endpoint "List" }}
@@ -139,7 +147,6 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		respData := resp.{{$rootKey}}
 
 		// Build the table
-		// TODO: Handle nested structures
 		headerRow := table.Row{}
 
 		tbl := table.NewWriter()
@@ -156,7 +163,31 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 			for i := 0; i < c.NumField(); i++ {
 				// Skip all unexported fields
 				if c.Type().Field(i).IsExported() {
-					row = append(row, c.Field(i).Interface())
+				    val := fmt.Sprintf("%v", c.Field(i).Interface())
+
+                    // Custom fields?
+                    // TODO: Remove duplicate code
+			        col := fmt.Sprintf("%v", c.Type().Field(i).Name)
+			        switch col {
+			        case "CreatedAt":
+			            // This one is tricky. We need to get the seconds from the struct
+			            // and convert it to a time.Time object. Problem is the Go type system
+			            // and the fact that we don't know the type of the field. So we need to
+			            // use reflection to get the value and then convert it to a time.Time.
+			            // A lib like Jennifer would be better suited for this.
+			            a := reflect.Indirect(c.FieldByName("CreatedAt"))
+			            s := reflect.Indirect(a).FieldByName("Seconds")
+			            if s.CanInt() {
+			                t := time.Unix(s.Int(), 0)
+                            val = t.Format("2006-01-02 15:04:05")
+                        }
+                    case "Currency":
+                        val = val[9:]
+                    case "Environment":
+                        val = val[20:]
+			        }
+
+					row = append(row, val)
 
 					if j == 0 {
 						headerRow = append(headerRow, c.Type().Field(i).Name)
@@ -173,11 +204,47 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 
 		{{- else }}
 		// Only use whitelist fields
+		{{- $name := .Definition.Name}}
 		for i, entry := range respData {
             row := make([]interface{}, 0)
+			c := reflect.ValueOf(*entry)
+            val := ""
+            col := ""
 
             {{- range $key, $value := .Action.Fields}}
-            row = append(row, entry.{{$value|Title}})
+            // The field from the res
+            val = fmt.Sprintf("%v", entry.{{$value|Title}})
+
+		    {{- if HasHook $name $subcommand "post"}}
+            if v, ok := respHook[i]["{{$value|Title}}"]; ok {
+                // We do have a custom hook field
+                val = v
+            }
+            {{- end}}
+
+            // Custom fields?
+            // TODO: Remove duplicate code.
+			col = "{{$value|Title}}"
+			switch col {
+			case "CreatedAt":
+			    // This one is tricky. We need to get the seconds from the struct
+			    // and convert it to a time.Time object. Problem is the Go type system
+			    // and the fact that we don't know the type of the field. So we need to
+			    // use reflection to get the value and then convert it to a time.Time.
+			    // A lib like Jennifer would be better suited for this.
+			    a := reflect.Indirect(c.FieldByName("CreatedAt"))
+			    s := reflect.Indirect(a).FieldByName("Seconds")
+			    if s.CanInt() {
+			        t := time.Unix(s.Int(), 0)
+                    val = t.Format("2006-01-02 15:04:05")
+                }
+            case "Currency":
+                val = val[9:]
+            case "Environment":
+                val = val[20:]
+			}
+
+            row = append(row, val)
             if i == 0 {
                 headerRow = append(headerRow, "{{$value|Title}}")
             }
