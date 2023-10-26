@@ -1,10 +1,7 @@
 # GPORTAL Cloud CLI
 
-Just run `go run gpc.go` to see the help menu.
-On first run, it asks for credentials (client-id, client-secret) and saves them
-in a config file. To create a new oauth client for the credentials, go to
-https://panel.g-portal.cloud/user/settings/clients. The default config path is
-located at `~/.gpc.yaml`.
+A handy little commandline tool to access the GPORTAL Cloud API.
+
 
 ## Install and update
 
@@ -21,6 +18,12 @@ To update the tool itself, use the selfupdate command:
 ```
 $ gpc selfupdate
 ```
+
+On first run, it asks for credentials (client-id, client-secret) and saves them
+in a config file. To create a new oauth client for the credentials, go to
+https://panel.g-portal.cloud/user/settings/clients. The default config path is
+located at `~/.gpc.yaml`.
+
 
 ## Basic usage
 First you can list the projects you have access to:
@@ -57,7 +60,13 @@ file to ```cmd/```. The file name will be the name of the subcommand.
 
 # TODOs
 
-* Pagination support for long lists
-* Encrypt config file with a password
+* Check selfupdate
+* Check interactive command
+* Update packages
+* Write a comprehensive README for users and developers
+* Squash all commits and make a release
+
+## Nice to haves
+* Migrate code generation to Jennifer
+* Pagination support for long lists (pending because of Jennifer migration)
 * Separate admin and non admin commands (or check if the user is an admin?)
-* Migrate code generation to jennifer?

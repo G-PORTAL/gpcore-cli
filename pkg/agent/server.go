@@ -59,13 +59,13 @@ func StartServer() {
 	}
 
 	// Credentials
-	// TODO: Encrypt password or whole config file
-	credentials := &auth.ProviderKeycloakClientAuth{
+	// We need the user/pass auth to use admin endpoints
+	credentials := &auth.ProviderKeycloakUserPassword{
+		Username:     session.config.Username,
+		Password:     session.config.Password,
 		ClientID:     session.config.ClientID,
 		ClientSecret: session.config.ClientSecret,
 	}
-
-	// TODO: optional check if we need to use auth auth.ProviderKeycloakUserPassword{}
 
 	// Open new connection
 	session.conn, err = NewGRPCConnection(

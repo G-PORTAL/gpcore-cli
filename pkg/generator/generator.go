@@ -1,5 +1,13 @@
 //go:build ignore
 
+// WARNING: This is not ideal. Generating code from go templates worked well for
+// simple stuff, but implementing complex things with conditional imports is a
+// pain. I started to implement the code generation with the code generator lib
+// Jennifer, which worked well, but takes some more time. So I decided to go with
+// this solution for now. It's not ideal, but it works, and we can move on with
+// this project. Adding more features to the code generator is not a good idea
+// and the migration to Jennifer should be considered.
+
 package main
 
 import (

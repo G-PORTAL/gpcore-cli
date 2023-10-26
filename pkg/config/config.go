@@ -2,6 +2,8 @@ package config
 
 import (
 	"bufio"
+	"errors"
+	"github.com/99designs/keyring"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/charmbracelet/log"
@@ -11,11 +13,13 @@ import (
 	"strings"
 )
 
-// Path is the path to the config file used to store the session config. The
+// ConfigFilePath is the path to the config file used to store the session config. The
 // default value is ~/.config/gpcloud/config.yaml. This can be overwritten by setting the
 // environment variable GPCLOUD_CONFIG or by passing the --config flag to the
 // gpc command.
-var Path = ""
+var ConfigFilePath = ""
+
+var SSHKeyFilePath = ""
 
 // JSONOutput is a global flag that can be used to output the result of a command
 // as JSON. This can be enabled by passing the --json flag to the gpc command.
@@ -37,90 +41,250 @@ var Endpoint = client.DefaultEndpoint
 
 var sessionConfig *SessionConfig
 
-const configFileName = "config.yaml"
-
 type SessionConfig struct {
 	ClientID       string  `yaml:"client_id"`
 	CurrentProject *string `yaml:"current_project"`
 	PublicKey      string  `yaml:"public_key"`
+	Username       string  `yaml:"username"`
 
-	// TODO: Use https://github.com/99designs/keyring instead!
-	ClientSecret string `yaml:"client_secret"`
+	ClientSecret string
+	Password     string
 }
 
 func init() {
+	log.Infof("Initializing config ...")
 	dirname, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)
 	}
 
-	Path = path.Join(dirname, ".config", consts.BinaryName, configFileName)
+	ConfigFilePath = path.Join(dirname, ".config", consts.BinaryName, "config.yaml")
+	SSHKeyFilePath = path.Join(dirname, ".config", consts.BinaryName, "id_rsa")
+}
+
+func GetSecretsFromKeyring(config *SessionConfig) error {
+	ring, err := keyring.Open(keyring.Config{
+		ServiceName: "gpc",
+	})
+	if err != nil {
+		return err
+	}
+
+	// Client secret
+	clientSecret, err := ring.Get("client_secret")
+	if err != nil {
+		return err
+	}
+	config.ClientSecret = string(clientSecret.Data)
+
+	// Password
+	password, err := ring.Get("password")
+	if err != nil {
+		return err
+	}
+	config.Password = string(password.Data)
+
+	return nil
+}
+
+func StoreSecretsInKeyring(config *SessionConfig) error {
+	ring, err := keyring.Open(keyring.Config{
+		ServiceName: "gpc",
+	})
+	if err != nil {
+		return err
+	}
+
+	// Client secret
+	err = ring.Set(keyring.Item{
+		Key:  "client_secret",
+		Data: []byte(config.ClientSecret),
+	})
+	if err != nil {
+		return err
+	}
+
+	// Password
+	err = ring.Set(keyring.Item{
+		Key:  "password",
+		Data: []byte(config.Password),
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func AskForInput(name string, isSecret bool) (string, error) {
+	reader := bufio.NewReader(os.Stdin)
+
+	passNotice := ""
+	if isSecret {
+		passNotice = " (will be stored in keyring)"
+	}
+	println("Please enter your " + name + passNotice + ":")
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+
+	input = strings.TrimSpace(input)
+
+	if input == "" {
+		return "", errors.New("input is empty")
+	}
+
+	return input, nil
+}
+
+func ResetSessionConfig() error {
+	log.Info("Reset config (new config file and keyring) ...")
+	sessionConfig = nil
+
+	// Remove config file
+	if _, err := os.Stat(ConfigFilePath); err == nil {
+		err = os.Remove(ConfigFilePath)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Remove secrets from keyring
+	ring, err := keyring.Open(keyring.Config{
+		ServiceName: "gpc",
+	})
+	if err != nil {
+		return err
+	}
+	if err = ring.Remove("client_secret"); err != nil {
+		return err
+	}
+	if err = ring.Remove("password"); err != nil {
+		return err
+	}
+
+	// Create new session config (which will ask for credentials)
+	_, err = GetSessionConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func GetSessionConfig() (*SessionConfig, error) {
 	if sessionConfig != nil {
 		return sessionConfig, nil
 	}
+
 	if os.Getenv("GPCLOUD_CONFIG") != "" {
-		Path = os.Getenv("GPCLOUD_CONFIG")
+		ConfigFilePath = os.Getenv("GPCLOUD_CONFIG")
 	}
 
-	if _, err := os.Stat(Path); err != nil {
-		reader := bufio.NewReader(os.Stdin)
+	sessionConfig = &SessionConfig{}
 
-		// TODO: Refactor this to go-pretty inputs
-		// TODO: Validate inputs
-		// TODO: Check if one of these is missing in the config and ask them individually
-		println("Please enter your Client ID:")
-		clientID, _ := reader.ReadString('\n')
-		println("Please enter your Client Secret:")
-		clientSecret, _ := reader.ReadString('\n')
-		sessionConfig = &SessionConfig{
-			ClientID:     strings.TrimSpace(clientID),
-			ClientSecret: strings.TrimSpace(clientSecret),
+	// No config file found?
+	if _, err := os.Stat(ConfigFilePath); err != nil {
+		log.Infof("No config file found at %s, creating a new one ...", ConfigFilePath)
+
+		// Client ID
+		err := errors.New("waiting for input")
+		for err != nil {
+			sessionConfig.ClientID, err = AskForInput("Client ID", false)
+			if err != nil {
+				log.Errorf("Error reading input: %s", err)
+			}
 		}
-		if err := sessionConfig.Write(); err != nil {
+
+		// Client Secret
+		err = errors.New("waiting for input")
+		for err != nil {
+			sessionConfig.ClientSecret, err = AskForInput("Client Secret", true)
+			if err != nil {
+				log.Errorf("Error reading input: %s", err)
+			}
+		}
+
+		// Username
+		err = errors.New("waiting for input")
+		for err != nil {
+			sessionConfig.Username, err = AskForInput("Username", false)
+			if err != nil {
+				log.Errorf("Error reading input: %s", err)
+			}
+		}
+
+		// Password
+		err = errors.New("waiting for input")
+		for err != nil {
+			sessionConfig.Password, err = AskForInput("Password", true)
+			if err != nil {
+				log.Errorf("Error reading input: %s", err)
+			}
+		}
+
+		// Store secrets in keyring
+		if err := StoreSecretsInKeyring(sessionConfig); err != nil {
+			log.Errorf("Error storing secrets in keyring: %s", err)
 			return nil, err
 		}
 
-		return sessionConfig, nil
-	}
-	data, err := os.ReadFile(Path)
-	if err != nil {
-		return nil, err
-	}
-	sessionConfig = &SessionConfig{}
-	if err := yaml.Unmarshal(data, sessionConfig); err != nil {
-		return nil, err
-	}
-	return sessionConfig, nil
-}
-
-func (c *SessionConfig) GetConfigDirectory() (string, error) {
-	// check if directory exists, if not create it recursively
-	directory := path.Dir(Path)
-	if _, err := os.Stat(directory); os.IsNotExist(err) {
-		log.Debugf("Creating directory %s", directory)
-		if err := os.MkdirAll(directory, 0700); err != nil {
-			return "", err
+		// Write config to disk
+		if err := sessionConfig.Write(); err != nil {
+			log.Errorf("Error writing config to disk: %s", err)
+			return nil, err
 		}
 	}
 
-	return directory, nil
+	// Read in config file
+	data, err := os.ReadFile(ConfigFilePath)
+	if err != nil {
+		return nil, err
+	}
+	if err := yaml.Unmarshal(data, sessionConfig); err != nil {
+		log.Errorf("Error reading config: %s", err)
+		return nil, err
+	}
+
+	// Get secrets from keyring
+	if err := GetSecretsFromKeyring(sessionConfig); err != nil {
+		log.Errorf("Error reading secrets from keyring: %s", err)
+		return nil, err
+	}
+
+	return sessionConfig, nil
+}
+
+func (c *SessionConfig) CreateConfigDirectory() error {
+	// check if directory exists, if not create it recursively
+	directory := path.Dir(ConfigFilePath)
+	if _, err := os.Stat(directory); os.IsNotExist(err) {
+		log.Debugf("Creating directory %s", directory)
+		if err := os.MkdirAll(directory, 0700); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (c *SessionConfig) Write() error {
-	configDir, err := c.GetConfigDirectory()
+	err := c.CreateConfigDirectory()
 	if err != nil {
 		return err
 	}
+
+	// Remove sensitive information before storing to disk
+	c.ClientSecret = ""
+	c.Password = ""
 
 	data, err := yaml.Marshal(c)
 	if err != nil {
 		return err
 	}
 
-	err = os.WriteFile(path.Join(configDir, configFileName), data, 0600)
+	err = os.WriteFile(ConfigFilePath, data, 0600)
 	if err != nil {
 		return err
 	}

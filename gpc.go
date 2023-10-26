@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/agent"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
 	"github.com/charmbracelet/log"
 	"github.com/shirou/gopsutil/v3/process"
@@ -42,8 +43,6 @@ func main() {
 	backend.SetLevel(logging.ERROR, "")
 	logging.SetBackend(backend)
 
-	// TODO: Put these in cobra commands?
-
 	// If we are in agent mode, start the agent
 	if len(os.Args) > 2 && os.Args[1] == "agent" {
 		// Stop running agent(s)
@@ -72,6 +71,13 @@ func main() {
 		// Start the agent
 		if os.Args[2] == "start" {
 			agent.StartServer()
+		}
+
+		if os.Args[2] == "reset-config" {
+			err := config.ResetSessionConfig()
+			if err != nil {
+				log.Fatalf("Failed to reset config: %s", err.Error())
+			}
 		}
 
 		return
