@@ -37,7 +37,7 @@ func New() *cobra.Command {
 	rootCmd.PersistentFlags().BoolVarP(&config.JSONOutput, "json", "j", false, "output as JSON")
 	rootCmd.PersistentFlags().BoolVarP(&config.CSVOutput, "csv", "x", false, "output as CSV")
 
-	InteractiveCLICommand(&rootCmd)
+	//InteractiveCLICommand(&rootCmd)
 	SelfupdateCommand(&rootCmd)
 	LiveLogCommand(&rootCmd)
 	AddGeneratedCommands(&rootCmd)
