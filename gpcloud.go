@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/G-PORTAL/gpcloud-cli/cmd"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/agent"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
@@ -43,7 +44,31 @@ func main() {
 	backend.SetLevel(logging.ERROR, "")
 	logging.SetBackend(backend)
 
-	// TODO: Put these in cobra commands?
+	command := strings.Join(os.Args[1:], " ")
+	if command == "" {
+		command = "help"
+	}
+
+	// Just show the version or the help?
+	if command == "--version" || command == "--help" || command == "help" {
+		rootCmd := cmd.New()
+		rootCmd.SetArgs(os.Args[1:])
+		rootCmd.Execute()
+		return
+	}
+
+	// Check if we have a working config or if we want to reset the config
+	if !config.HasConfig() || len(os.Args) > 1 && os.Args[1] == "reset-config" {
+		log.Infof("No config found, creating new one ...")
+		err := config.ResetConfig()
+		if err != nil {
+			log.Fatalf("Failed to reset config: %s", err.Error())
+		}
+		log.Infof("Config created successfully")
+		if len(os.Args) > 1 && os.Args[1] == "reset-config" {
+			return
+		}
+	}
 
 	// If we are in agent mode, start the agent
 	if len(os.Args) > 2 && os.Args[1] == "agent" {
@@ -60,7 +85,14 @@ func main() {
 					panic(err)
 					return
 				}
+
+				// Check if the process is _this_ process, if so, we do not kill it
+				if int(p.Pid) == os.Getpid() {
+					continue
+				}
+
 				if name == consts.BinaryName {
+					log.Infof("Stopping agent ...")
 					err := p.Kill()
 					if err != nil {
 						panic(err)
@@ -73,14 +105,6 @@ func main() {
 		// Start the agent
 		if os.Args[2] == "start" {
 			agent.StartServer()
-		}
-		return
-	}
-
-	if len(os.Args) > 1 && os.Args[1] == "reset-config" {
-		err := config.ResetConfig()
-		if err != nil {
-			log.Fatalf("Failed to reset config: %s", err.Error())
 		}
 		return
 	}
@@ -108,14 +132,10 @@ func main() {
 	// Start the client
 	c, err := client.NewClient()
 	if err != nil {
-		log.Fatalf("Failed to create client: %s", err.Error())
+		log.Errorf("Failed to create client: %s", err.Error())
+		log.Fatal("Check your config file and/or reset it with \"reset-config\"")
 	}
 	defer c.Close()
-
-	command := strings.Join(os.Args[1:], " ")
-	if command == "" {
-		command = "help"
-	}
 
 	client.Execute(c, command)
 }

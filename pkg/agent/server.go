@@ -52,6 +52,8 @@ func StartServer() {
 		config: sessionConfig,
 	}
 
+	log.Printf("Starting agent ...: %v", session)
+
 	// Endpoint
 	endpoint := config.Endpoint
 	if os.Getenv("GPCLOUD_ENDPOINT") != "" {
@@ -73,7 +75,8 @@ func StartServer() {
 		client.EndpointOverrideOption(endpoint),
 	)
 	if err != nil {
-		log.Fatalf("Can not connect to GPCloud API: %v", err)
+		log.Errorf("Can not connect to GPCloud API: %v", err)
+		log.Fatal("Check your config file and/or reset it with \"reset-config\"")
 		panic(err)
 	}
 

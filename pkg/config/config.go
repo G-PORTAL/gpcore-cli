@@ -66,6 +66,19 @@ func init() {
 	SSHKeyFilePath = path.Join(dirname, ".config", consts.BinaryName, "id_rsa")
 }
 
+func ReadConfigFile(config *SessionConfig) error {
+	data, err := os.ReadFile(ConfigFilePath)
+	if err != nil {
+		return err
+	}
+	if err := yaml.Unmarshal(data, config); err != nil {
+		log.Errorf("Error reading config: %s", err)
+		return err
+	}
+
+	return nil
+}
+
 func GetSecretsFromKeyring(config *SessionConfig) error {
 	ring, err := keyring.Open(keyring.Config{
 		ServiceName: "gpc",
@@ -142,6 +155,13 @@ func AskForInput(name string, isSecret bool) (string, error) {
 	return input, nil
 }
 
+func HasConfig() bool {
+	if _, err := os.Stat(ConfigFilePath); err == nil {
+		return true
+	}
+	return false
+}
+
 func ResetConfig() error {
 	log.Info("Reset config (new config file and keyring) ...")
 	sessionConfig = nil
@@ -175,14 +195,26 @@ func ResetConfig() error {
 	}
 
 	// Create new ssh keypair
-	log.Infof("Generating new SSH keypair ...")
+	log.Infof("Delete old SSH keypair ...")
 	if _, err := os.Stat(SSHKeyFilePath); err == nil {
 		err = os.Remove(SSHKeyFilePath)
 		if err != nil {
 			return err
 		}
 	}
+	log.Infof("Setup SSH keypair ...")
 	SetupSSHKey()
+
+	// Set new configuration
+	err = ReadConfigFile(sessionConfig)
+	if err != nil {
+		return err
+	}
+
+	err = GetSecretsFromKeyring(sessionConfig)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -252,11 +284,8 @@ func GetSessionConfig() (*SessionConfig, error) {
 	}
 
 	// Read in config file
-	data, err := os.ReadFile(ConfigFilePath)
+	err := ReadConfigFile(sessionConfig)
 	if err != nil {
-		return nil, err
-	}
-	if err := yaml.Unmarshal(data, sessionConfig); err != nil {
 		log.Errorf("Error reading config: %s", err)
 		return nil, err
 	}
@@ -271,7 +300,7 @@ func GetSessionConfig() (*SessionConfig, error) {
 }
 
 func (c *SessionConfig) CreateConfigDirectory() error {
-	// check if directory exists, if not create it recursively
+	// Check if directory exists, if not, create it recursively
 	directory := path.Dir(ConfigFilePath)
 	if _, err := os.Stat(directory); os.IsNotExist(err) {
 		log.Debugf("Creating directory %s", directory)
@@ -323,7 +352,7 @@ func SetupSSHKey() {
 	}
 
 	// Generate new keypair
-	log.Debug("Generating new SSH keypair ...")
+	log.Info("Generating new SSH keypair ...")
 	privateKey, err := rsa.GenerateKey(rand.Reader, 4096)
 	if err != nil {
 		panic(err)
@@ -346,7 +375,7 @@ func SetupSSHKey() {
 	}
 
 	// Write private key to disk
-	log.Debug("Store private key to disk (%s) ...", SSHKeyFilePath)
+	log.Infof("Store private key to disk (%s) ...", SSHKeyFilePath)
 
 	err = os.WriteFile(SSHKeyFilePath, pem.EncodeToMemory(block), 0600)
 	if err != nil {
@@ -354,7 +383,7 @@ func SetupSSHKey() {
 	}
 
 	// Store public key in config
-	log.Debug("Storing public key in config ...")
+	log.Info("Storing public key in config ...")
 	publicKey, err := ssh.NewPublicKey(&privateKey.PublicKey)
 	if err != nil {
 		panic(err)
