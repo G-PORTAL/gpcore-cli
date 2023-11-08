@@ -8,7 +8,7 @@ Commandline tool to access the GPORTAL Cloud API.
 ## Install and update
 
 Download the latest binary from the release page, make it executable and run it.
-To update the CLI, just run the ```selfupdate``` command. It will download the
+To update the CLI, just run the ```gpcloud selfupdate``` command. It will download the
 latest release from GitHub and replace the current binary.
 
 ## Overview
@@ -32,10 +32,10 @@ the same as the password for the GPCloud account. This way, the connection
 between client and server is secured and no other ssh client can connect to it.
 
 If you messed up your config, the sensitive data in the keyring or the piblic/private
-key, you can reset everything with the ```reset-config``` command.
+key, you can reset everything with the ```gpcloud reset-config``` command.
 
 The agent (SSH server) will start automatically and place it in the background,
-until the user actively stops it with ```agent stop```. So the first command will
+until the user actively stops it with ```gpcloud agent stop```. So the first command will
 take a little longer (because the agent has to start), but all following commands
 will be executed immediately.
 
@@ -46,16 +46,16 @@ SSH command (ssh) to connect through it, but it is not that convenient.
 ## Usage
 
 The commandline tool is separated into subcommands. To get a list of all
-available subcommands, run ```gportal help```. To get help for a specific
-subcommand, run ```gportal help <subcommand>```.
+available subcommands, run ```gpcloud help```. To get help for a specific
+subcommand, run ```gpcloud help <subcommand>```.
 
-As and example, to list all projects, run ```gportal project list```. If you run
+As and example, to list all projects, run ```gpcloud project list```. If you run
 just the subcommand without any arguments, you will get a list of all available
 actions for that subcommand.
 
 Some commands need flags or specific parameters. To get a list of all flags and
-parameters, run ```gportal help <subcommand> <action>```. For example, to change
-the active project, run ```gportal project set-active --id <project-uuid>```.
+parameters, run ```gpcloud help <subcommand> <action>```. For example, to change
+the active project, run ```gpcloud project set-active --id <project-uuid>```.
 
 By default, the output is formatted as a ASCII table. If you want to pass the
 output to other tools for processing, you can append the flag ```--csv``` or
