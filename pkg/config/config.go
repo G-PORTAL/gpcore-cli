@@ -9,6 +9,7 @@ import (
 	"errors"
 	"github.com/99designs/keyring"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
+	"github.com/G-PORTAL/gpcloud-cli/pkg/secret"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/charmbracelet/log"
 	"golang.org/x/crypto/ssh"
@@ -80,9 +81,7 @@ func ReadConfigFile(config *SessionConfig) error {
 }
 
 func GetSecretsFromKeyring(config *SessionConfig) error {
-	ring, err := keyring.Open(keyring.Config{
-		ServiceName: "gpc",
-	})
+	ring, err := secret.GetKeyring()
 	if err != nil {
 		return err
 	}
@@ -105,9 +104,7 @@ func GetSecretsFromKeyring(config *SessionConfig) error {
 }
 
 func StoreSecretsInKeyring(config *SessionConfig) error {
-	ring, err := keyring.Open(keyring.Config{
-		ServiceName: "gpc",
-	})
+	ring, err := secret.GetKeyring()
 	if err != nil {
 		return err
 	}
@@ -175,16 +172,15 @@ func ResetConfig() error {
 	}
 
 	// Remove secrets from keyring
-	ring, err := keyring.Open(keyring.Config{
-		ServiceName: "gpc",
-	})
+	ring, err := secret.GetKeyring()
 	if err != nil {
 		return err
 	}
-	if err = ring.Remove("client_secret"); err != nil {
+
+	if err = ring.Remove("client_secret"); err != nil && !errors.Is(err, keyring.ErrKeyNotFound) {
 		return err
 	}
-	if err = ring.Remove("password"); err != nil {
+	if err = ring.Remove("password"); err != nil && !errors.Is(err, keyring.ErrKeyNotFound) {
 		return err
 	}
 
