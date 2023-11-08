@@ -2,6 +2,8 @@
 
 Commandline tool to access the GPORTAL Cloud API.
 
+![header](logo.png)
+
 
 ## Install and update
 
