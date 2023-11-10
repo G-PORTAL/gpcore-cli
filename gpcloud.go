@@ -1,18 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"github.com/G-PORTAL/gpcloud-cli/cmd"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/agent"
+	"github.com/G-PORTAL/gpcloud-cli/cmd/agent"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
 	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
 	"github.com/charmbracelet/log"
-	"github.com/shirou/gopsutil/v3/process"
 	"gopkg.in/op/go-logging.v1"
 	"net"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -50,8 +48,8 @@ func main() {
 	}
 
 	// Just show the version or the help?
-	if command == "--version" || command == "--help" || command == "help" {
-		rootCmd := cmd.New()
+	if command == "--version" || command == "--help" || command == "help" || command == "agent" {
+		rootCmd := agent.New()
 		rootCmd.SetArgs(os.Args[1:])
 		rootCmd.Execute()
 		return
@@ -70,50 +68,25 @@ func main() {
 		}
 	}
 
-	// If we are in agent mode, start the agent
-	if len(os.Args) > 2 && os.Args[1] == "agent" {
-		// Stop running agent(s)
-		if os.Args[2] == "stop" {
-			processes, err := process.Processes()
-			if err != nil {
-				panic(err)
-				return
-			}
-			for _, p := range processes {
-				name, err := p.Name()
-				if err != nil {
-					panic(err)
-					return
-				}
-
-				// Check if the process is _this_ process, if so, we do not kill it
-				if int(p.Pid) == os.Getpid() {
-					continue
-				}
-
-				if name == consts.BinaryName {
-					log.Infof("Stopping agent ...")
-					err := p.Kill()
-					if err != nil {
-						panic(err)
-						return
-					}
-				}
-			}
-		}
-
-		// Start the agent
-		if os.Args[2] == "start" {
-			agent.StartServer()
-		}
+	// agent start is a special command, because we do not have a server at
+	// that moment, so we can not connect to anything. For that, we need to handle
+	// that special case and bypass the normal command execution.
+	if command == "agent start" {
+		rootCmd := agent.New()
+		rootCmd.SetArgs(os.Args[1:])
+		rootCmd.Execute()
 		return
 	}
 
-	// Otherwise start the client
+	// Same goes for agent stop. We only stop the agent if there is a running agent.
+	if command == "agent stop" && !agent.IsAgentRunning() {
+		log.Errorf("Agent is not running")
+		return
+	}
 
 	// Launch agent in the background if not already running. To do that, we
 	// try to connect to it.
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%v", consts.AgentHost, consts.AgentPort), 30*time.Second)
+	conn, err := net.DialTimeout("tcp", net.JoinHostPort(consts.AgentHost, strconv.Itoa(consts.AgentPort)), 30*time.Second)
 	if err != nil {
 		log.Infof("Starting agent in background ...")
 		err = exec.Command(os.Args[0], "agent", "start").Start()
@@ -121,7 +94,8 @@ func main() {
 			panic(err)
 		}
 		// Give the agent some time to start
-		time.Sleep(5 * time.Second)
+		// TODO: Optimize this
+		time.Sleep(1 * time.Second)
 	} else {
 		err = conn.Close()
 		if err != nil {
