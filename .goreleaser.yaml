@@ -6,7 +6,7 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
-project_name: gpcloud
+project_name: gpcore
 
 before:
   hooks:
@@ -18,12 +18,25 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
+    id: gpcore
     goos:
       - linux
       - windows
+    ldflags:
+      - '-s -w -X cmd.Version={{.Version}} -X cmd.Commit={{.Commit}} -X cmd.Date={{.Date}}'
+
+  - env:
+      - CGO_ENABLED=0
+    id: gpcore-macos
+    goos:
       - darwin
     ldflags:
       - '-s -w -X cmd.Version={{.Version}} -X cmd.Commit={{.Commit}} -X cmd.Date={{.Date}}'
+    goarch:
+      - amd64
+      - arm64
+    hooks:
+      post: gon gon.hcl
 
 archives:
   - format: tar.gz

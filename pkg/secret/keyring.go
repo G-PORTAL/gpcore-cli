@@ -2,7 +2,7 @@ package secret
 
 import (
 	"github.com/99designs/keyring"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
+	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 )
 
 func GetKeyring() (keyring.Keyring, error) {

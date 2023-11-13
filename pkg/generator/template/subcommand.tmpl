@@ -38,8 +38,8 @@ import (
 	{{- end}}
 	{{- end}}
 	"github.com/spf13/cobra"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
+	"github.com/G-PORTAL/gpcore-cli/pkg/config"
+	"github.com/G-PORTAL/gpcore-cli/pkg/client"
 	{{- range $i, $param := .Action.Params}}
     {{- if IsEnumType $param.Type}}
     "strings"

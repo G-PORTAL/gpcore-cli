@@ -8,9 +8,9 @@ import (
 	"encoding/pem"
 	"errors"
 	"github.com/99designs/keyring"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/secret"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
+	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
+	"github.com/G-PORTAL/gpcore-cli/pkg/secret"
 	"github.com/charmbracelet/log"
 	"golang.org/x/crypto/ssh"
 	"gopkg.in/yaml.v3"
@@ -220,8 +220,8 @@ func GetSessionConfig() (*SessionConfig, error) {
 		return sessionConfig, nil
 	}
 
-	if os.Getenv("GPCLOUD_CONFIG") != "" {
-		ConfigFilePath = os.Getenv("GPCLOUD_CONFIG")
+	if os.Getenv("GPCORE_CONFIG") != "" {
+		ConfigFilePath = os.Getenv("GPCORE_CONFIG")
 	}
 
 	sessionConfig = &SessionConfig{}

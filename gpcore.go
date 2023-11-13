@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/G-PORTAL/gpcloud-cli/cmd/agent"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
+	"github.com/G-PORTAL/gpcore-cli/cmd/agent"
+	"github.com/G-PORTAL/gpcore-cli/pkg/client"
+	"github.com/G-PORTAL/gpcore-cli/pkg/config"
+	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 	"github.com/charmbracelet/log"
 	"gopkg.in/op/go-logging.v1"
 	"net"

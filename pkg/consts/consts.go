@@ -1,6 +1,6 @@
 package consts
 
-const BinaryName = "gpcloud"
+const BinaryName = "gpcore"
 
 const AgentHost = "localhost"
 
