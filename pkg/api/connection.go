@@ -22,7 +22,7 @@ func NewGRPCConnection(extraOptions ...interface{}) (*grpc.ClientConn, error) {
 		})))
 
 	// User Agent
-	options = append(options, grpc.WithUserAgent(fmt.Sprintf("GPCloud Golang Client [%s]", grpc.Version)))
+	options = append(options, grpc.WithUserAgent(fmt.Sprintf("GPCore Golang Client [%s]", grpc.Version)))
 
 	endpoint := client.DefaultEndpoint
 	authenticationDefined := false

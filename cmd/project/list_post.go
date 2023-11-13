@@ -2,8 +2,8 @@ package project
 
 import (
 	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
+	"github.com/G-PORTAL/gpcore-cli/pkg/client"
+	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"github.com/spf13/cobra"
 )
 

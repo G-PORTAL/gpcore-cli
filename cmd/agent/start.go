@@ -7,11 +7,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/api"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client/auth"
+	"github.com/G-PORTAL/gpcore-cli/pkg/api"
+	"github.com/G-PORTAL/gpcore-cli/pkg/config"
+	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
@@ -63,8 +63,8 @@ var startCmd = &cobra.Command{
 
 		// Endpoint
 		endpoint := config.Endpoint
-		if os.Getenv("GPCLOUD_ENDPOINT") != "" {
-			endpoint = os.Getenv("GPCLOUD_ENDPOINT")
+		if os.Getenv("GPCORE_ENDPOINT") != "" {
+			endpoint = os.Getenv("GPCORE_ENDPOINT")
 		}
 
 		// Credentials

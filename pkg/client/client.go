@@ -1,8 +1,8 @@
 package client
 
 import (
-	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/consts"
+	"github.com/G-PORTAL/gpcore-cli/pkg/config"
+	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 	"github.com/charmbracelet/log"
 	"github.com/melbahja/goph"
 	"golang.org/x/crypto/ssh"

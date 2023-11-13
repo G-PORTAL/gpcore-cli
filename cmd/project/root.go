@@ -1,8 +1,8 @@
 package project
 
 import (
-	"github.com/G-PORTAL/gpcloud-cli/pkg/client"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/config"
+	"github.com/G-PORTAL/gpcore-cli/pkg/client"
+	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"github.com/spf13/cobra"
 )
 

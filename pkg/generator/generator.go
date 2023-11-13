@@ -12,7 +12,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/G-PORTAL/gpcloud-cli/pkg/generator"
+	"github.com/G-PORTAL/gpcore-cli/pkg/generator"
 	"github.com/gertd/go-pluralize"
 	"github.com/stoewer/go-strcase"
 	"gopkg.in/yaml.v3"
