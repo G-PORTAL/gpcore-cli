@@ -22,7 +22,7 @@ func SelfupdateCommand(rootCmd *cobra.Command) {
 		DisableFlagsInUseLine: true,
 		Args:                  cobra.OnlyValidArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			latest, found, err := selfupdate.DetectLatest(cmd.Context(), selfupdate.ParseSlug("G-PORTAL/gpcloud-cli"))
+			latest, found, err := selfupdate.DetectLatest(cmd.Context(), selfupdate.ParseSlug("G-PORTAL/gpcore-cli"))
 			if err != nil {
 				return fmt.Errorf("error occurred while detecting version: %w", err)
 			}

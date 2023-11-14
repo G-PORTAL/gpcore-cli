@@ -29,5 +29,5 @@ var stopCmd = &cobra.Command{
 }
 
 func init() {
-	AgentCommand.AddCommand(stopCmd)
+	agentCommand.AddCommand(stopCmd)
 }

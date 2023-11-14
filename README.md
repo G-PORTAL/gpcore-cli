@@ -1,6 +1,6 @@
-# GPORTAL Cloud CLI
+# GPCORE CLI
 
-Commandline tool to access the GPORTAL Cloud API.
+Commandline tool to access the GPCORE API.
 
 ![header](logo.png)
 
@@ -8,7 +8,7 @@ Commandline tool to access the GPORTAL Cloud API.
 ## Install and update
 
 Download the latest binary from the release page, make it executable and run it.
-To update the CLI, just run the ```gpcloud selfupdate``` command. It will download the
+To update the CLI, just run the ```gpcore selfupdate``` command. It will download the
 latest release from GitHub and replace the current binary.
 
 ## Overview
@@ -32,10 +32,10 @@ the same as the password for the GPCloud account. This way, the connection
 between client and server is secured and no other ssh client can connect to it.
 
 If you messed up your config, the sensitive data in the keyring or the piblic/private
-key, you can reset everything with the ```gpcloud reset-config``` command.
+key, you can reset everything with the ```gpcore reset-config``` command.
 
 The agent (SSH server) will start automatically and place it in the background,
-until the user actively stops it with ```gpcloud agent stop```. So the first command will
+until the user actively stops it with ```gpcore agent stop```. So the first command will
 take a little longer (because the agent has to start), but all following commands
 will be executed immediately.
 
@@ -46,20 +46,20 @@ SSH command (ssh) to connect through it, but it is not that convenient.
 ## Usage
 
 The commandline tool is separated into subcommands. To get a list of all
-available subcommands, run ```gpcloud help```. To get help for a specific
-subcommand, run ```gpcloud help <subcommand>```.
+available subcommands, run ```gpcore help```. To get help for a specific
+subcommand, run ```gpcore help <subcommand>```.
 
-As and example, to list all projects, run ```gpcloud project list```. If you run
+As and example, to list all projects, run ```gpcore project list```. If you run
 just the subcommand without any arguments, you will get a list of all available
 actions for that subcommand.
 
 Some commands need flags or specific parameters. To get a list of all flags and
-parameters, run ```gpcloud help <subcommand> <action>```. For example, to change
-the active project, run ```gpcloud project set-active --id <project-uuid>```.
+parameters, run ```gpcore help <subcommand> <action>```. For example, to change
+the active project, run ```gpcore project set-active --id <project-uuid>```.
 
 By default, the output is formatted as a ASCII table. If you want to pass the
 output to other tools for processing, you can append the flag ```--csv``` or
-```--json```. For example: ```gpcloud project list --json | jq 'length```
+```--json```. For example: ```gpcore project list --json | jq 'length```
 
 ## Development
 
@@ -81,6 +81,9 @@ action but before the outout is printed. As an example, see ```project/list_post
 
 
 ### Ongoing tasks
+
+- on login to api: check if user/pass is set, if so mark it as admin
+- catch unauthorized error and ask for user/pass
 
 * Migrate code generation to Jennifer for more advanced stuff (pagination)
 * Pagination support for long lists (pending because of Jennifer migration)

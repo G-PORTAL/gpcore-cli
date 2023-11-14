@@ -45,6 +45,49 @@ func (s *Session) ContextWithSession(ctx context.Context) context.Context {
 	return ctx
 }
 
+// ConnectToAPI connects to the API with the given credentials, depending
+// on what credentials we have.
+func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
+	// Endpoint
+	endpoint := config.Endpoint
+	if os.Getenv("GPCORE_ENDPOINT") != "" {
+		endpoint = os.Getenv("GPCORE_ENDPOINT")
+	}
+
+	// We have two different connection methods available, depending on the
+	// type of credentials we get. For "normal" usage, we need the ClientID
+	// and the ClientSecret, which can be used by every user.
+	// Some endpoints need admin privileges, tho. For that, we need the
+	// username and password of the user. We can not use the same connection
+	// for that, so we need to reconnect with admin credentials.
+
+	// First, we check if we have user/pass for admin login. If we have the
+	// credentials, we use it for login.
+	if session.config.Username != nil && session.config.Password != nil {
+		credentials := &auth.ProviderKeycloakUserPassword{
+			Username:     *session.config.Username,
+			Password:     *session.config.Password,
+			ClientID:     session.config.ClientID,
+			ClientSecret: session.config.ClientSecret,
+		}
+		return api.NewGRPCConnection(
+			credentials,
+			client.EndpointOverrideOption(endpoint),
+		)
+	}
+
+	// Otherwise, we just use the client credentials. With this login, the
+	// admin endpoints will not work and result in an error.
+	credentials := &auth.ProviderKeycloakClientAuth{
+		ClientID:     session.config.ClientID,
+		ClientSecret: session.config.ClientSecret,
+	}
+	return api.NewGRPCConnection(
+		credentials,
+		client.EndpointOverrideOption(endpoint),
+	)
+}
+
 var startCmd = &cobra.Command{
 	Use:                   "start",
 	Short:                 "Start the agent",
@@ -61,29 +104,11 @@ var startCmd = &cobra.Command{
 			config: sessionConfig,
 		}
 
-		// Endpoint
-		endpoint := config.Endpoint
-		if os.Getenv("GPCORE_ENDPOINT") != "" {
-			endpoint = os.Getenv("GPCORE_ENDPOINT")
-		}
-
-		// Credentials
-		// We need the user/pass auth to use admin endpoints
-		credentials := &auth.ProviderKeycloakUserPassword{
-			Username:     session.config.Username,
-			Password:     session.config.Password,
-			ClientID:     session.config.ClientID,
-			ClientSecret: session.config.ClientSecret,
-		}
-
 		// Open new connection
-		session.conn, err = api.NewGRPCConnection(
-			credentials,
-			client.EndpointOverrideOption(endpoint),
-		)
+		session.conn, err = ConnectToAPI(&session)
 		if err != nil {
-			log.Errorf("Can not connect to GPCloud API: %v", err)
-			log.Fatal("Check your config file and/or reset it with \"reset-config\"")
+			log.Errorf("Can not connect to GPCORE API: %v", err)
+			log.Fatal("Check your config file and/or reset it with \"gpcore agent setup\"")
 			panic(err)
 		}
 
@@ -180,5 +205,5 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
-	AgentCommand.AddCommand(startCmd)
+	agentCommand.AddCommand(startCmd)
 }

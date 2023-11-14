@@ -16,11 +16,6 @@ import (
 // NewClient creates a new ssh client to execute commands. For key verification
 // we use a fixed private key from the config.
 func NewClient() (*goph.Client, error) {
-	if _, err := os.Stat(config.SSHKeyFilePath); err != nil {
-		log.Errorf("SSH keypair not found. Please run 'gpc reset-config' first.")
-		return nil, err
-	}
-
 	// We "could" use the ssh-agent, but we want to be able to use the client
 	// without it. So we use the private key from the config and the public key
 	// from the config to verify the host key. This is not the best solution,
@@ -29,8 +24,13 @@ func NewClient() (*goph.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	auth, err := goph.Key(config.SSHKeyFilePath, sessionConfig.Password)
 
+	if sessionConfig.PrivateKey == nil {
+		log.Errorf("No private key found in config, (re)run `gpcore agent setup`")
+		return nil, err
+	}
+
+	auth, err := goph.RawKey(*sessionConfig.PrivateKey, *sessionConfig.PrivateKeyPassword)
 	config := &goph.Config{
 		Auth:    auth,
 		User:    "cli",

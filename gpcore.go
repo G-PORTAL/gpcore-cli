@@ -47,34 +47,29 @@ func main() {
 		command = "help"
 	}
 
-	// Just show the version or the help?
-	if command == "--version" || command == "--help" || command == "help" || command == "agent" {
-		rootCmd := agent.New()
-		rootCmd.SetArgs(os.Args[1:])
-		rootCmd.Execute()
+	// Some commands which can run without a valid config
+	if command == "--version" ||
+		command == "--help" ||
+		command == "help" ||
+		command == "agent" ||
+		strings.HasPrefix(command, "agent setup") {
+		RunCommandWithoutClient()
 		return
 	}
 
-	// Check if we have a working config or if we want to reset the config
-	if !config.HasConfig() || len(os.Args) > 1 && os.Args[1] == "reset-config" {
-		log.Infof("No config found, creating new one ...")
-		err := config.ResetConfig()
-		if err != nil {
-			log.Fatalf("Failed to reset config: %s", err.Error())
-		}
-		log.Infof("Config created successfully")
-		if len(os.Args) > 1 && os.Args[1] == "reset-config" {
-			return
-		}
+	// If we reach this point, we need a valid config, otherwise stuff will
+	// break. So we ensure we have at least "some" config.
+	if !config.HasConfig() {
+		log.Info("No config found, creating new one with `gpcore agent setup`")
+		log.Info("If you want to use admin endpoints, use `gpcore agent setup --admin`")
+		return
 	}
 
 	// agent start is a special command, because we do not have a server at
 	// that moment, so we can not connect to anything. For that, we need to handle
 	// that special case and bypass the normal command execution.
 	if command == "agent start" {
-		rootCmd := agent.New()
-		rootCmd.SetArgs(os.Args[1:])
-		rootCmd.Execute()
+		RunCommandWithoutClient()
 		return
 	}
 
@@ -107,9 +102,18 @@ func main() {
 	c, err := client.NewClient()
 	if err != nil {
 		log.Errorf("Failed to create client: %s", err.Error())
-		log.Fatal("Check your config file and/or reset it with \"reset-config\"")
+		log.Fatal("Check your config file and/or reset it with \"gpcore agent setup\"")
 	}
 	defer c.Close()
 
 	client.Execute(c, command)
+}
+
+func RunCommandWithoutClient() {
+	rootCmd := agent.New()
+	rootCmd.SetArgs(os.Args[1:])
+	err := rootCmd.Execute()
+	if err != nil {
+		panic(err)
+	}
 }
