@@ -27,6 +27,7 @@ func New() *cobra.Command {
 			cobraCmd.Println(cobraCmd.UsageString())
 			return nil
 		},
+		SilenceUsage: true,
 	}
 
 	// Application information

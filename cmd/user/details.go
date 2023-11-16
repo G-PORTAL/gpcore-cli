@@ -1,7 +1,6 @@
 package user
 
 import (
-	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"encoding/json"
 	"github.com/G-PORTAL/gpcore-cli/pkg/client"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
@@ -18,13 +17,14 @@ var detailsCmd = &cobra.Command{
 	Args:                  cobra.NoArgs,
 	RunE: func(cobraCmd *cobra.Command, args []string) error {
 		ctx := client.ExtractContext(cobraCmd)
-		user := ctx.Value("user").(*cloudv1.User)
+		user := client.GetUser(ctx)
 		sshSession := ctx.Value("ssh").(*ssh.Session)
 
 		tbl := table.NewWriter()
 		tbl.SetStyle(table.StyleRounded)
 		tbl.SetOutputMirror(*sshSession)
 		tbl.AppendRow([]interface{}{"Type", user.GetType()})
+		tbl.AppendRow([]interface{}{"Has admin credentials?", config.HasAdminConfig()})
 		tbl.AppendRow([]interface{}{"Id", user.GetId()})
 		tbl.AppendRow([]interface{}{"Keycloak ID", user.GetKeycloakId()})
 		tbl.AppendRow([]interface{}{"Username", user.GetUsername()})

@@ -129,13 +129,6 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 			return err
 		}
 
-		{{- if HasHook .Definition.Name $subcommand "post"}}
-		respHook, err := {{ $subcommand|ToCamel|Title }}HookPost(resp, cobraCmd)
-		if err != nil {
-		    return err
-		}
-		{{- end}}
-
         {{- if HasPrefix .Action.APICall.Endpoint "List" }}
 		sshSession := ctx.Value("ssh").(*ssh.Session)
         // Remove root key
@@ -153,6 +146,13 @@ var {{.Name|ToCamel}}Cmd = &cobra.Command{
 		tbl.SetStyle(table.StyleRounded)
 		tbl.SetOutputMirror(*sshSession)
 		cobraCmd.SetOut(*sshSession)
+
+		{{- if HasHook .Definition.Name $subcommand "post"}}
+		respHook, err := {{ $subcommand|ToCamel|Title }}HookPost(resp, cobraCmd)
+		if err != nil {
+		    return err
+		}
+		{{- end}}
 
 		{{- if eq (len .Action.Fields) 0}}
 		for j, entry := range respData {

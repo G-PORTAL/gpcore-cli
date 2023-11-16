@@ -31,8 +31,9 @@ key pair will be generated and secured with a passphrase. The passphrase is
 the same as the password for the GPCloud account. This way, the connection
 between client and server is secured and no other ssh client can connect to it.
 
-If you messed up your config, the sensitive data in the keyring or the piblic/private
-key, you can reset everything with the ```gpcore reset-config``` command.
+If you messed up your config, the sensitive data in the keyring or the public/private
+key, you can reset everything with the ```gpcore agent setup``` command. Use the
+```--admin``` flag to setup the admin credentials as well.
 
 The agent (SSH server) will start automatically and place it in the background,
 until the user actively stops it with ```gpcore agent stop```. So the first command will

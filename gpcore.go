@@ -114,6 +114,6 @@ func RunCommandWithoutClient() {
 	rootCmd.SetArgs(os.Args[1:])
 	err := rootCmd.Execute()
 	if err != nil {
-		panic(err)
+		log.Errorf("Command failed: %s", err)
 	}
 }

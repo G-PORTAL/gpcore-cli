@@ -12,7 +12,7 @@ func ListHookPost(resp *cloudv1.ListProjectsResponse, cobraCmd *cobra.Command) (
 
 	ctx := client.ExtractContext(cobraCmd)
 	cfg := ctx.Value("config").(*config.SessionConfig)
-	user := ctx.Value("user").(*cloudv1.User)
+	user := client.GetUser(ctx)
 
 	for i := range resp.Projects {
 		name := resp.Projects[i].Name
@@ -31,6 +31,10 @@ func ListHookPost(resp *cloudv1.ListProjectsResponse, cobraCmd *cobra.Command) (
 		res = append(res, map[string]string{
 			"Name": name,
 		})
+	}
+
+	if len(res) == 0 {
+		cobraCmd.Print("No projects found. If you have projects, make sure the service account \nis invited to the project(s).\n")
 	}
 
 	return res, nil

@@ -59,7 +59,7 @@ func Execute(client *goph.Client, command string) {
 	session, err := client.NewSession()
 	if err != nil {
 		log.Errorf("Error creating session: %s", err)
-		panic(err)
+		return
 	}
 	defer func(session *ssh.Session) {
 		err := session.Close()
@@ -84,9 +84,11 @@ func Execute(client *goph.Client, command string) {
 
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
+
+	// Executing the command on the agent
 	err = session.Run(command)
+
 	if err != nil {
-		log.Errorf("Error executing command: %s", err)
-		panic(err)
+		log.Errorf("%v", err)
 	}
 }

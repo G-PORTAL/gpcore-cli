@@ -1,9 +1,6 @@
 package agent
 
 import (
-	"buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/auth/v1/authv1grpc"
-	authv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/auth/v1"
-	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
 	"context"
 	"errors"
 	"fmt"
@@ -27,7 +24,6 @@ var rootCmd *cobra.Command
 
 type Session struct {
 	config *config.SessionConfig
-	user   *cloudv1.User
 	conn   *grpc.ClientConn
 	ssh    *ssh.Session
 }
@@ -39,7 +35,6 @@ var IsRunning = false
 
 func (s *Session) ContextWithSession(ctx context.Context) context.Context {
 	ctx = context.WithValue(ctx, "config", s.config)
-	ctx = context.WithValue(ctx, "user", s.user)
 	ctx = context.WithValue(ctx, "ssh", s.ssh)
 	ctx = context.WithValue(ctx, "conn", s.conn)
 	return ctx
@@ -100,6 +95,7 @@ var startCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+
 		session = Session{
 			config: sessionConfig,
 		}
@@ -134,7 +130,7 @@ var startCmd = &cobra.Command{
 						session.ssh = &s
 						ctx := session.ContextWithSession(context.Background())
 						if err := rootCmd.ExecuteContext(ctx); err != nil {
-							_ = s.Exit(1)
+							log.Errorf("Error executing command: %v", err)
 							return
 						}
 
@@ -166,19 +162,9 @@ var startCmd = &cobra.Command{
 			log.Fatalf("Can not create ssh server: %v", err)
 		}
 
-		log.Infof("Starting server on %s:%d", consts.AgentHost, consts.AgentPort)
 		go func() {
-			// Set user
-			authClient := authv1grpc.NewAuthServiceClient(session.conn)
-			resp, err := authClient.GetUser(context.Background(), &authv1.GetUserRequest{})
-			if err != nil {
-				log.Fatalf("Can not get user: %v", err)
-			}
-			session.user = resp.GetUser()
-			log.Infof("Logged in as user ID %q", resp.User.Id)
-
+			log.Infof("Starting server on %s:%d", consts.AgentHost, consts.AgentPort)
 			IsRunning = true
-
 			if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 				log.Fatalf("Can not start ssh server: %v", err)
 				DoneChan <- nil
