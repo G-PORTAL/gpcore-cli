@@ -32,6 +32,7 @@ require (
 	github.com/charmbracelet/keygen v0.5.0 // indirect
 	github.com/charmbracelet/lipgloss v0.9.1 // indirect
 	github.com/danieljoos/wincred v1.2.0 // indirect
+	github.com/dave/jennifer v1.7.0 // indirect
 	github.com/davidmz/go-pageant v1.0.2 // indirect
 	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
 	github.com/go-fed/httpsig v1.1.0 // indirect
