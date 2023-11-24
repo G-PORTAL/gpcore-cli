@@ -120,13 +120,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	rootcommandTemplate, err := template.
-		New("rootcommand.tmpl").
-		Funcs(templateFuncMap).
-		ParseFiles("./pkg/generator/template/rootcommand.tmpl")
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	var targetFile *os.File
 
@@ -162,15 +155,8 @@ func main() {
 		// Create root command if not exist
 		if _, err := os.Stat("./cmd/" + subcommandName + "/root.go"); os.IsNotExist(err) {
 			log.Printf("  Create root command ./cmd/%s/root"+generatedFileSuffix+".go ...\n", subcommandName)
-			targetFile, err = os.Create("./cmd/" + subcommandName + "/root" + generatedFileSuffix + ".go")
-			if err != nil {
-				log.Fatal(err)
-			}
-			err = rootcommandTemplate.Funcs(templateFuncMap).Execute(targetFile, metadata)
-			if err != nil {
-				log.Fatal(err)
-			}
-			err = targetFile.Close()
+			targetFilename := "./cmd/" + subcommandName + "/root" + generatedFileSuffix + ".go"
+			err = generator.GenerateRootCommand(metadata, targetFilename)
 			if err != nil {
 				log.Fatal(err)
 			}
