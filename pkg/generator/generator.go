@@ -127,13 +127,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	addcommandsTemplate, err := template.
-		New("addcommands.tmpl").
-		Funcs(templateFuncMap).
-		ParseFiles("./pkg/generator/template/addcommands.tmpl")
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	var targetFile *os.File
 
@@ -211,20 +204,13 @@ func main() {
 	}
 
 	// Generate the AddCommands func, so the commands get added to the root command
-	targetFile, err = os.Create("./cmd/addcommands" + generatedFileSuffix + ".go")
-	if err != nil {
-		log.Fatal(err)
-	}
+	targetFilename := "./cmd/addcommands" + generatedFileSuffix + ".go"
 	commandList := []string{}
 	for _, definitionFile := range definitionFiles {
 		subcommandName := strings.TrimSuffix(definitionFile.Name(), filepath.Ext(definitionFile.Name()))
 		commandList = append(commandList, subcommandName)
 	}
-	err = addcommandsTemplate.Funcs(templateFuncMap).Execute(targetFile, commandList)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = targetFile.Close()
+	err = generator.GenerateAddCommands(commandList, targetFilename)
 	if err != nil {
 		log.Fatal(err)
 	}
