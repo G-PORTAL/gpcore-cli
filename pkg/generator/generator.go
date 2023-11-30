@@ -11,117 +11,19 @@
 package main
 
 import (
-	"fmt"
 	"github.com/G-PORTAL/gpcore-cli/pkg/generator"
-	"github.com/gertd/go-pluralize"
 	"github.com/stoewer/go-strcase"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
-	"text/template"
 )
 
 func main() {
 	generatedFileSuffix := "_gen"
 
 	log.Println("Generate subcommands ...")
-
-	pl := pluralize.NewClient()
-	templateFuncMap := template.FuncMap{
-		"Title": func(s string) string {
-			return strings.Title(strcase.LowerCamelCase(s))
-		},
-		"ToLower":   strings.ToLower,
-		"ToUpper":   strings.ToUpper,
-		"ToKebab":   strcase.KebabCase,
-		"ToSnake":   strcase.SnakeCase,
-		"ToCamel":   strcase.LowerCamelCase,
-		"Pluralize": pl.Plural,
-		"HasPrefix": strings.HasPrefix,
-		"HasHook": func(command string, subcommand string, hookType string) bool {
-			if _, err := os.Stat("./cmd/" + command + "/" + subcommand + "_" + hookType + ".go"); !os.IsNotExist(err) {
-				log.Printf("  Include hook %s/%s for type %s", command, subcommand, hookType)
-				return true
-			}
-			return false
-		},
-		"IsEnumType": func(s string) bool {
-			return strings.Contains(s, ".")
-		},
-		"StripPackage": func(s string) string {
-			parts := strings.Split(s, ".")
-			return parts[1]
-		},
-		"EscapePackage": func(s string) string {
-			return strings.Replace(strings.Replace(s, ".", "_", -1), "-", "_", -1)
-		},
-		"EnumToProto": func(enumType string, value string) string {
-			// cloudv1.ProjectEnvironment -> ProjectEnvironment_PROJECT_ENVIRONMENT_[VALUE]
-			parts := strings.Split(enumType, ".")
-			return parts[0] + "." + parts[1] + "_" + strcase.UpperSnakeCase(parts[1]) + "_" + strings.ToUpper(value)
-		},
-		"EnumToValue": func(enumType string) string {
-			// PROJECT_ENVIRONMENT_[VALUE] -> VALUE
-			parts := strings.Split(enumType, "_")
-			return parts[len(parts)-1]
-		},
-		"DefaultValue": func(param generator.Param) string {
-			if param.Default == nil {
-				switch param.Type {
-				case "string":
-					return "\"\""
-				case "bool":
-					return "false"
-				case "int":
-					return "false"
-				}
-			} else {
-				switch param.Type {
-				case "string":
-					return fmt.Sprintf("\"%s\"", param.Default)
-				case "bool":
-					return fmt.Sprintf("%t", param.Default)
-				case "int":
-					return fmt.Sprintf("%d", param.Default)
-				default: // enum
-					if strings.Contains(param.Default.(string), ".") {
-						parts := strings.Split(param.Default.(string), "_")
-						return fmt.Sprintf("\"%s\"", parts[len(parts)-1])
-					}
-				}
-			}
-
-			return "nil"
-		},
-		"ParameterDescription": func(param generator.Param) string {
-			flags := []string{}
-			if param.Default == nil {
-				if param.Required {
-					flags = append(flags, "required")
-				}
-			} else {
-				flags = append(flags, fmt.Sprintf("default:\\\"%v\\\"", param.Default))
-			}
-
-			if len(flags) > 0 {
-				return fmt.Sprintf("%s (%s)", param.Description, strings.Join(flags, ", "))
-			}
-			return param.Description
-		},
-	}
-
-	// Read in the template files
-	subcommandTemplate, err := template.
-		New("subcommand.tmpl").
-		Funcs(templateFuncMap).
-		ParseFiles("./pkg/generator/template/subcommand.tmpl")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var targetFile *os.File
 
 	// Get all definitions
 	definitionFiles, err := os.ReadDir("./pkg/generator/definition")
@@ -170,19 +72,12 @@ func main() {
 				continue
 			}
 			log.Printf("  Generate subcommand %s ...\n", action)
-			targetFile, err = os.Create("./cmd/" + subcommandName + "/" + strcase.SnakeCase(action) + generatedFileSuffix + ".go")
-			if err != nil {
-				log.Fatal(err)
-			}
-			err = subcommandTemplate.Funcs(templateFuncMap).Execute(targetFile, generator.SubcommandMetadata{
+			targetFilename := "./cmd/" + subcommandName + "/" + strcase.SnakeCase(action) + generatedFileSuffix + ".go"
+			err = generator.GenerateSubCommand(generator.SubcommandMetadata{
 				Definition: metadata,
 				Action:     meta,
 				Name:       action,
-			})
-			if err != nil {
-				log.Fatal(err)
-			}
-			err = targetFile.Close()
+			}, targetFilename)
 			if err != nil {
 				log.Fatal(err)
 			}
