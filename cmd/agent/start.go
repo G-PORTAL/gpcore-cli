@@ -58,7 +58,8 @@ func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
 
 	// First, we check if we have user/pass for admin login. If we have the
 	// credentials, we use it for login.
-	if session.config.Username != nil && session.config.Password != nil {
+	if config.HasAdminConfig() {
+		log.Info("Using admin credentials")
 		credentials := &auth.ProviderKeycloakUserPassword{
 			Username:     *session.config.Username,
 			Password:     *session.config.Password,

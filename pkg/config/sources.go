@@ -33,14 +33,6 @@ func GetSecretsFromKeyring(config *SessionConfig) error {
 	}
 	config.ClientSecret = string(clientSecret.Data)
 
-	// Password
-	password, err := ring.Get("password")
-	if err != nil {
-		return err
-	}
-	pw := string(password.Data)
-	config.Password = &pw
-
 	// Private Key
 	privateKey, err := ring.Get("private_key")
 	if err == nil {
@@ -48,11 +40,18 @@ func GetSecretsFromKeyring(config *SessionConfig) error {
 		config.PrivateKey = &pk
 	}
 
-	// Password
+	// Private Key Password
 	privateKeyPassword, err := ring.Get("private_key_password")
 	if err == nil {
 		pkpw := string(privateKeyPassword.Data)
 		config.PrivateKeyPassword = &pkpw
+	}
+
+	// Password (admin)
+	password, err := ring.Get("password")
+	if err == nil {
+		pw := string(password.Data)
+		config.Password = &pw
 	}
 
 	return nil
