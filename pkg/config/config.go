@@ -2,7 +2,7 @@ package config
 
 import (
 	"errors"
-	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
+	"github.com/G-PORTAL/gpcore-go/pkg/gpcore/client"
 	"github.com/charmbracelet/log"
 	"os"
 )

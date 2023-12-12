@@ -21,8 +21,8 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 	name := strcase.LowerCamelCase(metadata.Name)
 
 	// Imports
-	apiClientImport = "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/" + metadata.Action.APICall.Client + "/" + metadata.Action.APICall.Version
-	apiGRPCImport = "buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/" + metadata.Action.APICall.Client + "/" + metadata.Action.APICall.Version + "/" + metadata.Action.APICall.Client + metadata.Action.APICall.Version + "grpc"
+	apiClientImport = "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/" + metadata.Action.APICall.Client + "/" + metadata.Action.APICall.Version
+	apiGRPCImport = "buf.build/gen/go/gportal/gpcore/grpc/go/gpcore/api/" + metadata.Action.APICall.Client + "/" + metadata.Action.APICall.Version + "/" + metadata.Action.APICall.Client + metadata.Action.APICall.Version + "grpc"
 
 	f.ImportName("github.com/spf13/cobra", "cobra")
 	f.ImportName("github.com/G-PORTAL/gpcore-cli/pkg/client", "client")

@@ -2,10 +2,10 @@ package agent
 
 import (
 	"fmt"
-	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
 	"github.com/G-PORTAL/gpcore-cli/cmd"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
+	"github.com/G-PORTAL/gpcore-go/pkg/gpcore/client"
 	"github.com/spf13/cobra"
 	"net"
 	"strconv"
