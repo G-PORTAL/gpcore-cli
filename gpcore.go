@@ -61,7 +61,6 @@ func main() {
 	// break. So we ensure we have at least "some" config.
 	if !config.HasConfig() {
 		log.Info("No config found, creating new one with `gpcore agent setup`")
-		log.Info("If you want to use admin endpoints, use `gpcore agent setup --admin`")
 		return
 	}
 

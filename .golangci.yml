@@ -1,0 +1,19 @@
+---
+
+run:
+  timeout: 30m
+
+  concurrency: 4
+
+  issue-exit-code: 1
+
+  tests: true
+
+  skip-files:
+    - .*\_gen\.go
+
+  allow-parallel-runners: true
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

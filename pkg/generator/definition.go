@@ -1,7 +1,6 @@
 package generator
 
 import (
-	"errors"
 	"fmt"
 	"gopkg.in/yaml.v3"
 	"regexp"
@@ -37,7 +36,7 @@ func (api *APICall) UnmarshalYAML(value *yaml.Node) error {
 
 	matches := regex.FindStringSubmatch(value.Value)
 	if len(matches) != 3 {
-		return errors.New(fmt.Sprintf("invalid api call definition: %s", value.Value))
+		return fmt.Errorf("invalid api call definition: %s", value.Value)
 	}
 
 	api.Client = matches[1]
