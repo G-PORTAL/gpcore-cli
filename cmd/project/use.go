@@ -8,12 +8,13 @@ import (
 	"fmt"
 	"github.com/G-PORTAL/gpcore-cli/pkg/client"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
+	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
 
-var id string
-var name string
+var useId string
+var useName string
 var useCmd = &cobra.Command{
 	Use:                   "use",
 	Short:                 "Selects a project to use",
@@ -30,21 +31,22 @@ var useCmd = &cobra.Command{
 			return err
 		}
 		for _, project := range resp.Projects {
-			if project.Id == id || project.Name == name {
-				cfg.CurrentProject = &id
+			if (useName != "" && project.Name == useName) || (useId == "" && project.Id == useId) {
+				cfg.CurrentProject = &project.Id
 				if err := cfg.Write(); err != nil {
 					return err
 				}
+				log.Info("Active project is now: " + project.Name)
 				cobraCmd.Println("Active project is now: " + project.Name)
 				return nil
 			}
 		}
-		return fmt.Errorf("project with id %s not found", id)
+		return fmt.Errorf("project not found")
 	},
 }
 
 func init() {
 	RootProjectCommand.AddCommand(useCmd)
-	useCmd.PersistentFlags().StringVarP(&id, "id", "", "", "Specify ID of Project to use")
-	useCmd.PersistentFlags().StringVarP(&name, "name", "", "", "Specify name of Project to use")
+	useCmd.PersistentFlags().StringVarP(&useId, "id", "", "", "Specify ID of Project to use")
+	useCmd.PersistentFlags().StringVarP(&useName, "name", "", "", "Specify name of Project to use")
 }
