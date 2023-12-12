@@ -11,14 +11,12 @@ import (
 	"google.golang.org/grpc"
 )
 
-var useId string
-var useName string
 var useCmd = &cobra.Command{
 	Use:                   "use",
 	Short:                 "Selects a project to use",
 	Long:                  "Selects a project to use",
 	DisableFlagsInUseLine: true,
-	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
+	Args:                  cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cobraCmd *cobra.Command, args []string) error {
 		ctx := client.ExtractContext(cobraCmd)
 		grpcConn := ctx.Value("conn").(*grpc.ClientConn)
@@ -28,8 +26,9 @@ var useCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
 		for _, project := range resp.Projects {
-			if (useName != "" && project.Name == useName) || (useId == "" && project.Id == useId) {
+			if (project.Name == args[0]) || (project.Id == args[0]) {
 				cfg.CurrentProject = &project.Id
 				if err := cfg.Write(); err != nil {
 					return err
@@ -45,6 +44,4 @@ var useCmd = &cobra.Command{
 
 func init() {
 	RootProjectCommand.AddCommand(useCmd)
-	useCmd.PersistentFlags().StringVarP(&useId, "id", "", "", "Specify ID of Project to use")
-	useCmd.PersistentFlags().StringVarP(&useName, "name", "", "", "Specify name of Project to use")
 }

@@ -31,7 +31,11 @@ func NewClient() (*goph.Client, error) {
 	}
 
 	auth, err := goph.RawKey(*sessionConfig.PrivateKey, *sessionConfig.PrivateKeyPassword)
-	config := &goph.Config{
+	if err != nil {
+		return nil, err
+	}
+
+	gophConfig := &goph.Config{
 		Auth:    auth,
 		User:    "cli",
 		Addr:    consts.AgentHost,
@@ -45,7 +49,7 @@ func NewClient() (*goph.Client, error) {
 		},
 	}
 
-	client, err := goph.NewConn(config)
+	client, err := goph.NewConn(gophConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -89,6 +93,6 @@ func Execute(client *goph.Client, command string) {
 	err = session.Run(command)
 
 	if err != nil {
-		log.Errorf("%v", err)
+		log.Error(err)
 	}
 }

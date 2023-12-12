@@ -89,7 +89,8 @@ func defaultValue(param Param) *Statement {
 		default: // enum
 			if strings.Contains(param.Default.(string), ".") {
 				parts := strings.Split(param.Default.(string), "_")
-				return Lit(fmt.Sprintf("%s", parts[len(parts)-1]))
+
+				return Lit(parts[len(parts)-1])
 			}
 		}
 	}
