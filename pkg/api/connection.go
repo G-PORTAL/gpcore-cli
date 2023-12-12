@@ -3,7 +3,7 @@ package api
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/G-PORTAL/gpcloud-go/pkg/gpcloud/client"
+	"github.com/G-PORTAL/gpcore-go/pkg/gpcore/client"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -22,7 +22,7 @@ func NewGRPCConnection(extraOptions ...interface{}) (*grpc.ClientConn, error) {
 		})))
 
 	// User Agent
-	options = append(options, grpc.WithUserAgent(fmt.Sprintf("GPCore Golang Client [%s]", grpc.Version)))
+	options = append(options, grpc.WithUserAgent(fmt.Sprintf("GPCORE CLI [%s]", grpc.Version)))
 
 	endpoint := client.DefaultEndpoint
 	authenticationDefined := false

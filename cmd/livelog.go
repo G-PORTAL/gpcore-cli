@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/admin/v1/adminv1grpc"
-	adminv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/admin/v1"
-	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
+	"buf.build/gen/go/gportal/gpcore/grpc/go/gpcore/api/admin/v1/adminv1grpc"
+	adminv1 "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/admin/v1"
+	cloudv1 "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/cloud/v1"
 	"github.com/charmbracelet/ssh"
 	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/spf13/cobra"

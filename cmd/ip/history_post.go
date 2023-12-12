@@ -1,7 +1,7 @@
 package ip
 
 import (
-	adminv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/admin/v1"
+	adminv1 "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/admin/v1"
 	"github.com/spf13/cobra"
 )
 

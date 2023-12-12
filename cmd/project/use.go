@@ -1,10 +1,8 @@
 package project
 
-// TODO: File needs to be generated instead of being statically defined
-
 import (
-	"buf.build/gen/go/gportal/gportal-cloud/grpc/go/gpcloud/api/cloud/v1/cloudv1grpc"
-	cloudv1 "buf.build/gen/go/gportal/gportal-cloud/protocolbuffers/go/gpcloud/api/cloud/v1"
+	"buf.build/gen/go/gportal/gpcore/grpc/go/gpcore/api/cloud/v1/cloudv1grpc"
+	cloudv1 "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/cloud/v1"
 	"fmt"
 	"github.com/G-PORTAL/gpcore-cli/pkg/client"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
