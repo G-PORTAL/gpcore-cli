@@ -16,7 +16,9 @@ func GetUser(ctx context.Context) *cloudv1.User {
 	resp, err := authClient.GetUser(context.Background(), &authv1.GetUserRequest{})
 	if err != nil {
 		log.Fatalf("Can not get user: %v", err)
+		return nil
 	}
+
 	return resp.GetUser()
 
 }
