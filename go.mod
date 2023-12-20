@@ -8,7 +8,7 @@ require (
 	github.com/99designs/keyring v1.2.2
 	github.com/G-PORTAL/gpcore-go v0.0.0-20231212092153-ce276ab9f482
 	github.com/charmbracelet/log v0.3.1
-	github.com/charmbracelet/ssh v0.0.0-20230822194956-1a051f898e09
+	github.com/charmbracelet/ssh v0.0.0-20231219235653-2fb01e2a3f80
 	github.com/charmbracelet/wish v1.2.0
 	github.com/creativeprojects/go-selfupdate v1.1.2
 	github.com/dave/jennifer v1.7.0
@@ -17,8 +17,8 @@ require (
 	github.com/melbahja/goph v1.4.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stoewer/go-strcase v1.3.0
-	golang.org/x/crypto v0.16.0
-	google.golang.org/grpc v1.60.0
+	golang.org/x/crypto v0.17.0
+	google.golang.org/grpc v1.60.1
 	gopkg.in/op/go-logging.v1 v1.0.0-20160315200505-970db520ece7
 	gopkg.in/yaml.v3 v3.0.1
 )
