@@ -3,8 +3,8 @@ module github.com/G-PORTAL/gpcore-cli
 go 1.21
 
 require (
-	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20231214151246-fc049535d7b1.2
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.32.0-20231214151246-fc049535d7b1.1
+	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240214122508-3176bbe00a4d.2
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.32.0-20240214122508-3176bbe00a4d.1
 	github.com/99designs/keyring v1.2.2
 	github.com/G-PORTAL/gpcore-go v0.0.0-20231212092153-ce276ab9f482
 	github.com/charmbracelet/log v0.3.1
