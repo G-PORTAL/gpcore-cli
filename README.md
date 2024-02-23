@@ -28,7 +28,7 @@ password). Non-critical information will be stored in a config file
 keyring (if supported by the OS). The keyring is encrypted with the user's
 password. To secure the connection between client and server, a SSH public/private
 key pair will be generated and secured with a passphrase. The passphrase is
-the same as the password for the GPCloud account. This way, the connection
+the same as the password for the GPCORE account. This way, the connection
 between client and server is secured and no other ssh client can connect to it.
 
 If you messed up your config, the sensitive data in the keyring or the public/private
@@ -78,14 +78,11 @@ example, if you want to remove some colums, format certain colums or validate
 input, you can do this with hooks. Create a file in the same package with the
 same name of the action (auto generated file), but with the prefix ```_pre.go```
 to execute code before the action and ```_post.go``` to execute code after the
-action but before the outout is printed. As an example, see ```project/list_post.go```.
+action but before the output is printed. As an example, see ```project/list_post.go```.
 
 
 ### Ongoing tasks
 
-- on login to api: check if user/pass is set, if so mark it as admin
-- catch unauthorized error and ask for user/pass
-
-* Migrate code generation to Jennifer for more advanced stuff (pagination)
+* catch unauthorized error and ask for user/pass
 * Pagination support for long lists (pending because of Jennifer migration)
 * Complete the API endpoints, so everything is accessible through the CLI tool

@@ -18,7 +18,7 @@ import (
 //go:generate go run ./pkg/generator/generator.go
 //go:generate gofmt -s -w ./cmd/
 
-// GPCloud CLI (gpc in short) is a command line interface for the G-Portal Cloud
+// GPCORE CLI (gpc in short) is a command line interface for the G-Portal Cloud
 // API. It is written in Go and uses the Cobra framework. The commands are auto
 // generated from definition files in the pkg/generator/definition directory
 // (the generated files get the _gen postfix). Custom commands can be added in
