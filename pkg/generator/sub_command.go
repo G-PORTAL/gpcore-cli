@@ -9,6 +9,7 @@ import (
 var (
 	apiClientImport string
 	apiGRPCImport   string
+	apiTypesImport  string
 )
 
 // GenerateSubCommand generates a subcommand based on the given metadata. The
@@ -23,6 +24,7 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 	// Imports
 	apiClientImport = "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/" + metadata.Action.APICall.Client + "/" + metadata.Action.APICall.Version
 	apiGRPCImport = "buf.build/gen/go/gportal/gpcore/grpc/go/gpcore/api/" + metadata.Action.APICall.Client + "/" + metadata.Action.APICall.Version + "/" + metadata.Action.APICall.Client + metadata.Action.APICall.Version + "grpc"
+	apiTypesImport = "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/type/v1"
 
 	f.ImportName("github.com/spf13/cobra", "cobra")
 	f.ImportName("github.com/G-PORTAL/gpcore-cli/pkg/client", "client")
@@ -30,8 +32,10 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 	f.ImportName("google.golang.org/grpc", "grpc")
 	f.ImportName("github.com/charmbracelet/ssh", "ssh")
 	f.ImportName("github.com/jedib0t/go-pretty/v6/table", "table")
-	f.ImportAlias(apiClientImport, apiClient(metadata))
 	f.ImportName(apiGRPCImport, apiClient(metadata)+"grpc")
+
+	f.ImportAlias(apiClientImport, apiClient(metadata))
+	f.ImportAlias(apiTypesImport, "typesv1")
 
 	// Parameters (variables)
 	for _, param := range metadata.Action.Params {
@@ -163,29 +167,93 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		apiCallParams[Id(title(strcase.LowerCamelCase(param.Name)))] = val
 	}
 
-	c = append(c, List(Id("resp"), Id("err")).Op(":=").
+	// Pagination
+	if hasPaginateField(metadata.Action.APICall) {
+		apiCallParams[Id("Pagination")] = Id("pagination")
+		c = append(c, Var().Id("totalPages").Int32())
+		c = append(c, Id("pagination").Op(":=").Op("&").Qual(apiTypesImport, "PaginationRequest").Values(
+			Id("Page").Op(":").Lit(1),
+		))
+	}
+
+	respC := make([]Code, 0)
+	respC = append(respC, List(Id("resp"), Id("err")).Op(":=").
 		Id("client").Dot(metadata.Action.APICall.Endpoint).Call(
 		Id("cobraCmd").Dot("Context").Call(),
 		Op("&").Qual(apiClientImport, metadata.Action.APICall.Endpoint+"Request").Values(apiCallParams)))
 
-	c = append(c, If(Id("err").Op("!=").Nil()).Block(
+	respC = append(respC, If(Id("err").Op("!=").Nil()).Block(
 		Return(Id("err"))))
 
-	if strings.HasPrefix(metadata.Action.APICall.Endpoint, "List") {
+	if hasListOutput(metadata.Action.APICall) {
 		// List response
-		c = append(c, listResponse(metadata)...)
+		respC = append(respC, listResponse(metadata)...)
+
+		if hasPaginateField(metadata.Action.APICall) {
+			c = append(c, Var().Id("combinedData").Index().Interface())
+
+			respC = append(respC, Line())
+			respC = append(respC, If(Id("resp.Pagination").Op("==").Nil().Block(
+				Break())))
+			respC = append(respC, Id("totalPages").Op("=").
+				Id("resp").Dot("GetPagination").Call().Dot("GetTotal").Call())
+			respC = append(respC, Id("pagination").Dot("Page").Op("++"))
+			respC = append(respC, If(Id("resp").Dot("Pagination").Dot("Page").Op(">=").Id("totalPages")).Block(
+				Break()))
+		}
 	} else {
 		// Single response
-		c = append(c, singleResponse(metadata)...)
+		respC = append(respC, singleResponse(metadata)...)
 	}
 
-	c = append(c, Line())
+	if hasListOutput(metadata.Action.APICall) {
+		// Build the table
+		c = append(c, Id("sshSession").Op(":=").
+			Id("ctx").Dot("Value").
+			Call(Lit("ssh")).
+			Assert(Op("*").Qual("github.com/charmbracelet/ssh", "Session")))
+		c = append(c, Id("headerRow").Op(":=").
+			Qual("github.com/jedib0t/go-pretty/v6/table", "Row").Values())
+		c = append(c, Id("tbl").Op(":=").
+			Qual("github.com/jedib0t/go-pretty/v6/table", "NewWriter").Call())
+		c = append(c, Id("tbl").Dot("SetStyle").
+			Call(Id("table").Dot("StyleRounded")))
+		c = append(c, Id("tbl").Dot("SetOutputMirror").
+			Call(Op("*").Id("sshSession")))
+		c = append(c, Id("cobraCmd").Dot("SetOut").
+			Call(Op("*").Id("sshSession")))
 
+		if hasPaginateField(metadata.Action.APICall) {
+			c = append(c, For().Block(respC...))
+		} else {
+			c = append(c, respC...)
+		}
+
+		// Do we have CSV output?
+		c = append(c, Line())
+		c = append(c, If(
+			Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "CSVOutput")).Block(
+			Id("tbl").Dot("RenderCSV").Call(),
+			Return(Nil())))
+
+		// Normal output
+		c = append(c, If(
+			Op("!").Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "JSONOutput")).Block(
+			Id("tbl").Dot("Render").Call()))
+
+	} else {
+		c = append(c, respC...)
+	}
+
+	respData := "respData"
+	if hasPaginateField(metadata.Action.APICall) {
+		respData = "combinedData"
+	}
 	c = append(c, If(Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "JSONOutput")).Block(
 		List(Id("jsonData"), Id("err")).
 			Op(":=").
 			Qual("encoding/json", "MarshalIndent").Call(
-			Id("respData"),
+			Id(respData),
 			Lit(""),
 			Lit("  ")),
 		If(Id("err").Op("!=").Nil()).Block(
@@ -204,11 +272,6 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 func listResponse(metadata SubcommandMetadata) []Code {
 	c := make([]Code, 0)
 
-	c = append(c, Id("sshSession").Op(":=").
-		Id("ctx").Dot("Value").
-		Call(Lit("ssh")).
-		Assert(Op("*").Qual("github.com/charmbracelet/ssh", "Session")))
-
 	// Remove root key
 	rootKey := metadata.Action.RootKey
 	if rootKey == "" {
@@ -216,18 +279,6 @@ func listResponse(metadata SubcommandMetadata) []Code {
 	}
 	c = append(c, Id("respData").Op(":=").
 		Id("resp").Dot(rootKey))
-
-	// Build the table
-	c = append(c, Id("headerRow").Op(":=").
-		Qual("github.com/jedib0t/go-pretty/v6/table", "Row").Values())
-	c = append(c, Id("tbl").Op(":=").
-		Qual("github.com/jedib0t/go-pretty/v6/table", "NewWriter").Call())
-	c = append(c, Id("tbl").Dot("SetStyle").
-		Call(Id("table").Dot("StyleRounded")))
-	c = append(c, Id("tbl").Dot("SetOutputMirror").
-		Call(Op("*").Id("sshSession")))
-	c = append(c, Id("cobraCmd").Dot("SetOut").
-		Call(Op("*").Id("sshSession")))
 
 	// Call post hook if available
 	if hasHook(metadata.Definition.Name, metadata.Name, "post") {
@@ -241,49 +292,69 @@ func listResponse(metadata SubcommandMetadata) []Code {
 	// Collect rows
 	if len(metadata.Action.Fields) == 0 {
 		// We use all the fields
+		allFieldsCode := make([]Code, 0)
+
+		allFieldsCode = append(allFieldsCode, Id("c").Op(":=").
+			Qual("reflect", "ValueOf").
+			Call(Op("*").Id("entry")))
+
+		if hasPaginateField(metadata.Action.APICall) {
+			allFieldsCode = append(allFieldsCode, Id("combinedData").Op("=").Append(Id("combinedData"), Id("entry")))
+		}
+		allFieldsCode = append(allFieldsCode, Id("row").Op(":=").
+			Qual("github.com/jedib0t/go-pretty/v6/table", "Row").Values())
+
+		headerCondition := Id("j").Op("==").Lit(0)
+		if hasPaginateField(metadata.Action.APICall) {
+			headerCondition = headerCondition.Op("&&").Id("pagination").Dot("Page").Op("==").Lit(1)
+		}
+
+		allFieldsCode = append(allFieldsCode, For(
+			Id("i").Op(":=").Lit(0),
+			Id("i").Op("<").Id("c").Dot("NumField").Call(),
+			Id("i").Op("++")).Block(
+			If(Id("c").Dot("Type").Call().Dot("Field").Call(Id("i")).Dot("IsExported").Call().Block(
+				Id("val").Op(":=").Qual("fmt", "Sprintf").Call(
+					Lit("%v"),
+					Id("c").Dot("Field").Call(
+						Id("i")).Dot("Interface").Call()),
+				Id("col").Op(":=").Qual("fmt", "Sprintf").Call(
+					Lit("%v"),
+					Id("c").Dot("Type").Call().
+						Dot("Field").Call(
+						Id("i")).
+						Dot("Name")),
+				Switch(Id("col").Block(
+					Case(Lit("CreatedAt")).Block(tableColValue("CreatedAt")...),
+					Case(Lit("Currency")).Block(tableColValue("Currency")...),
+					Case(Lit("User")).Block(tableColValue("User")...),
+					Case(Lit("Environment")).Block(tableColValue("Environment")...))),
+				Id("row").Op("=").Append(Id("row"), Id("val")),
+				If(headerCondition).Block(
+					Id("headerRow").Op("=").Append(
+						Id("headerRow"),
+						Id("c").Dot("Type").Call().Dot("Field").Call(Id("i")).Dot("Name"))),
+			))))
+		allFieldsCode = append(allFieldsCode, Id("tbl").Dot("AppendRow").Call(Id("row")))
+		allFieldsCode = append(allFieldsCode, If(headerCondition).Block(
+			Id("tbl").Dot("AppendHeader").Call(Id("headerRow"))))
+
 		c = append(c, For(List(Id("j"), Id("entry")).
-			Op(":=").Range().Id("respData")).Block(
-			Id("c").Op(":=").
-				Qual("reflect", "ValueOf").
-				Call(Op("*").Id("entry")),
-			Id("row").Op(":=").
-				Qual("github.com/jedib0t/go-pretty/v6/table", "Row").Values(),
-			For(
-				Id("i").Op(":=").Lit(0),
-				Id("i").Op("<").Id("c").Dot("NumField").Call(),
-				Id("i").Op("++")).Block(
-				If(Id("c").Dot("Type").Call().Dot("Field").Call(Id("i")).Dot("IsExported").Call().Block(
-					Id("val").Op(":=").Qual("fmt", "Sprintf").Call(
-						Lit("%v"),
-						Id("c").Dot("Field").Call(
-							Id("i")).Dot("Interface").Call()),
-					Id("col").Op(":=").Qual("fmt", "Sprintf").Call(
-						Lit("%v"),
-						Id("c").Dot("Type").Call().
-							Dot("Field").Call(
-							Id("i")).
-							Dot("Name")),
-					Switch(Id("col").Block(
-						Case(Lit("CreatedAt")).Block(tableColValue("CreatedAt")...),
-						Case(Lit("Currency")).Block(tableColValue("Currency")...),
-						Case(Lit("Environment")).Block(tableColValue("Environment")...),
-						Id("row").Op("=").Append(Id("row"), Id("val")))),
-					If(Id("j").Op("==").Lit(0)).Block(
-						Id("headerRow").Op("=").Append(
-							Id("headerRow"),
-							Id("c").Dot("Type").Call().Dot("Field").Call(Id("i")).Dot("Name"))),
-				))),
-			Id("tbl").Dot("AppendRow").Call(Id("row"))))
-
-		// Add the header row
-		c = append(c, Id("tbl").Dot("AppendHeader").Call(Id("headerRow")))
-
+			Op(":=").Range().Id("respData")).Block(allFieldsCode...))
 	} else {
 		// Header row
+		headerCode := make([]Code, 0)
+
 		for _, value := range metadata.Action.Fields {
-			c = append(c, Id("headerRow").Op("=").Append(Id("headerRow"), Lit(value)))
+			headerCode = append(headerCode, Id("headerRow").Op("=").Append(Id("headerRow"), Lit(value)))
 		}
-		c = append(c, Id("tbl").Dot("AppendHeader").Call(Id("headerRow")))
+		headerCode = append(headerCode, Id("tbl").Dot("AppendHeader").Call(Id("headerRow")))
+
+		if hasPaginateField(metadata.Action.APICall) {
+			c = append(c, If(Id("pagination").Dot("Page").Op("==").Lit(1)).Block(headerCode...))
+		} else {
+			c = append(c, headerCode...)
+		}
 		c = append(c, Line())
 
 		// Only use whitelisted fields
@@ -316,23 +387,15 @@ func listResponse(metadata SubcommandMetadata) []Code {
 			valuesCode = append(valuesCode, Id("row").Op("=").Append(Id("row"), Id("val")))
 		}
 
+		// Append to combined data (json output)
 		valuesCode = append(valuesCode, Id("tbl").Dot("AppendRow").Call(Id("row")))
+
+		if hasPaginateField(metadata.Action.APICall) {
+			valuesCode = append(valuesCode, Id("combinedData").Op("=").Append(Id("combinedData"), Id("entry")))
+		}
 		c = append(c, For(List(Id(indexVariable), Id("entry")).Op(":=").Range().Id("respData")).Block(
 			valuesCode...))
-
 	}
-
-	// Do we have CSV output?
-	c = append(c, Line())
-	c = append(c, If(
-		Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "CSVOutput")).Block(
-		Id("tbl").Dot("RenderCSV").Call(),
-		Return(Nil())))
-
-	// Normal output
-	c = append(c, If(
-		Op("!").Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "JSONOutput")).Block(
-		Id("tbl").Dot("Render").Call()))
 
 	return c
 }
@@ -354,11 +417,6 @@ func tableColValue(col string) []Code {
 
 	switch col {
 	case "CreatedAt":
-		// This one is tricky. We need to get the seconds from the struct
-		// and convert it to a time.Time object. Problem is the Go type system
-		// and the fact that we don't know the type of the field. So we need to
-		// use reflection to get the value and then convert it to a time.Time.
-		// A lib like Jennifer would be better suited for this.
 		c = append(c, Id("c").Op(":=").Qual("reflect", "ValueOf").Call(
 			Op("*").Id("entry")))
 		c = append(c, Id("a").Op(":=").
@@ -379,6 +437,15 @@ func tableColValue(col string) []Code {
 	case "Environment":
 		c = append(c, Id("val").Op("=").
 			Id("val").Index(Lit(20), Empty()))
+	case "User":
+		c = append(c, Id("u").Op(":=").Qual("reflect", "ValueOf").Call(
+			Op("*").Id("entry")))
+		c = append(c, Id("user").Op(":=").
+			Qual("reflect", "Indirect").Call(
+			Id("u")).Dot("FieldByName").Call(Lit("User")))
+		c = append(c, Id("val").Op("=").
+			Qual("reflect", "Indirect").Call(
+			Id("user")).Dot("FieldByName").Call(Lit("Username")).Dot("String").Call())
 	}
 
 	return c
@@ -391,35 +458,39 @@ func initFunc(name string, metadata SubcommandMetadata) []Code {
 	c := make([]Code, 0)
 
 	// Params
-	for _, param := range metadata.Action.Params {
-		dataType := title(param.Type)
-		if enumType(param.Type) {
-			dataType = "String"
-		}
+	if len(metadata.Action.Params) > 0 {
+		for _, param := range metadata.Action.Params {
+			dataType := title(param.Type)
+			if enumType(param.Type) {
+				dataType = "String"
+			}
 
-		c = append(c,
-			Id(strcase.LowerCamelCase(name)+"Cmd").
-				Dot("Flags").Call().
-				Dot(dataType+"Var").Params(
-				Op("&").Id(strcase.LowerCamelCase(name)+title(strcase.LowerCamelCase(param.Name))),
-				Lit(strcase.KebabCase(param.Name)),
-				defaultValue(param),
-				Lit(parameterDescription(param))))
+			c = append(c,
+				Id(strcase.LowerCamelCase(name)+"Cmd").
+					Dot("Flags").Call().
+					Dot(dataType+"Var").Params(
+					Op("&").Id(strcase.LowerCamelCase(name)+title(strcase.LowerCamelCase(param.Name))),
+					Lit(strcase.KebabCase(param.Name)),
+					defaultValue(param),
+					Lit(parameterDescription(param))))
+		}
+		c = append(c, Line())
 	}
 
-	c = append(c, Line())
-
 	// Required fields
+	containsRequiredFields := false
 	for _, param := range metadata.Action.Params {
 		if param.Required {
 			c = append(c,
 				Id(strcase.LowerCamelCase(name)+"Cmd").
 					Dot("MarkFlagRequired").
 					Call(Lit(strcase.KebabCase(param.Name))))
+			containsRequiredFields = true
 		}
 	}
-
-	c = append(c, Line())
+	if containsRequiredFields {
+		c = append(c, Line())
+	}
 
 	// Add the command to the root command
 	c = append(c, Id("Root"+strcase.UpperCamelCase(metadata.Definition.Name)+"Command").

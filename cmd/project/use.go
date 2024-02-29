@@ -27,6 +27,7 @@ var useCmd = &cobra.Command{
 			return err
 		}
 
+		log.Info("Selecting project: " + args[0])
 		for _, project := range resp.Projects {
 			if (project.Name == args[0]) || (project.Id == args[0]) {
 				cfg.CurrentProject = &project.Id
