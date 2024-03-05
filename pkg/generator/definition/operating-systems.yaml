@@ -1,0 +1,57 @@
+description: Network Switche related operations
+actions:
+  list:
+    api-call: admin.ListOperatingSystems
+    root-key: OperatingSystems
+
+  get:
+    api-call: admin.GetOperatingSystem
+    params:
+      - name: id
+        type: string
+        description: Operating system ID
+        required: true
+
+  create:
+    api-call: admin.CreateOperatingSystem
+    params:
+      - name: name
+        type: string
+        description: Operating system name
+        required: true
+      - name: family
+        type: cloudv1.OperatingSystemFamily
+        default: cloudv1.OPERATING_SYSTEM_FAMILY_LINUX
+        description: Operating system family
+
+  update:
+    api-call: admin.UpdateOperatingSystem
+    params:
+      - name: id
+        type: string
+        description: Operating system ID
+        required: true
+      - name: name
+        type: string
+        description: Operating system name
+        required: true
+      - name: family
+        type: cloudv1.OperatingSystemFamily
+        default: cloudv1.OPERATING_SYSTEM_FAMILY_LINUX
+        description: Operating system family
+      - name: default_image_id
+        type: string
+        description: Default image ID
+        required: false
+      # TODO: File support
+      #- name: icon
+      #  type: file
+      #  description: Operating system icon
+
+  delete:
+    api-call: admin.DeleteOperatingSystem
+    params:
+      - name: id
+        type: string
+        description: Operating system ID
+        required: true

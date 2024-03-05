@@ -11,3 +11,65 @@ actions:
       - PowerState
       - ProvisionState
       - CreatedAt
+
+  list-available:
+    api-call: admin.ListAvailableServer
+    description: List all available servers
+    root-key: Server
+
+  import:
+    api-call: admin.ImportServer
+    description: Import a new server
+
+  trigger-action:
+    api-call: admin.TriggerServerAction
+    description: Trigger an action on a server
+    params:
+      - name: server_id
+        type: string
+        description: Server ID
+        required: true
+      - name: action
+        type: cloudv1.ServerAction
+        default: cloudv1.SERVER_ACTION_POWER_ON
+        description: Action to trigger
+        required: true
+
+  get:
+    api-call: admin.GetServer
+    description: Get server details
+    params:
+      - name: id
+        type: string
+        description: Server ID
+        required: true
+
+  update:
+    api-call: admin.UpdateServer
+    description: Update server details
+    params:
+      - name: id
+        type: string
+        description: Server ID
+        required: true
+      - name: flavour_id
+        type: string
+        description: Flavour ID
+        required: true
+      - name: in-pool
+        type: bool
+        description: If the server is available
+        required: true
+
+  delete:
+    api-call: admin.DeleteServer
+    description: Delete a server
+    params:
+      - name: id
+        type: string
+        description: Server ID
+        required: true
+
+  platform-management:
+    api-call: admin.GetServerPlatformManagement
+    description: Get server platform management details

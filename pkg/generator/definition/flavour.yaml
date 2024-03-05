@@ -15,3 +15,117 @@ actions:
       - Disk
       - Network
       - Traffic
+
+  list-project:
+    api-call: cloud.ListProjectFlavours
+    description: List all available flavours for a project
+    root-key: Flavours
+    params:
+      - name: id
+        type: string
+        description: Project ID
+        required: true
+
+  get:
+    api-call: admin.GetFlavour
+    description: Get flavour details
+    params:
+      - name: id
+        type: string
+        description: Flavour ID
+        required: true
+
+  delete:
+    api-call: admin.DeleteFlavour
+    description: Delete a flavour
+    params:
+      - name: id
+        type: string
+        description: Flavour ID
+        required: true
+
+  create:
+    api-call: admin.CreateFlavour
+    description: Create a new flavour
+    params:
+      - name: name
+        type: string
+        description: Flavour name
+        required: true
+      - name: cpu
+        type: string
+        description: CPU model
+        required: true
+      - name: cpu_amount
+        type: int32
+        description: Amount of CPUs
+        required: true
+      - name: cpu_cores
+        type: int32
+        description: Amount of CPU cores
+        required: true
+      - name: cpu_threads
+        type: int32
+        description: Amount of CPU threads
+        required: true
+      - name: memory
+        type: string
+        description: Amount of memory in MB
+        required: true
+      - name: disk
+        type: string
+        description: Amount of disk space in GB
+        required: true
+      - name: network
+        type: string
+        description: Network speed in Mbit/s
+        required: true
+      - name: traffic
+        type: int64
+        description: Traffic in TB
+        required: true
+
+  update:
+    api-call: admin.UpdateFlavour
+    description: Update flavour details
+    params:
+      - name: id
+        type: string
+        description: Flavour ID
+        required: true
+      - name: name
+        type: string
+        description: Flavour name
+        required: true
+      - name: cpu
+        type: string
+        description: CPU model
+        required: true
+      - name: cpu_amount
+        type: int32
+        description: Amount of CPUs
+        required: true
+      - name: cpu_cores
+        type: int32
+        description: Amount of CPU cores
+        required: true
+      - name: cpu_threads
+        type: int32
+        description: Amount of CPU threads
+        required: true
+      - name: memory
+        type: string
+        description: Amount of memory in MB
+        required: true
+      - name: disk
+        type: string
+        description: Amount of disk space in GB
+        required: true
+      - name: network
+        type: string
+        description: Network speed in Mbit/s
+        required: true
+      - name: traffic
+        type: int64
+        description: Traffic in TB
+        required: true

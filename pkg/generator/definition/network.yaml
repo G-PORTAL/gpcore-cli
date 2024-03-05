@@ -1,0 +1,58 @@
+description: Network management
+actions:
+  list:
+    api-call: admin.ListNetworks
+    root-key: Networks
+
+  get:
+    api-call: admin.GetNetwork
+    params:
+      - name: id
+        type: string
+        description: Network ID
+        required: true
+
+  create:
+    api-call: admin.CreateNetwork
+    params:
+      - name: datacenter_id
+        type: string
+        description: Datacenter ID
+        required: true
+      - name: type
+        type: cloudv1.NetworkType
+        default: cloudv1.NETWORK_TYPE_PRIVATE
+        description: Network type
+        required: true
+      - name: name
+        type: string
+        description: Network name
+        required: true
+      - name: vlan_id
+        type: int32
+        description: VLAN ID
+        required: true
+
+  update:
+    api-call: admin.UpdateNetwork
+    params:
+      - name: id
+        type: string
+        description: Network ID
+        required: true
+      - name: name
+        type: string
+        description: Network name
+        required: true
+      - name: vlan_id
+        type: int32
+        description: VLAN ID
+        required: true
+
+  delete:
+    api-call: admin.DeleteNetwork
+    params:
+      - name: id
+        type: string
+        description: Network ID
+        required: true

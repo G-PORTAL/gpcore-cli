@@ -1,0 +1,19 @@
+description: Server and admin logs
+actions:
+  server:
+    api-call: admin.ListServerLogs
+    description: List all server logs
+    root-key: Logs
+    params:
+      - name: id
+        type: string
+        description: Server ID
+        required: true
+      - name: search
+        type: string
+        description: Search for a specific log
+
+  admin:
+    api-call: admin.ListAdminLogs
+    description: List all admin logs
+    root-key: Logs

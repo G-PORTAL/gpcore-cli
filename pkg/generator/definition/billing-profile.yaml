@@ -1,3 +1,4 @@
+description: Manage billing profiles for your account
 actions:
   list:
     api-call: payment.ListBillingProfiles
@@ -10,6 +11,62 @@ actions:
       - City
       - Postcode
       - Company
+
+  list-bills:
+    #api-call: cloudv2.ListBillingProfileBills (not ready yet)
+    api-call: cloud.ListBillingProfileBills
+    description: List bills for billing profile
+    root-key: Bills
+    params:
+      - name: id
+        type: string
+        description: Billing profile ID
+        required: true
+      - name: year
+        type: int32
+        description: Year
+        required: false
+
+  list-projects:
+    #api-call: cloudv2.ListBillingProfileProjects (not ready yet)
+    api-call: cloud.ListBillingProfileProjects
+    description: List projects for billing profile
+    root-key: Projects
+    params:
+      - name: id
+        type: string
+        description: Project ID
+        required: true
+
+  details:
+    api-call: cloud.GetBillingProfileBillDetails
+    description: Get details for a bill
+    params:
+      - name: id
+        type: string
+        required: true
+      - name: bill_id
+        type: string
+        required: true
+
+  change-node-billing-period:
+    api-call: cloud.ChangeNodeBillingPeriod
+    params:
+      - name: id
+        type: string
+        required: true
+      - name: project_id
+        type: string
+        required: true
+      - name: billing_period
+        type: cloudv1.BillingPeriod
+        default: cloudv1.BILLING_PERIOD_MONTHLY
+        required: true
+
+  # TODO: File output support not available
+  #pdf:
+  #  api-call: cloud.GetBillingProfileBillPdf
+
   create:
     api-call: payment.CreateBillingProfile
     description: Create a new billing profile

@@ -1,0 +1,38 @@
+description: Agents, which are deployed on the nodes
+actions:
+  list:
+    api-call: admin.ListAgents
+    root-key: Agents
+    fields:
+      - Id
+      - Type
+      - Datacenter
+      - Fqdn
+      - IronicEndpoint
+      - LastContactAt
+
+  create:
+    api-call: admin.CreateAgent
+    description: Create a new agent
+    params:
+      - name: type
+        type: adminv1.AgentType
+        default: adminv1.AGENT_TYPE_NETWORK_AGENT
+        description: Agent type
+        required: true
+      - name: datacenter_id
+        type: string
+        description: Datacenter ID
+        required: true
+      - name: fqdn
+        type: string
+        description: FQDN of the node
+        required: true
+
+  delete:
+    api-call: admin.DeleteAgent
+    params:
+      - name: id
+        type: string
+        description: Agent ID to delete
+        required: true

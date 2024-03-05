@@ -1,0 +1,20 @@
+description: Manage regions in which datacenters are located
+actions:
+  list:
+    api-call: admin.ListRegions
+    root-key: Regions
+    fields:
+      - Id
+      - Name
+      - CountryCode
+
+  get:
+    api-call: admin.GetRegion
+    params:
+      - name: id
+        type: string
+        description: Region ID
+        required: true
+
+# edge cases gefixt
+#

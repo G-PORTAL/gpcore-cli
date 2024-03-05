@@ -84,6 +84,19 @@ func main() {
 		}
 	}
 
+	// Generate the Helper functions file
+	if _, err := os.Stat("./pkg/protobuf"); os.IsNotExist(err) {
+		err = os.Mkdir("./pkg/protobuf", 0755)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	targetFilenameHelpers := "./pkg/protobuf/helpers" + generatedFileSuffix + ".go"
+	err = generator.GenerateHelpersFile(targetFilenameHelpers)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Generate the AddCommands func, so the commands get added to the root command
 	targetFilename := "./cmd/addcommands" + generatedFileSuffix + ".go"
 	commandList := []string{}

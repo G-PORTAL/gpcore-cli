@@ -1,0 +1,30 @@
+description: SSH Keys
+actions:
+  list:
+    api-call: cloud.ListUserSSHKeys
+    root-key: SshKeys
+
+  list-project:
+    api-call: cloud.ListProjectSSHKeys
+    root-key: Keys
+
+  create:
+    api-call: cloud.CreateUserSSHKey
+    description: Create a new SSH key
+    params:
+      - name: name
+        type: string
+        description: SSH key name
+        required: true
+      - name: public_key
+        type: string
+        description: Public key
+        required: true
+
+  delete:
+    api-call: cloud.DeleteUserSSHKey
+    params:
+      - name: id
+        type: string
+        description: SSH key ID
+        required: true

@@ -1,0 +1,65 @@
+description: Project Images
+actions:
+  list:
+    api-call: cloud.ListProjectImages
+    root-key: Images
+
+  get:
+    api-call: cloud.GetProjectImage
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Image ID
+        required: true
+      - name: project_id
+        type: string
+        description: Project ID
+        required: true
+
+  create:
+    api-call: cloud.CreateProjectImage
+    description: Create a new image
+    params:
+      - name: name
+        type: string
+        description: Image name
+        required: true
+      # TODO: Array support needed
+      #- name: authentication_types
+      #  type: cloudv1.ImageAuthenticationType
+      #  description: Authentication type
+      #  required: true
+      #  default: cloudv1.IMAGE_AUTHENTICATION_TYPE_PASSWORD
+      - name: available
+        type: bool
+        description: Image availability
+        required: true
+
+  delete:
+    api-call: cloud.DeleteProjectImage
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Image ID
+        required: true
+      - name: project_id
+        type: string
+        description: Project ID
+        required: true
+
+  delete-version:
+    api-call: cloud.DeleteProjectImageVersion
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Image ID
+        required: true
+      - name: project_id
+        type: string
+        description: Project ID
+        required: true
+
+identifier: session.CurrentProject

@@ -1,0 +1,10 @@
+description: Network ARP table
+actions:
+  lookup:
+    api-call: admin.LookupARP
+    description: Lookup ARP table
+    params:
+      - name: mac_address
+        type: string
+        description: IP address
+        required: true
