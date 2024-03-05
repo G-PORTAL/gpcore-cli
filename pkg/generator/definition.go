@@ -42,14 +42,12 @@ func (api *APICall) UnmarshalYAML(value *yaml.Node) error {
 	api.Client = matches[1]
 	api.Endpoint = matches[2]
 	api.Version = "v1"
-	if len(matches) == 4 {
-		versionRegex := regexp.MustCompile(`.*\/(v[0-9])`)
 
-		versionMatches := versionRegex.FindStringSubmatch(api.Endpoint)
-		if len(versionMatches) == 2 {
-			api.Version = versionMatches[1]
-			api.Endpoint = api.Endpoint[:len(api.Endpoint)-len(versionMatches[1])-1]
-		}
+	versionRegex := regexp.MustCompile(`(.*)(v[1-9]+)`)
+	versionMatches := versionRegex.FindStringSubmatch(api.Client)
+	if len(versionMatches) == 3 {
+		api.Client = versionMatches[1]
+		api.Version = versionMatches[2]
 	}
 
 	return nil

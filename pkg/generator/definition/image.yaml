@@ -1,3 +1,4 @@
+description: Disk images to boot and install on the nodes
 actions:
   list:
     api-call: admin.ListImages
@@ -6,3 +7,99 @@ actions:
       - Id
       - Name
       - Available
+
+  list-public:
+    api-call: cloud.ListPublicImages
+    root-key: OperatingSystems
+
+  get:
+    api-call: admin.GetImage
+    params:
+      - name: id
+        type: string
+        description: Image ID
+        required: true
+
+  update:
+    api-call: admin.UpdateImage
+    params:
+      - name: id
+        type: string
+        description: Image ID
+        required: true
+      - name: available
+        type: bool
+        description: Image availability
+        required: true
+      - name: vendor_data
+        type: string
+        description: Vendor data
+        required: false
+      - name: alias
+        type: string
+        description: Alias for the image
+        required: false
+      - name: release
+        type: cloudv1.ImageRelease
+        default: cloudv1.IMAGE_RELEASE_STABLE
+        description: Release of the image
+        required: false
+      - name: name
+        type: string
+        description: Name of the image
+        required: true
+      - name: username
+        type: string
+        description: Username for the image
+        required: true
+      #- name: authentication_types (need array support)
+
+  create:
+    api-call: admin.CreateImage
+    params:
+      - name: operating_system_id
+        type: string
+        description: Operating system ID
+        required: true
+      - name: name
+        type: string
+        description: Name of the image
+        required: true
+      - name: username
+        type: string
+        description: Username for the image
+        required: true
+      - name: available
+        type: bool
+        description: Image availability
+        required: true
+      - name: vendor_data
+        type: string
+        description: Vendor data
+        required: false
+      - name: alias
+        type: string
+        description: Alias for the image
+        required: false
+      - name: release
+        type: cloudv1.ImageRelease
+        default: cloudv1.IMAGE_RELEASE_STABLE
+        description: Release of the image
+        required: false
+      #- name: authentication_types (need array support)
+
+  delete:
+    api-call: admin.DeleteImage
+    params:
+      - name: id
+        type: string
+        description: Image ID
+        required: true
+
+  delete-version:
+    api-call: admin.DeleteImageVersion
+    params:
+      - name: id
+        type: string
+        description: Image version ID
+        required: true

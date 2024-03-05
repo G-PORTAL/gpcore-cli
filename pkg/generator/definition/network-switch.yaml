@@ -1,0 +1,13 @@
+description: Network Switches
+actions:
+  list:
+    api-call: admin.ListSwitches
+    root-key: Switches
+
+  get:
+    api-call: admin.GetSwitch
+    params:
+      - name: id
+        type: string
+        description: Switch ID
+        required: true

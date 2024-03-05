@@ -1,3 +1,4 @@
+description: List or update datacenter colocations
 actions:
   list:
     api-call: cloud.ListDatacenters
@@ -7,3 +8,16 @@ actions:
       - Short
       - Name
       - Status
+
+  update:
+    api-call: admin.UpdateDatacenter
+    params:
+      - name: id
+        type: string
+        description: Datacenter ID
+        required: true
+      - name: status
+        type: cloudv1.DatacenterStatus
+        default: cloudv1.DATACENTER_STATUS_ACTIVE
+        description: Datacenter status
+        required: true

@@ -1,5 +1,64 @@
+description: User management
 actions:
   ssh-keys:
     api-call: cloud.ListUserSSHKeys
     response-type: "*typev1.SSHKey"
     no-pagination: true
+
+  list:
+    api-call: admin.ListUsers
+    description: List all users
+    root-key: Users
+    params:
+      - name: search
+        type: string
+        description: Search for a specific log
+
+  get:
+    api-call: admin.GetUser
+    description: Get user details
+    params:
+      - name: id
+        type: string
+        description: User ID
+        required: true
+
+  update:
+    api-call: admin.UpdateUser
+    description: Update user details
+    params:
+      - name: id
+        type: string
+        description: User ID
+        required: true
+      - name: node_limit
+        type: int32
+        description: Node limit
+        required: false
+      - name: avatar_url
+        type: string
+        description: Avatar URL
+        required: false
+      # TODO: Tags
+
+  lock:
+    api-call: admin.LockUser
+    description: Lock a user
+    params:
+      - name: user_id
+        type: string
+        description: User ID
+        required: true
+      - name: reason
+        type: string
+        description: Reason for locking the user
+        required: true
+
+  unlock:
+    api-call: admin.UnlockUser
+    description: Unlock a user
+    params:
+      - name: user_id
+        type: string
+        description: User ID
+        required: true

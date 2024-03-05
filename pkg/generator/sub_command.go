@@ -29,6 +29,7 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 	f.ImportName("github.com/spf13/cobra", "cobra")
 	f.ImportName("github.com/G-PORTAL/gpcore-cli/pkg/client", "client")
 	f.ImportName("github.com/G-PORTAL/gpcore-cli/pkg/config", "config")
+	f.ImportName("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", "protobuf")
 	f.ImportName("google.golang.org/grpc", "grpc")
 	f.ImportName("github.com/charmbracelet/ssh", "ssh")
 	f.ImportName("github.com/jedib0t/go-pretty/v6/table", "table")
@@ -46,7 +47,19 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 	// Enum helper functions
 	for _, param := range metadata.Action.Params {
 		if enumType(param.Type) {
-			f.Add(enumToProtoFunc(param.Type)...)
+			// Add the import for the enum type
+			f.ImportAlias(clientPackageName(param.Type), stripClient(param.Type)+"v"+stripVersion(param.Type))
+
+			// Check if we need to add the proto helper
+			found := false
+			for _, helper := range protoHelpersAdded {
+				if helper == param.Type {
+					found = true
+				}
+			}
+			if !found {
+				protoHelpersAdded = append(protoHelpersAdded, param.Type)
+			}
 		}
 	}
 
@@ -155,7 +168,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		var val *Statement
 		if enumType(param.Type) {
 			// Enum helper function call
-			val = Id(stripPackage(param.Type) + "ToProto").Call(Id(variable))
+			val = Qual("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", stripPackage(param.Type)+"ToProto").Call(Id(variable))
 		} else {
 			// Optional pointer type
 			if !param.Required && param.Default == nil {
@@ -422,15 +435,20 @@ func tableColValue(col string) []Code {
 		c = append(c, Id("a").Op(":=").
 			Qual("reflect", "Indirect").Call(
 			Id("c").Dot("FieldByName").Call(Lit("CreatedAt"))))
-		c = append(c, Id("s").Op(":=").
-			Qual("reflect", "Indirect").Call(
-			Id("a")).Dot("FieldByName").Call(Lit("Seconds")))
-		c = append(c, If(Id("s").Dot("CanInt").Call().Block(
-			Id("t").Op(":=").Qual("time", "Unix").Call(
-				Id("s").Dot("Int").Call(),
-				Lit(0)),
-			Id("val").Op("=").
-				Id("t").Dot("Format").Call(Lit("2006-01-02 15:04:05")))))
+		c = append(c, If(
+			Op("!").Id("c").
+				Dot("FieldByName").Call(Lit("CreatedAt")).
+				Dot("IsZero").Call()).
+			Block(
+				Id("s").Op(":=").
+					Qual("reflect", "Indirect").Call(
+					Id("a")).Dot("FieldByName").Call(Lit("Seconds")),
+				If(Id("s").Dot("CanInt").Call().Block(
+					Id("t").Op(":=").Qual("time", "Unix").Call(
+						Id("s").Dot("Int").Call(),
+						Lit(0)),
+					Id("val").Op("=").
+						Id("t").Dot("Format").Call(Lit("2006-01-02 15:04:05"))))))
 	case "Currency":
 		c = append(c, Id("val").Op("=").
 			Id("val").Index(Lit(9), Empty()))
@@ -446,6 +464,15 @@ func tableColValue(col string) []Code {
 		c = append(c, Id("val").Op("=").
 			Qual("reflect", "Indirect").Call(
 			Id("user")).Dot("FieldByName").Call(Lit("Username")).Dot("String").Call())
+	case "Datacenter":
+		c = append(c, Id("n").Op(":=").Qual("reflect", "ValueOf").Call(
+			Op("*").Id("entry")))
+		c = append(c, Id("name").Op(":=").
+			Qual("reflect", "Indirect").Call(
+			Id("n")).Dot("FieldByName").Call(Lit("Datacenter")))
+		c = append(c, Id("val").Op("=").
+			Qual("reflect", "Indirect").Call(
+			Id("name")).Dot("FieldByName").Call(Lit("Name")).Dot("String").Call())
 	}
 
 	return c
@@ -500,30 +527,6 @@ func initFunc(name string, metadata SubcommandMetadata) []Code {
 	return c
 }
 
-// enumToProtoFunc generates a function which converts a string to a proto enum
-// to be used it in the API call.
-func enumToProtoFunc(enumType string) []Code {
-	c := make([]Code, 0)
-
-	// Generate the function
-	c = append(c, Func().Id(stripPackage(enumType)+"ToProto").Params(
-		Id("a").String()).Id(enumType).Block(
-		For(List(Id("k"), Id("v")).Op(":=").Range().Id(enumType+"_name").Block(
-			If(Id("v").Op("==").
-				Lit(strings.ToUpper(strcase.SnakeCase(stripPackage(enumType)))+"_").
-				Op("+").
-				Qual("strings", "ToUpper").Call(Id("a"))).Block(
-				Return(Id(enumType).Call(Id("k"))),
-			),
-		),
-			Return(Id(enumToProtoType(enumType, "UNSPECIFIED"))),
-		),
-	),
-	)
-
-	return c
-}
-
 // variableDefinition returns a statement for a variable definition, coming from
 // a given param. We can not use the string representation of a type, so we need
 // to transpile it to the correct type. Enum types are always strings.
@@ -534,6 +537,10 @@ func variableDefinition(name string, param Param) *Statement {
 		variable.Bool()
 	case "int":
 		variable.Int()
+	case "int32":
+		variable.Int32()
+	case "int64":
+		variable.Int64()
 	case "float":
 		variable.Float64()
 	case "string":

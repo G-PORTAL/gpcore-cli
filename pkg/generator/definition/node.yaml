@@ -1,6 +1,162 @@
 actions:
   list:
+    #api-call: cloudv2.ListNodes (api not ready yet)
     api-call: cloud.ListNodes
     description: List all nodes in the project
     root-key: Nodes
+
+  search-options:
+    api-call: cloud.GetNodeSearchOptions
+
+  get:
+    api-call: cloud.GetNode
+    identifier: nil
+    params:
+      - name: id
+        description: Node ID
+        type: string
+        required: true
+
+  update:
+    api-call: admin.UpdateNode
+    description: Update node details
+    params:
+      - name: managed
+        type: bool
+        required: true
+
+  # TODO: There is an update actions in the cloud API as well.
+
+  create:
+    api-call: cloud.CreateNode
+    description: Create a new node
+    identifier: nil
+    params:
+      - name: project_id
+        type: string
+        description: Project ID
+        required: true
+      - name: flavour_id
+        type: string
+        description: Flavour ID
+        required: true
+      - name: datacenter_id
+        type: string
+        description: Datacenter ID
+        required: true
+      - name: password
+        type: string
+        description: Password
+        required: false
+      # TODO: Array not supported
+      #- name: ssh_key_ids
+      - name: image_id
+        type: string
+        description: Image ID
+        required: true
+      - name: user_data
+        type: string
+        description: User data
+        required: false
+      # TODO: Array not supported
+      #- name: fqdns
+      - name: billing_period
+        type: cloudv1.BillingPeriod
+        default: cloudv1.BILLING_PERIOD_MONTHLY
+        required: true
+
+  destroy:
+    api-call: cloud.DestroyNode
+    description: Destroy a node
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Node ID
+        required: true
+
+  reinstall:
+    api-call: cloud.ReinstallNode
+    description: Reinstall a node
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Node ID
+        required: true
+      - name: project_id
+        type: string
+        description: Project ID
+        required: true
+      - name: fqdn
+        type: string
+        description: Fully qualified domain name
+        required: true
+      - name: password
+        type: string
+        description: Password
+        required: false
+      # TODO: Array not supported
+      #- name: ssh_keys
+      - name: image_id
+        type: string
+        description: Image ID
+        required: true
+      - name: user_data
+        type: string
+        description: User data
+        required: true
+
+  power-action:
+    api-call: cloud.PowerActionNode
+    description: Perform a power action on a node
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Node ID
+        required: true
+      - name: project_id
+        description: Project ID
+        type: string
+        required: true
+      - name: power_state
+        type: cloudv1.ServerPowerState
+        default: cloudv1.SERVER_POWER_STATE_REBOOT
+        required: true
+
+  remote-console-access:
+    api-call: cloud.GetRemoteConsoleAccess
+    description: Get remote console access
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Node ID
+        required: true
+
+  change-rescue-mode:
+    api-call: cloud.ChangeNodeRescueMode
+    description: Change rescue mode
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Node ID
+        required: true
+      - name: project_id
+        type: string
+        description: Project ID
+        required: true
+      # TODO: Objects not supported
+      #- name: rescue_mode
+      #  type: cloud.RescueMode
+      #  default: cloud.RESCUE_MODE_NONE
+      #  required: false
+
+  limit:
+    api-call: cloud.GetUserNodeLimit
+    description: Get user node limit
+    identifier: nil
+
 identifier: session.CurrentProject

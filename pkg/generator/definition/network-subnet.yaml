@@ -1,0 +1,68 @@
+description: Manage subnets
+actions:
+  delete:
+    api-call: admin.DeleteSubnet
+    description: Delete a subnet
+    params:
+      - name: id
+        type: string
+        description: Subnet ID
+        required: true
+
+  create:
+    api-call: admin.CreateSubnet
+    description: Create a new subnet
+    params:
+      - name: network_id
+        type: string
+        description: Network ID
+        required: true
+      - name: cidr
+        type: string
+        description: CIDR
+        required: true
+      - name: gateway
+        type: string
+        description: Gateway
+        required: true
+      - name: dhcp
+        type: bool
+        description: DHCP
+        required: true
+      - name: pool_start
+        type: string
+        description: Start IP
+        required: true
+      - name: pool_end
+        type: string
+        description: End IP
+        required: true
+
+  update:
+    api-call: admin.UpdateSubnet
+    description: Update subnet details
+    params:
+      - name: id
+        type: string
+        description: Network ID
+        required: true
+      - name: cidr
+        type: string
+        description: CIDR
+        required: true
+      - name: gateway
+        type: string
+        description: Gateway
+        required: true
+      - name: dhcp
+        type: bool
+        description: DHCP
+        required: true
+      - name: pool_start
+        type: string
+        description: Start IP
+        required: true
+      - name: pool_end
+        type: string
+        description: End IP
+        required: true

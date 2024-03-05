@@ -10,6 +10,40 @@ actions:
       - Currency
       - Environment
 
+  get:
+    api-call: cloud.GetProject
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Project ID
+        required: true
+
+  update:
+    api-call: cloud.UpdateProject
+    params:
+      - name: name
+        type: string
+        description: Project name
+        required: true
+      - name: description
+        type: string
+        description: Project description
+        required: true
+      - name: environment
+        type: cloudv1.ProjectEnvironment
+        description: Project environment
+        default: cloudv1.PROJECT_ENVIRONMENT_DEVELOPMENT
+        required: true
+      - name: credit_card_id
+        type: string
+        description: Credit card ID
+        required: true
+      - name: billing_address_id
+        type: string
+        description: Billing address ID
+        required: true
+
   create:
     api-call: cloud.CreateProject
     description: Create a new project
@@ -47,6 +81,42 @@ actions:
         type: string
         required: true
 
+  networks:
+    api-call: admin.ListProjectNetworks
+
+  network-create:
+    api-call: admin.CreateProjectNetwork
+    identifier: nil
+    params:
+      - name: project_id
+        type: string
+        description: Project ID
+        required: true
+      - name: name
+        type: string
+        description: Network name
+        required: true
+      - name: type
+        type: cloudv1.NetworkType
+        default: cloudv1.NETWORK_TYPE_PRIVATE
+        description: Network type
+        required: true
+      #- name: subnets (TODO: array support needed)
+      - name: vlan_id
+        type: int32
+        description: VLAN ID
+        required: false
+      #- name: datacenter (TODO: support for datacenter struct)
+      #  type: cloudv1.Datacenter
+
+  logs:
+    #api-call: cloudv2.ListProjectLogs (not ready yet)
+    api-call: cloud.ListProjectLogs
+    fields:
+      - CreatedAt
+      - User
+      - Message
+
   # Join/Leave project
   join:
     api-call: cloud.JoinProject
@@ -56,6 +126,26 @@ actions:
         default: false
   leave:
     api-call: cloud.LeaveProject
+
+  invite-member:
+    api-call: cloud.InviteMemberToProject
+    identifier: nil
+    params:
+      - name: id
+        description: Project ID
+        type: string
+        required: true
+      - name: identifier
+        ##description: ??
+        type: string
+        required: true
+
+  remove-member:
+    api-call: cloud.RemoveMemberFromProject
+    params:
+      - name: user_id
+        type: string
+        required: true
 
   default-project:
     api-call: cloud.ChangeDefaultProject
@@ -70,16 +160,20 @@ actions:
   locks:
     api-call: cloud.GetProjectLocks
     description: List all locks in the project
+
   usage:
     api-call: cloud.GetProjectUsage
     params:
       - name: detailed
         type: bool
         default: false
+
   images:
     api-call: cloud.ListProjectImages
+
   ssh-keys:
     api-call: cloud.ListProjectSSHKeys
     root-key: Keys
+
 
 identifier: session.CurrentProject
