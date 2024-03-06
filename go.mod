@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240214122508-3176bbe00a4d.2
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.32.0-20240214122508-3176bbe00a4d.1
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240214122508-3176bbe00a4d.1
 	github.com/99designs/keyring v1.2.2
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240122103833-6af7e686f119
 	github.com/charmbracelet/log v0.3.1
@@ -81,5 +81,5 @@ require (
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240221002015-b0ce06bbee7c // indirect
-	google.golang.org/protobuf v1.32.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 )
