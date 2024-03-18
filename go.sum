@@ -1,10 +1,15 @@
 buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240214122508-3176bbe00a4d.2 h1:DtSuaOJWs6NWUppJiEJUWcPMvtTf7PYkmDIPkAo6DBs=
 buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240214122508-3176bbe00a4d.2/go.mod h1:DdVo0xixRrjb2FZ3mbhBgnt4c6iOubvuvMWRXuxM6wc=
+buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240318124614-f17736e11c74.2 h1:vJ9RIZhBADOJn+Trt2XXGLK1jRz9VlIAP8udVqDU4eA=
+buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240318124614-f17736e11c74.2/go.mod h1:WiX74mH0/mQGB2IW99QQzffg590R/0O27Q18rEhoN/4=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.28.1-20240214122508-3176bbe00a4d.4/go.mod h1:h3wtxRcqIy+Dj8bh/VOIES6GkH7fPyndyJWU3Ay8hLc=
+buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.28.1-20240318124614-f17736e11c74.4/go.mod h1:8L/pNrLvWyVy9Tp80YMwysubPdGarWpytGWFDJI5HuQ=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.32.0-20240214122508-3176bbe00a4d.1 h1:IcksA9gS7Tk3RePM5pE+7cZ13VbxTLMajouBifEyx/Q=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.32.0-20240214122508-3176bbe00a4d.1/go.mod h1:twZ9aAKHKveifvQt6aQKSBDeLRbJz5b/8b2ETkt5kFk=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240214122508-3176bbe00a4d.1 h1:qvfSIpAPPpu+3WzC88hXfqxhrfYyS6umt1Z7alXT9tU=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240214122508-3176bbe00a4d.1/go.mod h1:XlvQwcTKyQh6s46/nZi94JbeUqUvzO9XTa4wN0yuOR0=
+buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240318124614-f17736e11c74.1 h1:jFw90l3Zsxup6Ri38YIgQ4j5dBwB1T7qwwUoBsSVysw=
+buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240318124614-f17736e11c74.1/go.mod h1:lWVKInEaQQzNM6UWZSW4GocSm3Ox/Oz7P5T/I1SUk6A=
 buf.build/gen/go/grpc-ecosystem/grpc-gateway/grpc/go v1.3.0-20221127060915-a1ecdc58eccd.2/go.mod h1:AyYRpZBNAzxOhzaY02jFxL+P7eINiIju6BdSZyi1q7o=
 buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.28.1-20221127060915-a1ecdc58eccd.4/go.mod h1:92ejKVTiuvnKoAtRlpJpIxKfloI935DDqhs0NCRx+KM=
 buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.32.0-20221127060915-a1ecdc58eccd.1/go.mod h1:XdxZqtnJr4q2vF8RLEhC903d6Nxxtz1vEMTyTAyvSUs=
