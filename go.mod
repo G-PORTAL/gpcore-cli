@@ -10,15 +10,15 @@ require (
 	github.com/charmbracelet/log v0.4.0
 	github.com/charmbracelet/ssh v0.0.0-20240401141849-854cddfa2917
 	github.com/charmbracelet/wish v1.4.0
-	github.com/creativeprojects/go-selfupdate v1.1.4
+	github.com/creativeprojects/go-selfupdate v1.2.0
 	github.com/dave/jennifer v1.7.0
 	github.com/gertd/go-pluralize v0.2.1
-	github.com/jedib0t/go-pretty/v6 v6.5.6
+	github.com/jedib0t/go-pretty/v6 v6.5.8
 	github.com/melbahja/goph v1.4.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stoewer/go-strcase v1.3.0
 	golang.org/x/crypto v0.22.0
-	google.golang.org/grpc v1.63.0
+	google.golang.org/grpc v1.63.2
 	gopkg.in/op/go-logging.v1 v1.0.0-20160315200505-970db520ece7
 	gopkg.in/yaml.v3 v3.0.1
 )
