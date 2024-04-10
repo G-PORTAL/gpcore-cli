@@ -3,8 +3,8 @@ module github.com/G-PORTAL/gpcore-cli
 go 1.21
 
 require (
-	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240409125940-614f06ae21e4.2
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240409125940-614f06ae21e4.1
+	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240410082109-a248fa355710.2
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240410082109-a248fa355710.1
 	github.com/99designs/keyring v1.2.2
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240122103833-6af7e686f119
 	github.com/charmbracelet/log v0.4.0
@@ -24,6 +24,7 @@ require (
 )
 
 require (
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.33.0-20240401165935-b983156c5e99.1 // indirect
 	code.gitea.io/sdk/gitea v0.17.1 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
