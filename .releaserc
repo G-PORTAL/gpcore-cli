@@ -1,0 +1,18 @@
+{
+  "extends": "@semantic-release/gitlab-config",
+  "branches": [
+    {
+      "name": "dev",
+      "prerelease": true
+    },
+    {
+      "name": "main",
+      "prerelease": false
+    }
+  ],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/github"
+  ]
+}

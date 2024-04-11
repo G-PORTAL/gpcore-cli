@@ -15,7 +15,7 @@ latest release from GitHub and replace the current binary.
 
 The commandline tool works in two different modes: As a server and as a client.
 The server is a standard ssh server, which does the heavy lifting. The server
-logs into the GPORTAL Cloud API once and wait for commands from the client.
+logs into the GPCORE API once and wait for commands from the client.
 
 The server acts as a proxy between the client and the API. The client connects
 to the server and sends commands to it. The server executes the commands and
