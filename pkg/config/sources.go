@@ -3,7 +3,6 @@ package config
 import (
 	"bufio"
 	"errors"
-	"github.com/99designs/keyring"
 	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 	"github.com/G-PORTAL/gpcore-cli/pkg/secret"
 	"os"
@@ -21,54 +20,34 @@ func init() {
 }
 
 func GetSecretsFromKeyring(config *SessionConfig) error {
-	ring, err := secret.GetKeyring()
-	if err != nil {
-		return err
-	}
+	ring := secret.GetKeyring()
 
 	// Client secret
 	clientSecret, err := ring.Get("client_secret")
-	if err != nil {
-		return err
-	}
-	config.ClientSecret = string(clientSecret.Data)
-
-	// Private Key
-	privateKey, err := ring.Get("private_key")
 	if err == nil {
-		pk := string(privateKey.Data)
-		config.PrivateKey = &pk
+		config.ClientSecret = clientSecret
 	}
 
 	// Private Key Password
 	privateKeyPassword, err := ring.Get("private_key_password")
 	if err == nil {
-		pkpw := string(privateKeyPassword.Data)
-		config.PrivateKeyPassword = &pkpw
+		config.PrivateKeyPassword = &privateKeyPassword
 	}
 
 	// Password (admin)
 	password, err := ring.Get("password")
 	if err == nil {
-		pw := string(password.Data)
-		config.Password = &pw
+		config.Password = &password
 	}
 
 	return nil
 }
 
 func StoreSecretsInKeyring(config *SessionConfig) error {
-	ring, err := secret.GetKeyring()
-	if err != nil {
-		return err
-	}
-
+	ring := secret.GetKeyring()
 	// Client secret
 	if config.ClientSecret != "" {
-		err = ring.Set(keyring.Item{
-			Key:  "client_secret",
-			Data: []byte(config.ClientSecret),
-		})
+		err := ring.Set("client_secret", config.ClientSecret)
 		if err != nil {
 			return err
 		}
@@ -76,23 +55,7 @@ func StoreSecretsInKeyring(config *SessionConfig) error {
 
 	// Password
 	if config.Password != nil {
-		pw := []byte(*config.Password)
-		err = ring.Set(keyring.Item{
-			Key:  "password",
-			Data: pw,
-		})
-		if err != nil {
-			return err
-		}
-	}
-
-	// Private Key
-	if config.PrivateKey != nil {
-		pk := []byte(*config.PrivateKey)
-		err = ring.Set(keyring.Item{
-			Key:  "private_key",
-			Data: pk,
-		})
+		err := ring.Set("password", *config.Password)
 		if err != nil {
 			return err
 		}
@@ -100,11 +63,7 @@ func StoreSecretsInKeyring(config *SessionConfig) error {
 
 	// Private Key Password
 	if config.PrivateKeyPassword != nil {
-		pwpk := []byte(*config.PrivateKeyPassword)
-		err = ring.Set(keyring.Item{
-			Key:  "private_key_password",
-			Data: pwpk,
-		})
+		err := ring.Set("private_key_password", *config.PrivateKeyPassword)
 		if err != nil {
 			return err
 		}
