@@ -60,3 +60,7 @@ changelog:
     exclude:
       - "^docs[:\(]?"
       - "^test[:\(]?"
+
+release:
+  github:
+  prerelease: auto
