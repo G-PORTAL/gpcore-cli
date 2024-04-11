@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"github.com/99designs/keyring"
 	"github.com/G-PORTAL/gpcore-cli/pkg/secret"
 	"github.com/charmbracelet/log"
 	"os"
@@ -49,18 +48,15 @@ func CleanupConfig() error {
 	}
 
 	// Remove secrets from keyring
-	ring, err := secret.GetKeyring()
-	if err != nil {
-		return err
-	}
+	ring := secret.GetKeyring()
 
-	if err = ring.Remove("client_secret"); err != nil && !errors.Is(err, keyring.ErrKeyNotFound) {
+	if err := ring.Remove("client_secret"); err != nil && !errors.Is(err, secret.ErrKeyNotFound) {
 		return err
 	}
-	if err = ring.Remove("private_key"); err != nil && !errors.Is(err, keyring.ErrKeyNotFound) {
+	if err := ring.Remove("private_key"); err != nil && !errors.Is(err, secret.ErrKeyNotFound) {
 		return err
 	}
-	if err = ring.Remove("private_key_password"); err != nil && !errors.Is(err, keyring.ErrKeyNotFound) {
+	if err := ring.Remove("private_key_password"); err != nil && !errors.Is(err, secret.ErrKeyNotFound) {
 		return err
 	}
 
@@ -83,11 +79,8 @@ func SetupAdminConfig() error {
 
 func CleanupAdminConfig() error {
 	// Remove secrets from keyring
-	ring, err := secret.GetKeyring()
-	if err != nil {
-		return err
-	}
-	if err = ring.Remove("password"); err != nil && !errors.Is(err, keyring.ErrKeyNotFound) {
+	ring := secret.GetKeyring()
+	if err := ring.Remove("password"); err != nil && !errors.Is(err, secret.ErrKeyNotFound) {
 		return err
 	}
 
