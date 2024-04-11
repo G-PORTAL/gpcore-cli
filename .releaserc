@@ -1,5 +1,4 @@
 {
-  "extends": "@semantic-release/gitlab-config",
   "branches": [
     {
       "name": "dev",
