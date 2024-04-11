@@ -50,7 +50,7 @@ jobs:
           QUILL_NOTARY_KEY_ID: ${{ secrets.QUILL_NOTARY_KEY_ID }}
           QUILL_NOTARY_ISSUER: ${{ secrets.QUILL_NOTARY_ISSUER }}
       - name: Upload dist artifacts to GitHub when not on main
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: "!contains(github.ref, 'main')"
         with:
           name: gpcore
