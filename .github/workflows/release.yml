@@ -35,10 +35,13 @@ jobs:
           go-version: '1.22.x'
       - name: Install quill CLI
         run: curl -sSfL https://raw.githubusercontent.com/anchore/quill/main/install.sh | sh -s -- -b /usr/local/bin
-      - uses: goreleaser/goreleaser-action@v4
+      - name: Check if snapshot build
+        if: "!contains(github.ref, 'main')"
+        run: echo "flags=--snapshot" >> $GITHUB_ENV
+      - uses: goreleaser/goreleaser-action@v5
         with:
           version: v1.25.1
-          args: release
+          args: release ${{ env.flags }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           QUILL_SIGN_P12: ${{ secrets.QUILL_SIGN_P12 }}
