@@ -10,7 +10,7 @@ project_name: gpcore
 
 before:
   hooks:
-    - go mod tidy
+    - go mod download
     - go generate ./...
 
 builds:
@@ -21,7 +21,7 @@ builds:
       - linux
       - windows
     ldflags:
-      - '-s -w -X cmd.Version={{.Version}} -X cmd.Commit={{.Commit}} -X cmd.Date={{.Date}}'
+      - '-s -w -X cmd.Version={{.Tag}} -X cmd.Commit={{.Commit}} -X cmd.Date={{.Date}}'
 
   - env:
       - CGO_ENABLED=0
@@ -29,12 +29,15 @@ builds:
     goos:
       - darwin
     ldflags:
-      - '-s -w -X cmd.Version={{.Version}} -X cmd.Commit={{.Commit}} -X cmd.Date={{.Date}}'
+      - '-s -w -X cmd.Version={{.Tag}} -X cmd.Commit={{.Commit}} -X cmd.Date={{.Date}}'
     goarch:
       - amd64
       - arm64
     hooks:
-      post: gon gon.hcl
+      post:
+        - cmd: quill sign-and-notarize "{{ .Path }}" --dry-run={{ .IsSnapshot }} --ad-hoc={{ .IsSnapshot }} -vv
+          env:
+            - QUILL_LOG_FILE=/tmp/quill-{{ .Target }}.log
 
 archives:
   - format: tar.gz
@@ -55,5 +58,5 @@ changelog:
   sort: asc
   filters:
     exclude:
-      - "^docs:"
-      - "^test:"
+      - "^docs"
+      - "^test"
