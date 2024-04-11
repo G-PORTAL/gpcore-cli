@@ -55,7 +55,6 @@ func (c *SessionConfig) Write() error {
 	}
 
 	// Remove sensitive data from struct
-	c.PrivateKey = nil
 	c.PrivateKeyPassword = nil
 	c.Password = nil
 	c.ClientSecret = ""
