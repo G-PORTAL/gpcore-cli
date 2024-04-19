@@ -1,7 +1,6 @@
 actions:
   list:
-    #api-call: cloudv2.ListNodes (api not ready yet)
-    api-call: cloud.ListNodes
+    api-call: cloudv2.ListNodes
     description: List all nodes in the project
     root-key: Nodes
 

@@ -110,8 +110,7 @@ actions:
       #  type: cloudv1.Datacenter
 
   logs:
-    #api-call: cloudv2.ListProjectLogs (not ready yet)
-    api-call: cloud.ListProjectLogs
+    api-call: cloudv2.ListProjectLogs
     fields:
       - CreatedAt
       - User
