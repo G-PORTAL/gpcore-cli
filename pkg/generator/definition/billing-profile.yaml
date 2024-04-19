@@ -13,8 +13,7 @@ actions:
       - Company
 
   list-bills:
-    #api-call: cloudv2.ListBillingProfileBills (not ready yet)
-    api-call: cloud.ListBillingProfileBills
+    api-call: cloudv2.ListBillingProfileBills
     description: List bills for billing profile
     root-key: Bills
     params:
@@ -28,8 +27,7 @@ actions:
         required: false
 
   list-projects:
-    #api-call: cloudv2.ListBillingProfileProjects (not ready yet)
-    api-call: cloud.ListBillingProfileProjects
+    api-call: cloudv2.ListBillingProfileProjects
     description: List projects for billing profile
     root-key: Projects
     params:

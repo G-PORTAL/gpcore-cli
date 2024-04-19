@@ -11,26 +11,6 @@ import (
 	"strings"
 )
 
-// paginatedEndpoints is a list of all endpoints which already supports pagination.
-// When the pagination MR for gpcore-mono is merged into master, we can remove
-// this list and use all endpoints which start with "List".
-var paginatedEndpoints = []string{
-	// Admin
-	"ListServers",
-	"ListServerLogs",
-	"ListSwitches",
-	"ListUsers",
-	"ListUserBills",
-	"ListAdminLogs",
-	"ListIPHistories",
-
-	// Cloud
-	"ListBillingProfileBills",
-	"ListBillingProfileProjects",
-	"ListProjectLogs",
-	"ListNodes",
-}
-
 var protoHelpersAdded = make([]string, 0)
 
 // warningComment adds a warning comment to the file. This will be added to all
@@ -81,26 +61,11 @@ func GenerateHelpersFile(targetFilename string) error {
 	return f.Save(targetFilename)
 }
 
-// hasPaginateField checks if a given API call supports pagination with the
-// Pagination field in request and response.
-func hasPaginateField(apiCall APICall) bool {
-	// TODO: After the pagination MR for gpcore-mono is merged into master,
-	// we can change this to all list endpoints which start with "List". But
-	// until then, we need to whitelist the endpoints which support pagination.
-	for _, endpoint := range paginatedEndpoints {
-		if apiCall.Endpoint == endpoint {
-			return true
-		}
-	}
-
-	return false
-}
-
 // hasListOutput checks if a given API call has a list output. This is the case
 // if the endpoint starts with "List" or if the API call supports pagination.
 // This can be used to determine the output format (table or just a single object).
 func hasListOutput(apiCall APICall) bool {
-	return hasPaginateField(apiCall) || strings.HasPrefix(apiCall.Endpoint, "List")
+	return strings.HasPrefix(apiCall.Endpoint, "List")
 }
 
 // hasHook checks if a hook exists for a given command and subcommand. A hook is

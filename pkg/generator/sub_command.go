@@ -181,7 +181,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	}
 
 	// Pagination
-	if hasPaginateField(metadata.Action.APICall) {
+	if hasListOutput(metadata.Action.APICall) {
 		apiCallParams[Id("Pagination")] = Id("pagination")
 		c = append(c, Var().Id("totalPages").Int32())
 		c = append(c, Id("pagination").Op(":=").Op("&").Qual(apiTypesImport, "PaginationRequest").Values(
@@ -202,18 +202,16 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		// List response
 		respC = append(respC, listResponse(metadata)...)
 
-		if hasPaginateField(metadata.Action.APICall) {
-			c = append(c, Var().Id("combinedData").Index().Interface())
+		c = append(c, Var().Id("combinedData").Index().Interface())
 
-			respC = append(respC, Line())
-			respC = append(respC, If(Id("resp.Pagination").Op("==").Nil().Block(
-				Break())))
-			respC = append(respC, Id("totalPages").Op("=").
-				Id("resp").Dot("GetPagination").Call().Dot("GetTotal").Call())
-			respC = append(respC, Id("pagination").Dot("Page").Op("++"))
-			respC = append(respC, If(Id("resp").Dot("Pagination").Dot("Page").Op(">=").Id("totalPages")).Block(
-				Break()))
-		}
+		respC = append(respC, Line())
+		respC = append(respC, If(Id("resp.Pagination").Op("==").Nil().Block(
+			Break())))
+		respC = append(respC, Id("totalPages").Op("=").
+			Id("resp").Dot("GetPagination").Call().Dot("GetTotal").Call())
+		respC = append(respC, Id("pagination").Dot("Page").Op("++"))
+		respC = append(respC, If(Id("resp").Dot("Pagination").Dot("Page").Op(">=").Id("totalPages")).Block(
+			Break()))
 	} else {
 		// Single response
 		respC = append(respC, singleResponse(metadata)...)
@@ -236,7 +234,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		c = append(c, Id("cobraCmd").Dot("SetOut").
 			Call(Op("*").Id("sshSession")))
 
-		if hasPaginateField(metadata.Action.APICall) {
+		if hasListOutput(metadata.Action.APICall) {
 			c = append(c, For().Block(respC...))
 		} else {
 			c = append(c, respC...)
@@ -259,7 +257,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	}
 
 	respData := "respData"
-	if hasPaginateField(metadata.Action.APICall) {
+	if hasListOutput(metadata.Action.APICall) {
 		respData = "combinedData"
 	}
 	c = append(c, If(Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "JSONOutput")).Block(
@@ -311,14 +309,14 @@ func listResponse(metadata SubcommandMetadata) []Code {
 			Qual("reflect", "ValueOf").
 			Call(Op("*").Id("entry")))
 
-		if hasPaginateField(metadata.Action.APICall) {
+		if hasListOutput(metadata.Action.APICall) {
 			allFieldsCode = append(allFieldsCode, Id("combinedData").Op("=").Append(Id("combinedData"), Id("entry")))
 		}
 		allFieldsCode = append(allFieldsCode, Id("row").Op(":=").
 			Qual("github.com/jedib0t/go-pretty/v6/table", "Row").Values())
 
 		headerCondition := Id("j").Op("==").Lit(0)
-		if hasPaginateField(metadata.Action.APICall) {
+		if hasListOutput(metadata.Action.APICall) {
 			headerCondition = headerCondition.Op("&&").Id("pagination").Dot("Page").Op("==").Lit(1)
 		}
 
@@ -363,7 +361,7 @@ func listResponse(metadata SubcommandMetadata) []Code {
 		}
 		headerCode = append(headerCode, Id("tbl").Dot("AppendHeader").Call(Id("headerRow")))
 
-		if hasPaginateField(metadata.Action.APICall) {
+		if hasListOutput(metadata.Action.APICall) {
 			c = append(c, If(Id("pagination").Dot("Page").Op("==").Lit(1)).Block(headerCode...))
 		} else {
 			c = append(c, headerCode...)
@@ -403,7 +401,7 @@ func listResponse(metadata SubcommandMetadata) []Code {
 		// Append to combined data (json output)
 		valuesCode = append(valuesCode, Id("tbl").Dot("AppendRow").Call(Id("row")))
 
-		if hasPaginateField(metadata.Action.APICall) {
+		if hasListOutput(metadata.Action.APICall) {
 			valuesCode = append(valuesCode, Id("combinedData").Op("=").Append(Id("combinedData"), Id("entry")))
 		}
 		c = append(c, For(List(Id(indexVariable), Id("entry")).Op(":=").Range().Id("respData")).Block(
