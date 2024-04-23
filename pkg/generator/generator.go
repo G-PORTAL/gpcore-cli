@@ -31,6 +31,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	commandList := []string{}
+
 	for _, definitionFile := range definitionFiles {
 		log.Printf("Generate subcommand as definied in %s ...\n", definitionFile.Name())
 		definition, err := os.ReadFile("./pkg/generator/definition/" + definitionFile.Name())
@@ -45,6 +47,12 @@ func main() {
 
 		subcommandName := strings.Replace(strings.TrimSuffix(definitionFile.Name(), filepath.Ext(definitionFile.Name())), "-", "_", -1)
 		metadata.Name = subcommandName
+
+		// If there are no actions defined, we can skip this definition completely
+		if len(metadata.Actions) == 0 {
+			log.Printf("  No actions defined in %s, skipping ...\n", subcommandName)
+			continue
+		}
 
 		// Create directory if not exist
 		if _, err := os.Stat("./cmd/" + subcommandName); os.IsNotExist(err) {
@@ -65,6 +73,7 @@ func main() {
 		}
 
 		// Generate all subcommands
+		addedSubcommands := len(metadata.Actions)
 		for action, meta := range metadata.Actions {
 			// Check if the subcommand is overwritten by the user
 			if _, err := os.Stat("./cmd/" + subcommandName + "/" + strcase.SnakeCase(action) + ".go"); !os.IsNotExist(err) {
@@ -81,6 +90,14 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+
+			if !meta.CanCall() {
+				addedSubcommands--
+			}
+		}
+
+		if addedSubcommands > 0 {
+			commandList = append(commandList, subcommandName)
 		}
 	}
 
@@ -99,11 +116,6 @@ func main() {
 
 	// Generate the AddCommands func, so the commands get added to the root command
 	targetFilename := "./cmd/addcommands" + generatedFileSuffix + ".go"
-	commandList := []string{}
-	for _, definitionFile := range definitionFiles {
-		subcommandName := strings.TrimSuffix(definitionFile.Name(), filepath.Ext(definitionFile.Name()))
-		commandList = append(commandList, subcommandName)
-	}
 	err = generator.GenerateAddCommands(commandList, targetFilename)
 	if err != nil {
 		log.Fatal(err)

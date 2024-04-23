@@ -34,10 +34,6 @@ var Endpoint = client.DefaultEndpoint
 var sessionConfig *SessionConfig
 
 func HasConfig() bool {
-	if os.Getenv("GPCORE_CONFIG") != "" {
-		ConfigFilePath = os.Getenv("GPCORE_CONFIG")
-	}
-
 	if _, err := os.Stat(ConfigFilePath); err == nil {
 		return true
 	}
@@ -45,7 +41,14 @@ func HasConfig() bool {
 }
 
 func HasAdminConfig() bool {
-	return HasConfig() && sessionConfig.Username != nil && sessionConfig.Password != nil
+	// No session config, no admin config
+	config, err := GetSessionConfig()
+	if err != nil {
+		return false
+	}
+
+	// No username and password, no admin config
+	return config.Username != nil && config.Password != nil
 }
 
 func AskForCredentials() (string, string) {
@@ -104,10 +107,10 @@ func GetSessionConfig() (*SessionConfig, error) {
 	sessionConfig = &SessionConfig{}
 
 	// No config file found?
-	if _, err := os.Stat(ConfigFilePath); err != nil {
+	if !HasConfig() {
 		log.Errorf("No config file found at %s", ConfigFilePath)
 		log.Errorf("Create a new config file with \"gpcore agent setup\"")
-		return nil, err
+		return nil, errors.New("no config file found")
 	}
 
 	// Read in config file
@@ -118,4 +121,10 @@ func GetSessionConfig() (*SessionConfig, error) {
 	}
 
 	return sessionConfig, nil
+}
+
+func init() {
+	if os.Getenv("GPCORE_CONFIG") != "" {
+		ConfigFilePath = os.Getenv("GPCORE_CONFIG")
+	}
 }

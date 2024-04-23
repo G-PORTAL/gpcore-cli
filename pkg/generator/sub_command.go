@@ -517,10 +517,19 @@ func initFunc(name string, metadata SubcommandMetadata) []Code {
 		c = append(c, Line())
 	}
 
-	// Add the command to the root command
-	c = append(c, Id("Root"+strcase.UpperCamelCase(metadata.Definition.Name)+"Command").
+	// Add the command to the root command when the user has set up the admin
+	// configuration.
+	addCommand := Id("Root" + strcase.UpperCamelCase(metadata.Definition.Name) + "Command").
 		Dot("AddCommand").
-		Call(Id(name+"Cmd")))
+		Call(Id(name + "Cmd"))
+
+	if metadata.Action.APICall.Client == "admin" {
+		c = append(c, If(
+			Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "HasAdminConfig").Call().Block(
+				addCommand)))
+	} else {
+		c = append(c, addCommand)
+	}
 
 	return c
 }

@@ -18,7 +18,7 @@ import (
 //go:generate go run ./pkg/generator/generator.go
 //go:generate gofmt -s -w ./cmd/
 
-// GPCORE CLI (gpc in short) is a command line interface for the G-Portal Cloud
+// GPCORE CLI (gpc in short) is a command line interface for the GPCORE
 // API. It is written in Go and uses the Cobra framework. The commands are auto
 // generated from definition files in the pkg/generator/definition directory
 // (the generated files get the _gen postfix). Custom commands can be added in
@@ -28,7 +28,7 @@ import (
 // additional logic.
 //
 // The client and the agent communicate via SSH. The agent is a SSH server that
-// executes commands on the G-Portal Cloud API. The client is a SSH client that
+// executes commands on the GPCORE API. The client is a SSH client that
 // connects to the agent and executes commands on the agent. The agent is only
 // listening on localhost and the SSH keypair is stored in the users home
 // directory. The private key is secured with a password. This client/server
