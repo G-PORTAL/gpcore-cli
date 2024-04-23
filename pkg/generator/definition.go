@@ -2,8 +2,10 @@ package generator
 
 import (
 	"fmt"
+	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"gopkg.in/yaml.v3"
 	"regexp"
+	"strings"
 )
 
 type Action struct {
@@ -15,6 +17,11 @@ type Action struct {
 	RootKey     string   `yaml:"root-key"`
 	Identifier  string   `yaml:"identifier"`
 	Fields      []string `yaml:"fields"`
+}
+
+func (action *Action) CanCall() bool {
+	adminCall := strings.HasPrefix(action.APICall.Client, "admin")
+	return !adminCall || adminCall && config.HasAdminConfig()
 }
 
 type Param struct {
