@@ -39,7 +39,9 @@ func main() {
 	// Initialize logger
 	var format = logging.MustStringFormatter(`%{color}%{time:15:04:05} %{shortfunc} [%{level:.4s}]%{color:reset} %{message}`)
 	var backend = logging.AddModuleLevel(logging.NewBackendFormatter(logging.NewLogBackend(os.Stderr, "", 0), format))
-	backend.SetLevel(logging.ERROR, "")
+	// Default log level
+	backend.SetLevel(logging.INFO, "")
+	log.SetLevel(log.InfoLevel)
 	logging.SetBackend(backend)
 
 	command := strings.Join(os.Args[1:], " ")
@@ -64,6 +66,9 @@ func main() {
 		log.Info("No config found, creating new one with `gpcore agent setup`")
 		return
 	}
+
+	// Set the correct log level from the config file
+	config.ActivateLogLevel()
 
 	// agent start is a special command, because we do not have a server at
 	// that moment, so we can not connect to anything. For that, we need to handle

@@ -44,6 +44,7 @@ func New() *cobra.Command {
 
 	// Special client commands
 	cmd.SelfupdateCommand(&rootCmd)
+	cmd.SetLogLevelCommand(&rootCmd)
 
 	if config.HasAdminConfig() {
 		cmd.LiveLogCommand(&rootCmd)

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/G-PORTAL/gpcore-cli/pkg/secret"
 	"github.com/charmbracelet/log"
+	"gopkg.in/op/go-logging.v1"
 	"os"
 	"path"
 )
@@ -33,6 +34,10 @@ func SetupConfig() error {
 	// Create new ssh keypair
 	log.Infof("Setup SSH keypair ...")
 	SetupSSHKey()
+
+	// Set debug level to warning
+	sessionConfig.LogLevel = "INFO"
+	logging.SetLevel(logging.INFO, "")
 
 	// Save the config
 	return sessionConfig.Write()

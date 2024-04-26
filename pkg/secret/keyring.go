@@ -11,7 +11,6 @@ var ErrKeyNotFound = errors.New("the key does not exist in the keyring")
 var ErrInvalidData = errors.New("they keyring data is too large to set")
 
 func GetKeyring() Keyring {
-	log.SetLevel(log.DebugLevel)
 	return &ZalandoKeyring{}
 }
 

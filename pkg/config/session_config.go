@@ -26,6 +26,9 @@ type SessionConfig struct {
 
 	// Session related stuff
 	CurrentProject *string `yaml:"current_project"`
+
+	// Log level for debug output
+	LogLevel string `yaml:"log_level"`
 }
 
 // Read reads the config from the config file and stores it in the SessionConfig
