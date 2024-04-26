@@ -1,10 +1,10 @@
-buf.build/gen/go/bufbuild/protovalidate/grpc/go v1.3.0-20240401165935-b983156c5e99.2/go.mod h1:qFwwuJ+IVX+88aQmo4wNUH+YFvqxhC4qC3QsEQlhAqA=
+buf.build/gen/go/bufbuild/protovalidate/grpc/go v1.3.0-20240401165935-b983156c5e99.1/go.mod h1:qFwwuJ+IVX+88aQmo4wNUH+YFvqxhC4qC3QsEQlhAqA=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.28.1-20240401165935-b983156c5e99.4/go.mod h1:mS9XvSH4W2c4pyTYRkCwrIuwoYpigZwLrYhzHaIT0Vo=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.33.0-20240401165935-b983156c5e99.1 h1:2IGhRovxlsOIQgx2ekZWo4wTPAYpck41+18ICxs37is=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.33.0-20240401165935-b983156c5e99.1/go.mod h1:Tgn5bgL220vkFOI0KPStlcClPeOJzAv4uT+V8JXGUnw=
-buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240410082109-a248fa355710.2 h1:1paYv1WGm3Pb2/pchquoXSp4OY7IP9z34/yzMcLmjgI=
-buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240410082109-a248fa355710.2/go.mod h1:NPIc5eF4ac42vIOQfc/32h5jz0ITKIP9pRPl+VUkBBM=
-buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.28.1-20240410082109-a248fa355710.4/go.mod h1:HPBDCgspF+Zn22+oeifMCPtn+I88BWD8rvZrG2ykjxw=
+buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240425100511-26168f5f66ec.1 h1:wOYwkEh1lCHbkVtsV02mEuGu7Y/NJKzbJ5hguHSBxU8=
+buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240425100511-26168f5f66ec.1/go.mod h1:K49LJY+8fI5AcZenDtfX4WKOKAKxftqN1zTrZ2ck9QY=
+buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.28.1-20240425100511-26168f5f66ec.4/go.mod h1:HPBDCgspF+Zn22+oeifMCPtn+I88BWD8rvZrG2ykjxw=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240410082109-a248fa355710.1 h1:smt4DKBtfwwqcWTYiywl6V5Z5nRHLoLJ0elT5BKMfrE=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240410082109-a248fa355710.1/go.mod h1:mQ7OLqOvDByXANO6CUnCpbSGNVuOyOIWrTNh3q2LHZY=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
