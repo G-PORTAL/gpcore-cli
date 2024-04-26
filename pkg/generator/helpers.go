@@ -237,12 +237,8 @@ func defaultValue(param Param) *Statement {
 // has a default value, the default value is added to the description.
 func parameterDescription(param Param) string {
 	var flags []string
-	if param.Default == nil {
-		if param.Required {
-			flags = append(flags, "required")
-		}
-	} else {
-		flags = append(flags, fmt.Sprintf("default:\"%v\"", param.Default))
+	if param.Required {
+		flags = append(flags, "required")
 	}
 
 	if len(flags) > 0 {
