@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240425100511-26168f5f66ec.1
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240410082109-a248fa355710.1
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.33.0-20240425100511-26168f5f66ec.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240122103833-6af7e686f119
 	github.com/charmbracelet/log v0.4.0
 	github.com/charmbracelet/ssh v0.0.0-20240401141849-854cddfa2917
