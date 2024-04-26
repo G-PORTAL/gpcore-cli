@@ -15,6 +15,3 @@ actions:
         type: string
         description: Region ID
         required: true
-
-# edge cases gefixt
-#

@@ -84,30 +84,10 @@ actions:
   networks:
     api-call: admin.ListProjectNetworks
 
-  network-create:
-    api-call: admin.CreateProjectNetwork
-    identifier: nil
-    params:
-      - name: project_id
-        type: string
-        description: Project ID
-        required: true
-      - name: name
-        type: string
-        description: Network name
-        required: true
-      - name: type
-        type: cloudv1.NetworkType
-        default: cloudv1.NETWORK_TYPE_PRIVATE
-        description: Network type
-        required: true
-      #- name: subnets (TODO: array support needed)
-      - name: vlan_id
-        type: int32
-        description: VLAN ID
-        required: false
-      #- name: datacenter (TODO: support for datacenter struct)
-      #  type: cloudv1.Datacenter
+  # network-create is implemented in code, because it is a special case
+  # where we need to create a network and then attach it to the project.
+  # Also, the datacenter is a struct, which is not possible to pass as a
+  # parameter.
 
   logs:
     api-call: cloudv2.ListProjectLogs
