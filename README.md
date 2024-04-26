@@ -11,6 +11,16 @@ Download the latest binary from the release page, make it executable and run it.
 To update the CLI, just run the ```gpcore selfupdate``` command. It will download the
 latest release from GitHub and replace the current binary.
 
+To use shell completion for the gpcore command, you can generate the completion
+script with the ```gpcore completion``` command. Supported shells are bash, zsh
+fish and powershell. It will print the script to stdout, so pipe it in a file
+and source it in your shell.
+
+```
+gpcore completion bash > /etc/bash_completion.d/gpcore
+source /etc/bash_completion.d/gpcore
+```
+
 ## Overview
 
 The commandline tool works in two different modes: As a server and as a client.

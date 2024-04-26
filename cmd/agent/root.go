@@ -57,6 +57,9 @@ func New() *cobra.Command {
 	rootCmd.AddCommand(agentCommand)
 	rootCmd.AddCommand(setupCommand)
 
+	// Add completion generators
+	cmd.CompletionCommand(&rootCmd)
+
 	return &rootCmd
 }
 

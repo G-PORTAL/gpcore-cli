@@ -52,6 +52,7 @@ func main() {
 		command == "--help" ||
 		command == "help" ||
 		command == "agent" ||
+		strings.HasPrefix(command, "completion") ||
 		strings.HasPrefix(command, "agent setup") {
 		RunCommandWithoutClient()
 		return
