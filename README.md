@@ -90,6 +90,8 @@ same name of the action (auto generated file), but with the prefix ```_pre.go```
 to execute code before the action and ```_post.go``` to execute code after the
 action but before the output is printed. As an example, see ```project/list_post.go```.
 
+To increase the log level verbosity, you can set it with the ```loglevel```
+command (```gpcore loglevel debug```).
 
 ### Ongoing tasks
 
