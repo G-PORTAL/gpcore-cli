@@ -46,9 +46,13 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 
 	// Enum helper functions
 	for _, param := range metadata.Action.Params {
-		if enumType(param.Type) {
+		paramType := param.Type
+		if isArrayType(param.Type) {
+			paramType = strings.TrimPrefix(param.Type, "[]")
+		}
+		if isEnumType(param.Type) {
 			// Add the import for the enum type
-			f.ImportAlias(clientPackageName(param.Type), stripClient(param.Type)+"v"+stripVersion(param.Type))
+			f.ImportAlias(clientPackageName(paramType), stripClient(paramType)+"v"+stripVersion(paramType))
 
 			// Check if we need to add the proto helper
 			found := false
@@ -58,7 +62,16 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 				}
 			}
 			if !found {
-				protoHelpersAdded = append(protoHelpersAdded, param.Type)
+				alreadyAdded := false
+				for _, t := range protoHelpersAdded {
+					if t == paramType {
+						alreadyAdded = true
+					}
+				}
+
+				if !alreadyAdded {
+					protoHelpersAdded = append(protoHelpersAdded, paramType)
+				}
 			}
 		}
 	}
@@ -166,7 +179,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	for _, param := range metadata.Action.Params {
 		variable := strcase.LowerCamelCase(name) + title(strcase.LowerCamelCase(param.Name))
 		var val *Statement
-		if enumType(param.Type) {
+		if isEnumType(param.Type) && !isArrayType(param.Type) {
 			// Enum helper function call
 			val = Qual("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", stripPackage(param.Type)+"ToProto").Call(Id(variable))
 		} else {
@@ -486,18 +499,31 @@ func initFunc(name string, metadata SubcommandMetadata) []Code {
 	if len(metadata.Action.Params) > 0 {
 		for _, param := range metadata.Action.Params {
 			dataType := title(param.Type)
-			if enumType(param.Type) {
+			if isEnumType(param.Type) {
 				dataType = "String"
 			}
+			if isArrayType(param.Type) {
+				if isEnumType(param.Type) {
+					dataType = ""
+				} else {
+					dataType = title(strings.TrimPrefix(param.Type, "[]")) + "Slice"
+				}
+			}
+
+			params := make([]Code, 0)
+			params = append(params, Op("&").Id(strcase.LowerCamelCase(name)+title(strcase.LowerCamelCase(param.Name))))
+			params = append(params, Lit(strcase.KebabCase(param.Name)))
+
+			if !isArrayType(param.Type) || (isArrayType(param.Type) && !isEnumType(param.Type)) {
+				params = append(params, defaultValue(param))
+			}
+
+			params = append(params, Lit(parameterDescription(param)))
 
 			c = append(c,
 				Id(strcase.LowerCamelCase(name)+"Cmd").
 					Dot("Flags").Call().
-					Dot(dataType+"Var").Params(
-					Op("&").Id(strcase.LowerCamelCase(name)+title(strcase.LowerCamelCase(param.Name))),
-					Lit(strcase.KebabCase(param.Name)),
-					defaultValue(param),
-					Lit(parameterDescription(param))))
+					Dot(dataType+"Var").Params(params...))
 		}
 		c = append(c, Line())
 	}
@@ -552,11 +578,32 @@ func variableDefinition(name string, param Param) *Statement {
 		variable.Float64()
 	case "string":
 		variable.String()
+	// TODO: Fileupload
 	default:
-		if enumType(param.Type) {
-			variable.String()
+		if isArrayType(param.Type) {
+			singleType := strings.TrimPrefix(param.Type, "[]") // Remove array indicator
+
+			if isEnumType(param.Type) {
+				alreadyAdded := false
+				for _, t := range arrayDatatypes {
+					if t == singleType {
+						alreadyAdded = true
+					}
+				}
+				if !alreadyAdded {
+					arrayDatatypes = append(arrayDatatypes, singleType)
+				}
+
+				variable.Qual("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", title(stripPackage(singleType))+"Array")
+			} else {
+				variable.Index().Id(singleType)
+			}
 		} else {
-			variable.Id(title(param.Type))
+			if isEnumType(param.Type) {
+				variable.String()
+			} else {
+				variable.Id(title(param.Type))
+			}
 		}
 	}
 	return variable

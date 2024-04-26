@@ -52,7 +52,10 @@ actions:
         type: string
         description: Username for the image
         required: true
-      #- name: authentication_types (need array support)
+      - name: authentication_types
+        type: "[]cloudv1.AuthenticationType"
+        description: Authentication types
+        required: true
 
   create:
     api-call: admin.CreateImage
@@ -86,7 +89,10 @@ actions:
         default: cloudv1.IMAGE_RELEASE_STABLE
         description: Release of the image
         required: false
-      #- name: authentication_types (need array support)
+      - name: authentication_types
+        type: "[]cloudv1.AuthenticationType"
+        description: Authentication types
+        required: true
 
   delete:
     api-call: admin.DeleteImage

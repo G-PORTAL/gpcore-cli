@@ -61,7 +61,7 @@ actions:
         default: cloudv1.BILLING_PERIOD_MONTHLY
         required: true
 
-  # TODO: File output support not available
+  # TODO: File output support not available on the console at the moment.
   #pdf:
   #  api-call: cloud.GetBillingProfileBillPdf
 

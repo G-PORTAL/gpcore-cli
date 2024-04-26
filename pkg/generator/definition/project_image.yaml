@@ -25,12 +25,10 @@ actions:
         type: string
         description: Image name
         required: true
-      # TODO: Array support needed
-      #- name: authentication_types
-      #  type: cloudv1.ImageAuthenticationType
-      #  description: Authentication type
-      #  required: true
-      #  default: cloudv1.IMAGE_AUTHENTICATION_TYPE_PASSWORD
+      - name: authentication_types
+        type: "[]cloudv1.AuthenticationType"
+        description: Authentication types
+        required: true
       - name: available
         type: bool
         description: Image availability

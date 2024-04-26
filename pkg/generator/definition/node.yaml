@@ -16,6 +16,8 @@ actions:
         type: string
         required: true
 
+  # There is an update actions in the cloud API as well. Not sure which
+  # update node actions we should use here.
   update:
     api-call: admin.UpdateNode
     description: Update node details
@@ -23,8 +25,6 @@ actions:
       - name: managed
         type: bool
         required: true
-
-  # TODO: There is an update actions in the cloud API as well.
 
   create:
     api-call: cloud.CreateNode
@@ -47,8 +47,10 @@ actions:
         type: string
         description: Password
         required: false
-      # TODO: Array not supported
-      #- name: ssh_key_ids
+      - name: ssh_key_ids
+        type: "[]string"
+        description: SSH keys
+        required: true
       - name: image_id
         type: string
         description: Image ID
@@ -57,8 +59,11 @@ actions:
         type: string
         description: User data
         required: false
-      # TODO: Array not supported
-      #- name: fqdns
+      - name: fqdns
+        type: "[]string"
+        description: Fully qualified domain names
+        required: true
+        default: "[]"
       - name: billing_period
         type: cloudv1.BillingPeriod
         default: cloudv1.BILLING_PERIOD_MONTHLY
@@ -95,8 +100,10 @@ actions:
         type: string
         description: Password
         required: false
-      # TODO: Array not supported
-      #- name: ssh_keys
+      - name: ssh_key_ids
+        type: "[]string"
+        description: SSH keys
+        required: true
       - name: image_id
         type: string
         description: Image ID
@@ -134,24 +141,8 @@ actions:
         description: Node ID
         required: true
 
-  change-rescue-mode:
-    api-call: cloud.ChangeNodeRescueMode
-    description: Change rescue mode
-    identifier: nil
-    params:
-      - name: id
-        type: string
-        description: Node ID
-        required: true
-      - name: project_id
-        type: string
-        description: Project ID
-        required: true
-      # TODO: Objects not supported
-      #- name: rescue_mode
-      #  type: cloud.RescueMode
-      #  default: cloud.RESCUE_MODE_NONE
-      #  required: false
+  # change-rescue-mode is implemented in code, because rescue_mode is an object,
+  # which is not supported by the generator.
 
   limit:
     api-call: cloud.GetUserNodeLimit

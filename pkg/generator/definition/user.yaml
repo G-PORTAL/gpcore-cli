@@ -39,7 +39,10 @@ actions:
         type: string
         description: Avatar URL
         required: false
-      # TODO: Tags
+      - name: tags
+        type: "[]cloudv1.UserTag"
+        description: User tags
+        required: true
 
   lock:
     api-call: admin.LockUser
