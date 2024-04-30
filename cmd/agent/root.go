@@ -3,6 +3,7 @@ package agent
 import (
 	"fmt"
 	"github.com/G-PORTAL/gpcore-cli/cmd"
+	"github.com/G-PORTAL/gpcore-cli/cmd/help"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 	"github.com/G-PORTAL/gpcore-go/pkg/gpcore/client"
@@ -24,10 +25,11 @@ func New() *cobra.Command {
 				cobraCmd.Print(cmd.GetVersionDisplay())
 				return nil
 			}
-			cobraCmd.Println(cobraCmd.UsageString())
-			return nil
+			return help.UnknownSubcommandAction(cobraCmd, args)
 		},
-		SilenceUsage: true,
+		SilenceUsage:     true,
+		SilenceErrors:    true,
+		TraverseChildren: true,
 	}
 
 	// Application information

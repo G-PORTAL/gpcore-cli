@@ -78,11 +78,12 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 
 	// Build up the command
 	values := Dict{
-		Id("Use"):                   Lit(metadata.Name),
-		Id("Short"):                 Lit(metadata.Action.Description),
-		Id("Long"):                  Lit(metadata.Action.Description),
-		Id("DisableFlagsInUseLine"): True(),
-		Id("Args"):                  Qual("github.com/spf13/cobra", "OnlyValidArgs"),
+		Id("Use"):           Lit(metadata.Name),
+		Id("Short"):         Lit(metadata.Action.Description),
+		Id("Long"):          Lit(metadata.Action.Description),
+		Id("SilenceUsage"):  True(),
+		Id("SilenceErrors"): True(),
+		Id("Args"):          Qual("github.com/spf13/cobra", "OnlyValidArgs"),
 		Id("RunE"): Func().Params(
 			Id("cobraCmd").Op("*").Qual("github.com/spf13/cobra", "Command"),
 			Id("args").Index().String()).Error().
@@ -246,6 +247,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 			Call(Op("*").Id("sshSession")))
 		c = append(c, Id("cobraCmd").Dot("SetOut").
 			Call(Op("*").Id("sshSession")))
+		c = append(c, Defer().Id("cobraCmd").Dot("SetOut").Call(Nil()))
 
 		if hasListOutput(metadata.Action.APICall) {
 			c = append(c, For().Block(respC...))
