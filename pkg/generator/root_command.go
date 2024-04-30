@@ -13,17 +13,18 @@ func GenerateRootCommand(metadata SubcommandDefinition, targetFilename string) e
 	warningComment(f)
 
 	f.ImportName("github.com/spf13/cobra", "cobra")
+	f.ImportName("github.com/G-PORTAL/gpcore-cli/cmd/help", "help")
 
 	commandName := "Root" + strcase.UpperCamelCase(metadata.Name) + "Command"
 	f.Var().Add(Id(commandName).Op("=").Op("&").Qual("github.com/spf13/cobra", "Command").Values(Dict{
-		Id("Use"):                   Lit(metadata.Name),
-		Id("Short"):                 Lit(metadata.Description),
-		Id("Long"):                  Lit(metadata.Description),
-		Id("DisableFlagsInUseLine"): True(),
-		Id("Args"):                  Qual("github.com/spf13/cobra", "MatchAll").Call(Qual("github.com/spf13/cobra", "ExactArgs").Call(Lit(0)), Qual("github.com/spf13/cobra", "OnlyValidArgs")),
-		Id("RunE"): Func().Params(Id("cmd").Op("*").Qual("github.com/spf13/cobra", "Command"), Id("args").Index().String()).Error().Block(
-			Return(Id("cmd").Dot("Usage").Call()),
-		),
+		Id("Use"):              Lit(metadata.Name),
+		Id("Short"):            Lit(metadata.Description),
+		Id("Long"):             Lit(metadata.Description),
+		Id("SilenceUsage"):     True(),
+		Id("SilenceErrors"):    True(),
+		Id("TraverseChildren"): True(),
+		Id("Args"):             Qual("github.com/spf13/cobra", "OnlyValidArgs"),
+		Id("RunE"):             Qual("github.com/G-PORTAL/gpcore-cli/cmd/help", "UnknownSubcommandAction"),
 	}))
 
 	return f.Save(targetFilename)

@@ -18,7 +18,6 @@ and source it in your shell.
 
 ```
 gpcore completion bash > /etc/bash_completion.d/gpcore
-source /etc/bash_completion.d/gpcore
 ```
 
 ## Overview
