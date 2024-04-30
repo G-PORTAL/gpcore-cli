@@ -15,11 +15,20 @@ import (
 
 var printVersion = false
 
+var header = fmt.Sprintf(`
+   ____ ____   ____ ___  ____  _____
+  / ___|  _ \ / ___/ _ \|  _ \| ____|  GPCORE command line interface
+ | |  _| |_) | |  | | | | |_) |  _|    
+ | |_| |  __/| |__| |_| |  _ <| |___   Agent: %s
+  \____|_|    \____\___/|_| \_|_____|  %s
+									 
+`, consts.AgentHost+":"+strconv.Itoa(consts.AgentPort), cmd.GetHumanVersion())
+
 func New() *cobra.Command {
 	rootCmd := cobra.Command{
 		Use:   consts.BinaryName,
 		Short: fmt.Sprintf("%s is the command line tool for interacting with the GPCORE API", consts.BinaryName),
-		Long:  fmt.Sprintf("%s is the command line tool for interacting with the GPCORE API", consts.BinaryName),
+		Long:  header,
 		RunE: func(cobraCmd *cobra.Command, args []string) error {
 			if printVersion {
 				cobraCmd.Print(cmd.GetVersionDisplay())
