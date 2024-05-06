@@ -5,6 +5,6 @@ actions:
     description: List all IP history entries
     root-key: IpHistories
     fields:
-      - CreatedAt
+      - CreatedAt.DateTime
       - User
       - IpAddress

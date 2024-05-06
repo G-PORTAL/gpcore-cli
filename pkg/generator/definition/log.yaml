@@ -12,8 +12,18 @@ actions:
       - name: search
         type: string
         description: Search for a specific log
+    fields:
+      - CreatedAt.DateTime
+      - Level.ServerLogLevel
+      - Source.ServerLogSource
+      - Message
 
   admin:
     api-call: admin.ListAdminLogs
     description: List all admin logs
     root-key: Logs
+    fields:
+      - CreatedAt.DateTime
+      - AdminUser.BasicUser
+      - TargetUser.BasicUser
+      - Message

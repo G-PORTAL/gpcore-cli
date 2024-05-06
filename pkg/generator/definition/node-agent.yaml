@@ -5,11 +5,10 @@ actions:
     root-key: Agents
     fields:
       - Id
-      - Type
-      - Datacenter
+      - Type.AgentType
+      - Datacenter.Datacenter
       - Fqdn
-      - IronicEndpoint
-      - LastContactAt
+      - LastContactAt.DateTime
 
   create:
     api-call: admin.CreateAgent

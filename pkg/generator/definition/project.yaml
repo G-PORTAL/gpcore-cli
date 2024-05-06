@@ -7,8 +7,8 @@ actions:
       - Id
       - Name
       - Description
-      - Currency
-      - Environment
+      - Currency.Currency
+      - Environment.ProjectEnvironment
 
   get:
     api-call: cloud.GetProject
@@ -19,6 +19,7 @@ actions:
         description: Project ID
         required: true
 
+  # TODO: Fix after dependency upgrade
   update:
     api-call: cloud.UpdateProject
     params:
@@ -80,6 +81,12 @@ actions:
         description: Datacenter to fetch the flavours from
         type: string
         required: true
+    fields:
+      - Id
+      - Name
+      - Availability.FlavourAvailability
+      - PricePerMonth.Price
+      - PricePerHour.Price
 
   networks:
     api-call: admin.ListProjectNetworks
@@ -92,8 +99,8 @@ actions:
   logs:
     api-call: cloudv2.ListProjectLogs
     fields:
-      - CreatedAt
-      - User
+      - CreatedAt.DateTime
+      - User.BasicUser
       - Message
 
   # Join/Leave project
@@ -103,6 +110,7 @@ actions:
       - name: accept
         type: bool
         default: false
+
   leave:
     api-call: cloud.LeaveProject
 
@@ -150,9 +158,13 @@ actions:
   images:
     api-call: cloud.ListProjectImages
 
+  # TODO: Custom formatter to output keys in authorized_keys format
   ssh-keys:
     api-call: cloud.ListProjectSSHKeys
     root-key: Keys
+    fields:
+      - User.BasicUser
+      - SshKey.SshKey
 
 
 identifier: session.CurrentProject

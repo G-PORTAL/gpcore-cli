@@ -3,6 +3,12 @@ actions:
   list:
     api-call: admin.ListSwitches
     root-key: Switches
+    fields:
+      - Id
+      - Name
+      - Type.SwitchType
+      - IpAddress
+      - NetboxId.NetboxId
 
   get:
     api-call: admin.GetSwitch
