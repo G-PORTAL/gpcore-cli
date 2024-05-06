@@ -5,12 +5,16 @@ import (
 	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 )
 
-// ProductName is the name of the product
+var (
+	version string
+	commit  string
+	date    string
+)
 
 var (
-	Version = "dev"
-	Commit  = ""
-	Date    = ""
+	Version = valueOrFallback(version, func() string { return "dev" })
+	Commit  = valueOrFallback(commit, func() string { return "" })
+	Date    = valueOrFallback(date, func() string { return "" })
 )
 
 // GetVersionDisplay composes the parts of the version in a way that's suitable
@@ -30,4 +34,11 @@ func GetHumanVersion() string {
 
 	// Strip off any single quotes added by the git information.
 	return info
+}
+
+func valueOrFallback(val string, fn func() string) string {
+	if val != "" {
+		return val
+	}
+	return fn()
 }
