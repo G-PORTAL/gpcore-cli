@@ -21,7 +21,7 @@ builds:
       - linux
       - windows
     ldflags:
-      - '-s -w -X cmd.Version={{.Tag}} -X cmd.Commit={{.Commit}} -X cmd.Date={{.Date}}'
+      - "-s -w -X '{{ .ModulePath }}/cmd.version={{.Tag}}' -X '{{ .ModulePath }}/cmd.commit={{.Commit}}' -X '{{ .ModulePath }}/cmd.date={{.Date}}'"
 
   - env:
       - CGO_ENABLED=0
@@ -29,7 +29,7 @@ builds:
     goos:
       - darwin
     ldflags:
-      - '-s -w -X cmd.Version={{.Tag}} -X cmd.Commit={{.Commit}} -X cmd.Date={{.Date}}'
+      - "-s -w -X '{{ .ModulePath }}/cmd.version={{.Tag}}' -X '{{ .ModulePath }}/cmd.commit={{.Commit}}' -X '{{ .ModulePath }}/cmd.date={{.Date}}'"
     goarch:
       - amd64
       - arm64
