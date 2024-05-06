@@ -3,6 +3,10 @@ actions:
   list:
     api-call: admin.ListOperatingSystems
     root-key: OperatingSystems
+    fields:
+      - Id
+      - Name
+      - Family.OperatingSystemFamily
 
   get:
     api-call: admin.GetOperatingSystem

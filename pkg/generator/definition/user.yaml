@@ -4,6 +4,10 @@ actions:
     api-call: cloud.ListUserSSHKeys
     response-type: "*typev1.SSHKey"
     no-pagination: true
+    fields:
+      - Name
+      - Type
+      - Fingerprint
 
   list:
     api-call: admin.ListUsers
@@ -13,6 +17,16 @@ actions:
       - name: search
         type: string
         description: Search for a specific log
+    fields:
+      - Id
+      - Number
+      - FullName
+      - Email
+      - Confirmed
+      - Locked
+      - NodeLimit
+      - Type
+      - LastLoginAt
 
   get:
     api-call: admin.GetUser

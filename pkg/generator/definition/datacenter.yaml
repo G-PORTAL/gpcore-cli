@@ -7,7 +7,7 @@ actions:
       - Id
       - Short
       - Name
-      - Status
+      - Status.DatacenterStatus
 
   update:
     api-call: admin.UpdateDatacenter

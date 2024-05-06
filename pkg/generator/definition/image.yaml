@@ -6,11 +6,20 @@ actions:
     fields:
       - Id
       - Name
-      - Available
+      - Available.Boolean
 
   list-public:
     api-call: cloud.ListPublicImages
     root-key: OperatingSystems
+    params:
+      - name: flavour_id
+        type: string
+        description: Flavour ID
+        required: true
+    fields:
+      - Id
+      - Name
+      - Family.OperatingSystemFamily
 
   get:
     api-call: admin.GetImage

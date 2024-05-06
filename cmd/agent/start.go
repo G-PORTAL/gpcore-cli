@@ -132,6 +132,7 @@ var startCmd = &cobra.Command{
 						ctx := session.ContextWithSession(context.Background())
 						if err := rootCmd.ExecuteContext(ctx); err != nil {
 							log.Errorf("Error executing command: %v", err)
+							rootCmd.Printf("Error executing command: %v\n", err)
 							return
 						}
 

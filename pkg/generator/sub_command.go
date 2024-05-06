@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"github.com/G-PORTAL/gpcore-cli/pkg/api"
 	. "github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
 	"strings"
@@ -30,6 +31,7 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 	f.ImportName("github.com/G-PORTAL/gpcore-cli/pkg/client", "client")
 	f.ImportName("github.com/G-PORTAL/gpcore-cli/pkg/config", "config")
 	f.ImportName("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", "protobuf")
+	f.ImportName("github.com/G-PORTAL/gpcore-cli/pkg/api", "api")
 	f.ImportName("google.golang.org/grpc", "grpc")
 	f.ImportName("github.com/charmbracelet/ssh", "ssh")
 	f.ImportName("github.com/jedib0t/go-pretty/v6/table", "table")
@@ -275,7 +277,9 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	if hasListOutput(metadata.Action.APICall) {
 		respData = "combinedData"
 	}
-	c = append(c, If(Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "JSONOutput")).Block(
+
+	jsonOutputFormatCode := make([]Code, 0)
+	jsonOutputFormatCode = append(jsonOutputFormatCode,
 		List(Id("jsonData"), Id("err")).
 			Op(":=").
 			Qual("encoding/json", "MarshalIndent").Call(
@@ -286,7 +290,15 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 			Return(Id("err"))),
 		Id("cobraCmd").Dot("Println").Call(
 			Id("string").Call(
-				Id("jsonData")))))
+				Id("jsonData"))))
+
+	if hasListOutput(metadata.Action.APICall) {
+		c = append(c,
+			If(Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "JSONOutput")).
+				Block(jsonOutputFormatCode...))
+	} else {
+		c = append(c, jsonOutputFormatCode...)
+	}
 
 	c = append(c, Return(Nil()))
 
@@ -340,21 +352,28 @@ func listResponse(metadata SubcommandMetadata) []Code {
 			Id("i").Op("<").Id("c").Dot("NumField").Call(),
 			Id("i").Op("++")).Block(
 			If(Id("c").Dot("Type").Call().Dot("Field").Call(Id("i")).Dot("IsExported").Call().Block(
-				Id("val").Op(":=").Qual("fmt", "Sprintf").Call(
-					Lit("%v"),
-					Id("c").Dot("Field").Call(
-						Id("i")).Dot("Interface").Call()),
+				Id("field").Op(":=").Id("c").Dot("Field").Call(
+					Id("i")).Dot("Interface").Call(),
+				Id("val").Op(":=").Lit(""),
 				Id("col").Op(":=").Qual("fmt", "Sprintf").Call(
 					Lit("%v"),
 					Id("c").Dot("Type").Call().
 						Dot("Field").Call(
 						Id("i")).
 						Dot("Name")),
+				// TODO: This part should be refactored to a separate function
 				Switch(Id("col").Block(
-					Case(Lit("CreatedAt")).Block(tableColValue("CreatedAt")...),
-					Case(Lit("Currency")).Block(tableColValue("Currency")...),
-					Case(Lit("User")).Block(tableColValue("User")...),
-					Case(Lit("Environment")).Block(tableColValue("Environment")...))),
+					Case(Lit("CreatedAt")).Block(tableColValue("CreatedAt", "")...),
+					Case(Lit("Currency")).Block(tableColValue("Currency", "")...),
+					Case(Lit("User")).Block(tableColValue("User", "")...),
+					Case(Lit("Environment")).Block(tableColValue("Environment", "")...),
+					Case(Lit("Datacenter")).Block(tableColValue("Datacenter", "")...),
+					Case(Lit("Company")).Block(tableColValue("Company", "")...),
+					Default().Block(
+						Id("val").Op("=").Qual("fmt", "Sprintf").Call(
+							Lit("%v"), Id("field"),
+						),
+					))),
 				Id("row").Op("=").Append(Id("row"), Id("val")),
 				If(headerCondition).Block(
 					Id("headerRow").Op("=").Append(
@@ -372,7 +391,11 @@ func listResponse(metadata SubcommandMetadata) []Code {
 		headerCode := make([]Code, 0)
 
 		for _, value := range metadata.Action.Fields {
-			headerCode = append(headerCode, Id("headerRow").Op("=").Append(Id("headerRow"), Lit(value)))
+			colName := value
+			if strings.Contains(value, ".") {
+				colName = strings.Split(value, ".")[0]
+			}
+			headerCode = append(headerCode, Id("headerRow").Op("=").Append(Id("headerRow"), Lit(colName)))
 		}
 		headerCode = append(headerCode, Id("tbl").Dot("AppendHeader").Call(Id("headerRow")))
 
@@ -392,11 +415,8 @@ func listResponse(metadata SubcommandMetadata) []Code {
 
 		// Rows
 		for _, value := range metadata.Action.Fields {
-			// Default format
-			valuesCode = append(valuesCode, Id("val").Op("=").
-				Qual("fmt", "Sprintf").Call(
-				Lit("%v"),
-				Id("entry").Dot(value)))
+			// Format column cell
+			valuesCode = append(valuesCode, tableColValue(value, "entry")...)
 
 			// Call hook
 			if hasHook(metadata.Definition.Name, metadata.Name, "post") {
@@ -405,9 +425,6 @@ func listResponse(metadata SubcommandMetadata) []Code {
 					Id("respHook").Index(Id("i")).Index(Lit(title(value))).Op(";").Id("ok").Block(
 					Id("val").Op("=").Id("v"))))
 			}
-
-			// Special formatting
-			valuesCode = append(valuesCode, tableColValue(value)...)
 
 			// Append to row
 			valuesCode = append(valuesCode, Id("row").Op("=").Append(Id("row"), Id("val")))
@@ -438,56 +455,83 @@ func singleResponse(metadata SubcommandMetadata) []Code {
 // tableColValue generates the code for special table column values. Some
 // columns need special formatting, like the "CreatedAt" column, which is a
 // timestamp.
-func tableColValue(col string) []Code {
+func tableColValue(col string, structPrefix string) []Code {
 	c := make([]Code, 0)
 
-	switch col {
+	identifier := col
+
+	// When we have a dot in the identifier, we want to do some special formatting,
+	// but we need to extract the identifier first in order to work with it.
+	if strings.Contains(col, ".") {
+		parts := strings.Split(col, ".")
+		identifier = parts[0]
+	}
+
+	// If we have a struct prefix, we need to prefix the identifier with it.
+	if structPrefix != "" {
+		identifier = structPrefix + "." + identifier
+	}
+
+	// We define some special "formatting suffixes" for common fields
+	// like price, date, time, etc.
+	for _, suffix := range api.SpecialFormatters {
+		if strings.HasSuffix(col, "."+suffix) {
+			col = strings.TrimSuffix(col, "."+suffix)
+			c = append(c, Id("val").Op("=").
+				Qual("github.com/G-PORTAL/gpcore-cli/pkg/api", "Format"+suffix).Call(
+				Id(identifier)))
+
+			return c
+		}
+	}
+
+	// Special cases
+	switch identifier {
+	// TODO: Email
+	// TODO: FullName
+	// TODO: LastLoginAt
 	case "CreatedAt":
-		c = append(c, Id("c").Op(":=").Qual("reflect", "ValueOf").Call(
-			Op("*").Id("entry")))
-		c = append(c, Id("a").Op(":=").
-			Qual("reflect", "Indirect").Call(
-			Id("c").Dot("FieldByName").Call(Lit("CreatedAt"))))
-		c = append(c, If(
-			Op("!").Id("c").
-				Dot("FieldByName").Call(Lit("CreatedAt")).
-				Dot("IsZero").Call()).
-			Block(
-				Id("s").Op(":=").
-					Qual("reflect", "Indirect").Call(
-					Id("a")).Dot("FieldByName").Call(Lit("Seconds")),
-				If(Id("s").Dot("CanInt").Call().Block(
-					Id("t").Op(":=").Qual("time", "Unix").Call(
-						Id("s").Dot("Int").Call(),
-						Lit(0)),
-					Id("val").Op("=").
-						Id("t").Dot("Format").Call(Lit("2006-01-02 15:04:05"))))))
+		c = append(c, Id("val").Op("=").
+			Qual("github.com/G-PORTAL/gpcore-cli/pkg/api", "FormatDate").Call(
+			Id("field").Assert(Op("*").Qual("google.golang.org/protobuf/types/known/timestamppb", "Timestamp"))))
 	case "Currency":
-		c = append(c, Id("val").Op("=").
-			Id("val").Index(Lit(9), Empty()))
+		c = append(c, Id("val").Op("=").Qual("fmt", "Sprintf").Call(
+			Lit("%v"), Id("field")).Index(Lit(9), Empty()))
 	case "Environment":
-		c = append(c, Id("val").Op("=").
-			Id("val").Index(Lit(20), Empty()))
+		c = append(c, Id("val").Op("=").Qual("fmt", "Sprintf").Call(
+			Lit("%v"), Id("field")).Index(Lit(20), Empty()))
 	case "User":
-		c = append(c, Id("u").Op(":=").Qual("reflect", "ValueOf").Call(
-			Op("*").Id("entry")))
+		// TODO: Use FormatUser
 		c = append(c, Id("user").Op(":=").
 			Qual("reflect", "Indirect").Call(
-			Id("u")).Dot("FieldByName").Call(Lit("User")))
+			Id("c")).Dot("FieldByName").Call(Lit("User")))
 		c = append(c, Id("val").Op("=").
 			Qual("reflect", "Indirect").Call(
 			Id("user")).Dot("FieldByName").Call(Lit("Username")).Dot("String").Call())
-	case "Datacenter":
-		c = append(c, Id("n").Op(":=").Qual("reflect", "ValueOf").Call(
-			Op("*").Id("entry")))
+	case "Company":
+		// TODO: Use FormatCompany
 		c = append(c, Id("name").Op(":=").
 			Qual("reflect", "Indirect").Call(
-			Id("n")).Dot("FieldByName").Call(Lit("Datacenter")))
+			Id("c")).Dot("FieldByName").Call(Lit("Company")))
 		c = append(c, Id("val").Op("=").
 			Qual("reflect", "Indirect").Call(
 			Id("name")).Dot("FieldByName").Call(Lit("Name")).Dot("String").Call())
-	}
+	case "Datacenter":
+		// TODO: Use FormatDatacenter
+		c = append(c, Id("name").Op(":=").
+			Qual("reflect", "Indirect").Call(
+			Id("c")).Dot("FieldByName").Call(Lit("Datacenter")))
+		c = append(c, Id("val").Op("=").
+			Qual("reflect", "Indirect").Call(
+			Id("name")).Dot("FieldByName").Call(Lit("Name")).Dot("String").Call())
+	default:
+		// Default formatting
+		c = append(c, Id("val").Op("=").
+			Qual("fmt", "Sprintf").Call(
+			Lit("%v"),
+			Id(identifier)))
 
+	}
 	return c
 }
 

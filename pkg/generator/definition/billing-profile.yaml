@@ -10,7 +10,7 @@ actions:
       - Street
       - City
       - Postcode
-      - Company
+      - Company.Company
 
   list-bills:
     api-call: cloudv2.ListBillingProfileBills
@@ -25,6 +25,16 @@ actions:
         type: int32
         description: Year
         required: false
+    fields:
+      - Id
+      - Number
+      - Status.BillStatus
+      - NetPrice.Price
+      - TaxPrice.Price
+      - GrossPrice.Price
+      - CreditPrice.Price
+      - TotalPrice.Price
+      - IssuedAt.Date
 
   list-projects:
     api-call: cloudv2.ListBillingProfileProjects
@@ -33,7 +43,7 @@ actions:
     params:
       - name: id
         type: string
-        description: Project ID
+        description: Billing Profile UUID
         required: true
 
   details:
@@ -43,23 +53,11 @@ actions:
       - name: id
         type: string
         required: true
+        description: Billing Profile UUID
       - name: bill_id
         type: string
         required: true
-
-  change-node-billing-period:
-    api-call: cloud.ChangeNodeBillingPeriod
-    params:
-      - name: id
-        type: string
-        required: true
-      - name: project_id
-        type: string
-        required: true
-      - name: billing_period
-        type: cloudv1.BillingPeriod
-        default: cloudv1.BILLING_PERIOD_MONTHLY
-        required: true
+        description: Bill UUID
 
   # TODO: File output support not available on the console at the moment.
   #pdf:

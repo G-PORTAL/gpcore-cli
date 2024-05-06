@@ -7,15 +7,20 @@ actions:
     fields:
       - Id
       - Name
-      - InPool
-      - PowerState
-      - ProvisionState
-      - CreatedAt
+      - InPool.Boolean
+      - PowerState.ServerPowerState
+      - ProvisionState.ServerProvisioningState
+      - CreatedAt.Date
 
   list-available:
     api-call: admin.ListAvailableServer
     description: List all available servers
     root-key: Server
+    fields:
+      - Id
+      - Name
+      - Datacenter
+      - NetboxLink
 
   import:
     api-call: admin.ImportServer

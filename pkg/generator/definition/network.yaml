@@ -3,6 +3,17 @@ actions:
   list:
     api-call: admin.ListNetworks
     root-key: Networks
+    fields:
+      - Id
+      - Name
+      - Type.NetworkType
+      - Project.BasicProject
+      - Subnets.SubnetList
+      - VlanId
+      - Datacenter.Datacenter
+      - PoolSize
+      - PoolAvailable
+      - CreatedAt.DateTime
 
   get:
     api-call: admin.GetNetwork

@@ -23,8 +23,24 @@ actions:
     params:
       - name: id
         type: string
-        description: Project ID
+        description: Project UUID
         required: true
+      - name: datacenter_id
+        type: string
+        description: Datacenter UUID
+        required: true
+    fields:
+      - Id
+      - Name
+      - Availability.FlavourAvailability
+      - Cpu
+      - Memory
+      - Disk
+      - Network
+      - Traffic
+      - PricePerHour.Price
+      - PricePerMonth.Price
+      - WindowsMonthlyFee.Price
 
   get:
     api-call: admin.GetFlavour
@@ -32,7 +48,7 @@ actions:
     params:
       - name: id
         type: string
-        description: Flavour ID
+        description: Flavour UUID
         required: true
 
   delete:
@@ -41,7 +57,7 @@ actions:
     params:
       - name: id
         type: string
-        description: Flavour ID
+        description: Flavour UUID
         required: true
 
   create:
@@ -91,7 +107,7 @@ actions:
     params:
       - name: id
         type: string
-        description: Flavour ID
+        description: Flavour UUID
         required: true
       - name: name
         type: string
