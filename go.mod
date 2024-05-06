@@ -12,7 +12,7 @@ require (
 	github.com/creativeprojects/go-selfupdate v1.2.0
 	github.com/dave/jennifer v1.7.0
 	github.com/gertd/go-pluralize v0.2.1
-	github.com/jedib0t/go-pretty/v6 v6.5.8
+	github.com/jedib0t/go-pretty/v6 v6.5.9
 	github.com/melbahja/goph v1.4.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stoewer/go-strcase v1.3.0
