@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240425100511-26168f5f66ec.1
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.0-20240425100511-26168f5f66ec.1
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.0-20240506112553-74f750072c05.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240122103833-6af7e686f119
 	github.com/charmbracelet/log v0.4.0
 	github.com/charmbracelet/ssh v0.0.0-20240401141849-854cddfa2917
@@ -19,6 +19,7 @@ require (
 	github.com/zalando/go-keyring v0.2.4
 	golang.org/x/crypto v0.22.0
 	google.golang.org/grpc v1.63.2
+	google.golang.org/protobuf v1.34.0
 	gopkg.in/op/go-logging.v1 v1.0.0-20160315200505-970db520ece7
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -78,6 +79,5 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
-	google.golang.org/protobuf v1.34.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b // indirect
 )
