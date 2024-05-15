@@ -93,6 +93,16 @@ actions:
         description: Project UUID
         required: true
 
+  destroy-immediately:
+    api-call: admin.DestroyNode
+    description: Destroy a node immediately (not waiting for the end of the billing period)
+    identifier: nil
+    params:
+      - name: id
+        type: string
+        description: Node UUID
+        required: true
+
   reinstall:
     api-call: cloud.ReinstallNode
     description: Reinstall a node
