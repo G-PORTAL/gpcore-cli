@@ -3,7 +3,7 @@ module github.com/G-PORTAL/gpcore-cli
 go 1.22
 
 require (
-	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240425100511-26168f5f66ec.1
+	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240506112553-74f750072c05.3
 	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.1-20240506112553-74f750072c05.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240122103833-6af7e686f119
 	github.com/charmbracelet/log v0.4.0
@@ -79,5 +79,5 @@ require (
 	golang.org/x/text v0.15.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
-	gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
