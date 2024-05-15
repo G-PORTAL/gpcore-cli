@@ -37,7 +37,7 @@ func enumToProtoFunc(enumType string) []Code {
 		Id("a").String()).Qual(clientPackageName(enumType), stripPackage(enumType)).Block(
 		For(List(Id("k"), Id("v")).Op(":=").Range().Id(enumType+"_name").Block(
 			If(Id("v").Op("==").
-				Lit(strings.ToUpper(strcase.SnakeCase(stripPackage(enumType)))+"_").
+				Lit(strings.ToUpper(strcase.SnakeCase(stripEnum(stripPackage(enumType))))+"_").
 				Op("+").
 				Qual("strings", "ToUpper").Call(Id("a"))).Block(
 				Return(Id(enumType).Call(Id("k"))))),
@@ -175,9 +175,25 @@ func isArrayType(s string) bool {
 
 // enumToProtoType converts an enum type to a prototype.
 func enumToProtoType(enumType string, value string) string {
+	// normal enums
 	// cloudv1.ProjectEnvironment -> ProjectEnvironment_PROJECT_ENVIRONMENT_[VALUE]
 	parts := strings.Split(enumType, ".")
-	return parts[0] + "." + parts[1] + "_" + strcase.UpperSnakeCase(parts[1]) + "_" + strings.ToUpper(value)
+
+	client, enumType := parts[0], parts[1]
+	value = strings.ToUpper(strcase.SnakeCase(value))
+
+	// "inline" enums (enums inside messages)
+	// adminv1.ReplaceServerRequest_ReplaceServerReason -> ReplaceServerRequest_REPLACE_SERVER_REASON_[VALUE]
+	if strings.Contains(enumType, "_") {
+		parts := strings.Split(enumType, "_")
+		message, inlineEnum := parts[0], parts[1]
+		return client + "." +
+			message +
+			"_" + strcase.UpperSnakeCase(inlineEnum) +
+			"_" + value
+	}
+
+	return client + "." + enumType + "_" + strcase.UpperSnakeCase(enumType) + "_" + value
 }
 
 // defaultValue returns the default value for a given parameter as a
@@ -251,6 +267,16 @@ func parameterDescription(param Param) string {
 // generate valid variable names (without package names).
 func stripPackage(s string) string {
 	return strings.Split(s, ".")[1]
+}
+
+// stripEnum removes the enum prefix from a string. These prefixes are added	for
+// inline enums.
+func stripEnum(s string) string {
+	if strings.Contains(s, "_") {
+		return strings.Split(s, "_")[1]
+	}
+
+	return s
 }
 
 func clientPackageName(s string) string {

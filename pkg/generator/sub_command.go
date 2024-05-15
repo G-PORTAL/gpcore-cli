@@ -268,7 +268,6 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		c = append(c, If(
 			Op("!").Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "JSONOutput")).Block(
 			Id("tbl").Dot("Render").Call()))
-
 	} else {
 		c = append(c, respC...)
 	}
