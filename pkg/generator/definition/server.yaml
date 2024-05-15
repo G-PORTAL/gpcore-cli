@@ -32,7 +32,7 @@ actions:
     params:
       - name: server_id
         type: string
-        description: Server ID
+        description: Server UUID
         required: true
       - name: action
         type: cloudv1.ServerAction
@@ -46,7 +46,7 @@ actions:
     params:
       - name: id
         type: string
-        description: Server ID
+        description: Server UUID
         required: true
 
   update:
@@ -55,11 +55,11 @@ actions:
     params:
       - name: id
         type: string
-        description: Server ID
+        description: Server UUID
         required: true
       - name: flavour_id
         type: string
-        description: Flavour ID
+        description: Flavour UUID
         required: true
       - name: in-pool
         type: bool
@@ -72,8 +72,31 @@ actions:
     params:
       - name: id
         type: string
-        description: Server ID
+        description: Server UUID
         required: true
+      - name: force
+        type: bool
+        description: Force destroy the server, even if the server is unresponsive
+        default: false
+        required: true
+
+  replace:
+    api-call: admin.ReplaceServer
+    description: Replace a server with a new one (due to hardware failure)
+    params:
+      - name: id
+        type: string
+        description: Server UUID
+        required: true
+      - name: reason
+        type: adminv1.ReplaceServerRequest_ReplaceServerReason
+        description: Reason, why the server need to be replaced
+        default: adminv1.ReplaceServerRequest_REPLACE_SERVER_REASON_BROKEN
+        required: true
+      - name: replacement_server_id
+        type: string
+        description: Replacement server UUID
+        required: false
 
   platform-management:
     api-call: admin.GetServerPlatformManagement
