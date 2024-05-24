@@ -2,9 +2,9 @@ buf.build/gen/go/bufbuild/protovalidate/grpc/go v1.3.0-20240401165935-b983156c5e
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.28.1-20240401165935-b983156c5e99.4/go.mod h1:mS9XvSH4W2c4pyTYRkCwrIuwoYpigZwLrYhzHaIT0Vo=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.1-20240401165935-b983156c5e99.1 h1:npqzxtoNbSdWs7XBDzqvqA1ANrQQGc8QpN0zFq9sVHA=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.1-20240401165935-b983156c5e99.1/go.mod h1:XF+P8+RmfdufmIYpGUC+6bF7S+IlmHDEnCrO3OXaUAQ=
-buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240517000739-1159d7bec4aa.1 h1:gjjGGJ3CLpdcGFY1uWdd6y57FrPcuYQtjhF96mg3jBQ=
-buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240517000739-1159d7bec4aa.1/go.mod h1:NsT/ReE5ZuY/NF9CNAkw7PH670iOFm/ObegKk2N8gc0=
-buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.28.1-20240517000739-1159d7bec4aa.4/go.mod h1:HPBDCgspF+Zn22+oeifMCPtn+I88BWD8rvZrG2ykjxw=
+buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240523115717-f5ac5e7cae45.1 h1:LSogrwGUv/d+VzJF9evEM+Qh8RPY/jV14qpNWHUAEFg=
+buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240523115717-f5ac5e7cae45.1/go.mod h1:Ge5VeGqZojKIzgFFtMsbi2EpqNauVWqloYLha7S2478=
+buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.28.1-20240523115717-f5ac5e7cae45.4/go.mod h1:HPBDCgspF+Zn22+oeifMCPtn+I88BWD8rvZrG2ykjxw=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.1-20240517000739-1159d7bec4aa.1 h1:PiBMXHuS8EzveTrNE1h696xJ9ikgiNe9lIfTrxftXuk=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.1-20240517000739-1159d7bec4aa.1/go.mod h1:gVDHT3Al8/4lU+hTAqELRpoNmNZMPfMTm9sc8tIP5Iw=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
