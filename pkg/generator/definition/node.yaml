@@ -5,6 +5,7 @@ actions:
     root-key: Nodes
     fields:
       - Id
+      - Fqdn
       - Status.ServerProvisioningState
       - Flavour.Flavour
       - Image.Image
