@@ -38,7 +38,7 @@ jobs:
       - name: Check if snapshot build
         if: "!contains(github.ref, 'main')"
         run: echo "flags=--snapshot" >> $GITHUB_ENV
-      - uses: goreleaser/goreleaser-action@v5
+      - uses: goreleaser/goreleaser-action@v6
         with:
           version: v1.25.1
           args: release --clean ${{ env.flags }}
