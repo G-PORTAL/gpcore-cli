@@ -3,9 +3,9 @@ module github.com/G-PORTAL/gpcore-cli
 go 1.22
 
 require (
-	buf.build/gen/go/gportal/gpcore/grpc/go v1.3.0-20240517000739-1159d7bec4aa.1
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.1-20240517000739-1159d7bec4aa.1
-	github.com/G-PORTAL/gpcore-go v0.0.0-20240122103833-6af7e686f119
+	buf.build/gen/go/gportal/gpcore/grpc/go v1.4.0-20240606140147-6fb2b04ab31f.1
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.1-20240606140147-6fb2b04ab31f.1
+	github.com/G-PORTAL/gpcore-go v0.0.0-20240606091943-3d0109c39129
 	github.com/charmbracelet/log v0.4.0
 	github.com/charmbracelet/ssh v0.0.0-20240401141849-854cddfa2917
 	github.com/charmbracelet/wish v1.4.0
@@ -25,7 +25,7 @@ require (
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.1-20240401165935-b983156c5e99.1 // indirect
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.1-20240508200655-46a4cf4ba109.1 // indirect
 	code.gitea.io/sdk/gitea v0.17.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Nerzal/gocloak/v13 v13.9.0 // indirect
