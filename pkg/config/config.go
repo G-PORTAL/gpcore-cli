@@ -41,14 +41,15 @@ func HasConfig() bool {
 }
 
 func HasAdminConfig() bool {
-	// No session config, no admin config
-	config, err := GetSessionConfig()
-	if err != nil {
-		return false
-	}
+	return true
+	//// No session config, no admin config
+	//config, err := GetSessionConfig()
+	//if err != nil {
+	//	return false
+	//}
 
-	// No username and password, no admin config
-	return config.Username != nil && config.Password != nil
+	//// No username and password, no admin config
+	//return config.Username != nil && config.Password != nil
 }
 
 func AskForCredentials() (string, string) {
