@@ -61,10 +61,10 @@ actions:
         type: string
         description: Flavour UUID
         required: true
-      - name: in-pool
-        type: bool
-        description: If the server is available
-        required: true
+      - name: server_pool_id
+        type: string
+        description: Server Pool UUID
+        required: false
 
   delete:
     api-call: admin.DeleteServer
@@ -96,6 +96,10 @@ actions:
       - name: replacement_server_id
         type: string
         description: Replacement server UUID
+        required: false
+      - name: server_pool_id
+        type: string
+        description: Server Pool UUID
         required: false
 
   platform-management:
