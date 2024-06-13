@@ -1,0 +1,34 @@
+description: Server Pools
+actions:
+  list:
+    api-call: admin.ListServerPools
+    description: List all available server pools
+    root-key: ServerPools
+    fields:
+      - Id
+      - Name
+      - OneTime
+      - CreatedAt.Date
+      - UpdatedAt.Date
+
+  create:
+    api-call: admin.CreateServerPool
+    description: Create a new server pool
+    params:
+      - name: name
+        type: string
+        description: Server pool name
+        required: true
+      - name: one_time
+        type: bool
+        description: One-time server pool
+        required: true
+
+  delete:
+    api-call: admin.DeleteServerPool
+    description: Delete a server pool
+    params:
+      - name: id
+        type: string
+        description: Server pool UUID
+        required: true
