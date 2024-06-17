@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	buf.build/gen/go/gportal/gpcore/grpc/go v1.4.0-20240606140147-6fb2b04ab31f.1
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.1-20240606140147-6fb2b04ab31f.1
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.2-20240606140147-6fb2b04ab31f.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240606091943-3d0109c39129
 	github.com/charmbracelet/log v0.4.0
 	github.com/charmbracelet/ssh v0.0.0-20240401141849-854cddfa2917
@@ -19,13 +19,13 @@ require (
 	github.com/zalando/go-keyring v0.2.4
 	golang.org/x/crypto v0.24.0
 	google.golang.org/grpc v1.64.0
-	google.golang.org/protobuf v1.34.1
+	google.golang.org/protobuf v1.34.2
 	gopkg.in/op/go-logging.v1 v1.0.0-20160315200505-970db520ece7
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.1-20240508200655-46a4cf4ba109.1 // indirect
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240401165935-b983156c5e99.1 // indirect
 	code.gitea.io/sdk/gitea v0.17.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Nerzal/gocloak/v13 v13.9.0 // indirect
@@ -78,5 +78,4 @@ require (
 	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
