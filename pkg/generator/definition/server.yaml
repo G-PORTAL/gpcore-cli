@@ -97,10 +97,6 @@ actions:
         type: string
         description: Replacement server UUID
         required: false
-      - name: server_pool_id
-        type: string
-        description: Server Pool UUID
-        required: false
 
   platform-management:
     api-call: admin.GetServerPlatformManagement
