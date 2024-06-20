@@ -3,8 +3,8 @@ module github.com/G-PORTAL/gpcore-cli
 go 1.22
 
 require (
-	buf.build/gen/go/gportal/gpcore/grpc/go v1.4.0-20240606140147-6fb2b04ab31f.1
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.2-20240606140147-6fb2b04ab31f.2
+	buf.build/gen/go/gportal/gpcore/grpc/go v1.4.0-20240619092551-6124124f07ff.1
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.34.2-20240619092551-6124124f07ff.2
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240606091943-3d0109c39129
 	github.com/charmbracelet/log v0.4.0
 	github.com/charmbracelet/ssh v0.0.0-20240604154955-a40c6a0d028f
@@ -37,7 +37,7 @@ require (
 	github.com/charmbracelet/lipgloss v0.11.0 // indirect
 	github.com/charmbracelet/x/ansi v0.1.2 // indirect
 	github.com/charmbracelet/x/conpty v0.1.0 // indirect
-	github.com/charmbracelet/x/errors v0.0.0-20240606154654-7c42867b53c7 // indirect
+	github.com/charmbracelet/x/errors v0.0.0-20240617190524-788ec55faed1 // indirect
 	github.com/charmbracelet/x/exp/term v0.0.0-20240606154654-7c42867b53c7 // indirect
 	github.com/charmbracelet/x/input v0.1.2 // indirect
 	github.com/charmbracelet/x/term v0.1.1 // indirect
@@ -85,6 +85,6 @@ require (
 	golang.org/x/term v0.21.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240610135401-a8a62080eff3 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240617180043-68d350f18fd4 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
