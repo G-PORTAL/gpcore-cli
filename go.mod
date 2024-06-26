@@ -9,7 +9,7 @@ require (
 	github.com/charmbracelet/log v0.4.0
 	github.com/charmbracelet/ssh v0.0.0-20240604154955-a40c6a0d028f
 	github.com/charmbracelet/wish v1.4.0
-	github.com/creativeprojects/go-selfupdate v1.2.0
+	github.com/creativeprojects/go-selfupdate v1.3.0
 	github.com/dave/jennifer v1.7.0
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/jedib0t/go-pretty/v6 v6.5.9
@@ -38,12 +38,10 @@ require (
 	github.com/charmbracelet/x/ansi v0.1.2 // indirect
 	github.com/charmbracelet/x/conpty v0.1.0 // indirect
 	github.com/charmbracelet/x/errors v0.0.0-20240617190524-788ec55faed1 // indirect
-	github.com/charmbracelet/x/exp/term v0.0.0-20240606154654-7c42867b53c7 // indirect
 	github.com/charmbracelet/x/input v0.1.2 // indirect
 	github.com/charmbracelet/x/term v0.1.1 // indirect
 	github.com/charmbracelet/x/termios v0.1.0 // indirect
 	github.com/charmbracelet/x/windows v0.1.2 // indirect
-	github.com/containerd/console v1.0.4 // indirect
 	github.com/creack/pty v1.1.21 // indirect
 	github.com/danieljoos/wincred v1.2.1 // indirect
 	github.com/davidmz/go-pageant v1.0.2 // indirect
@@ -66,7 +64,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
-	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.15.2 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -75,16 +72,14 @@ require (
 	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/ulikunitz/xz v0.5.12 // indirect
-	github.com/xanzy/go-gitlab v0.105.0 // indirect
+	github.com/xanzy/go-gitlab v0.106.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/oauth2 v0.21.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
-	golang.org/x/term v0.21.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240617180043-68d350f18fd4 // indirect
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
