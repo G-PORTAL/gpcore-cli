@@ -16,7 +16,7 @@ require (
 	github.com/melbahja/goph v1.4.0
 	github.com/spf13/cobra v1.8.1
 	github.com/stoewer/go-strcase v1.3.0
-	github.com/zalando/go-keyring v0.2.5
+	github.com/zalando/go-keyring v0.2.6
 	golang.org/x/crypto v0.32.0
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.4
@@ -25,11 +25,11 @@ require (
 )
 
 require (
+	al.essio.dev/pkg/shellescape v1.5.1 // indirect
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.4-20240401165935-b983156c5e99.1 // indirect
 	code.gitea.io/sdk/gitea v0.19.0 // indirect
 	github.com/Masterminds/semver/v3 v3.3.0 // indirect
 	github.com/Nerzal/gocloak/v13 v13.9.0 // indirect
-	github.com/alessio/shellescape v1.4.2 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/bubbletea v0.26.4 // indirect
@@ -43,7 +43,7 @@ require (
 	github.com/charmbracelet/x/termios v0.1.0 // indirect
 	github.com/charmbracelet/x/windows v0.1.2 // indirect
 	github.com/creack/pty v1.1.21 // indirect
-	github.com/danieljoos/wincred v1.2.1 // indirect
+	github.com/danieljoos/wincred v1.2.2 // indirect
 	github.com/davidmz/go-pageant v1.0.2 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/go-fed/httpsig v1.1.0 // indirect
