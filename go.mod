@@ -10,7 +10,7 @@ require (
 	github.com/charmbracelet/ssh v0.0.0-20240604154955-a40c6a0d028f
 	github.com/charmbracelet/wish v1.4.0
 	github.com/creativeprojects/go-selfupdate v1.4.0
-	github.com/dave/jennifer v1.7.0
+	github.com/dave/jennifer v1.7.1
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/jedib0t/go-pretty/v6 v6.5.9
 	github.com/melbahja/goph v1.4.0
