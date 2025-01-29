@@ -7,8 +7,8 @@ require (
 	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.4-20250120104711-3db29961bd7b.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240606091943-3d0109c39129
 	github.com/charmbracelet/log v0.4.0
-	github.com/charmbracelet/ssh v0.0.0-20241211182756-4fe22b0f1b7c
-	github.com/charmbracelet/wish v1.4.4
+	github.com/charmbracelet/ssh v0.0.0-20250128164007-98fd5ae11894
+	github.com/charmbracelet/wish v1.4.6
 	github.com/creativeprojects/go-selfupdate v1.4.0
 	github.com/dave/jennifer v1.7.1
 	github.com/gertd/go-pluralize v0.2.1
@@ -35,7 +35,7 @@ require (
 	github.com/charmbracelet/bubbletea v1.2.4 // indirect
 	github.com/charmbracelet/keygen v0.5.1 // indirect
 	github.com/charmbracelet/lipgloss v1.0.0 // indirect
-	github.com/charmbracelet/x/ansi v0.4.5 // indirect
+	github.com/charmbracelet/x/ansi v0.8.0 // indirect
 	github.com/charmbracelet/x/conpty v0.1.0 // indirect
 	github.com/charmbracelet/x/errors v0.0.0-20240617190524-788ec55faed1 // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
@@ -59,7 +59,7 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
-	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/termenv v0.15.3-0.20240509142007-81b8f94111d5 // indirect
@@ -71,12 +71,12 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/ulikunitz/xz v0.5.12 // indirect
 	github.com/xanzy/go-gitlab v0.112.0 // indirect
-	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
-	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
+	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/oauth2 v0.24.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
-	golang.org/x/time v0.8.0 // indirect
+	golang.org/x/time v0.9.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241202173237-19429a94021a // indirect
 )
