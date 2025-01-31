@@ -4,8 +4,8 @@ buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.4-2024040116593
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.4-20240401165935-b983156c5e99.1/go.mod h1:novQBstnxcGpfKf8qGRATqn1anQKwMJIbH5Q581jibU=
 buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250120104711-3db29961bd7b.2 h1:xLKHPaj1RmiNkFaXr7zIXKogY7JrNmjXldcTRa3CsTA=
 buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250120104711-3db29961bd7b.2/go.mod h1:HdoNZp/nLemv7tIFYfJF8RZ6wOS5RsIJbj1w2ZeQyrw=
-buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.4-20250120104711-3db29961bd7b.1 h1:E7UaMoSgN+xggjBZj8LNhGnopCITFRmJ4BitoG/hS78=
-buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.4-20250120104711-3db29961bd7b.1/go.mod h1:WEdepccYENEyu709Vwyyb6aHzM5tDxK0PLHZtg2NDho=
+buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.4-20250128133116-6735b85bd101.1 h1:wFLM4gY5kRIKkkWcc5zBV5SZ1ScuFR7QrqynjLtRsdk=
+buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.4-20250128133116-6735b85bd101.1/go.mod h1:WEdepccYENEyu709Vwyyb6aHzM5tDxK0PLHZtg2NDho=
 code.gitea.io/sdk/gitea v0.19.0 h1:8I6s1s4RHgzxiPHhOQdgim1RWIRcr0LVMbHBjBFXq4Y=
 code.gitea.io/sdk/gitea v0.19.0/go.mod h1:IG9xZJoltDNeDSW0qiF2Vqx5orMWa7OhVWrjvrd5NpI=
 github.com/G-PORTAL/gpcore-go v0.0.0-20240606091943-3d0109c39129 h1:wV2Ialx2M65KYCVmBwcNDZVBTu7wYb4Y+moKz6h2M5E=
