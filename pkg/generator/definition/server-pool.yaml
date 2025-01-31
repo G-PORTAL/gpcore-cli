@@ -1,4 +1,5 @@
 description: Server Pools
+
 actions:
   list:
     api-call: admin.ListServerPools

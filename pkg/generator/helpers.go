@@ -280,7 +280,11 @@ func stripEnum(s string) string {
 }
 
 func clientPackageName(s string) string {
-	return "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/" + stripClient(s) + "/v" + stripVersion(s)
+	apiPrefix := "api/" + stripClient(s)
+	if stripClient(s) == "type" {
+		apiPrefix = "type"
+	}
+	return "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/" + apiPrefix + "/v" + stripVersion(s)
 }
 
 func stripVersion(s string) string {

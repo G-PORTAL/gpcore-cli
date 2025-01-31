@@ -1,9 +1,9 @@
 description: User management
+
 actions:
   ssh-keys:
     api-call: cloud.ListUserSSHKeys
-    response-type: "*typev1.SSHKey"
-    no-pagination: true
+    description: List all SSH keys for a user
     fields:
       - Name
       - Type
@@ -25,6 +25,7 @@ actions:
       - Confirmed
       - Locked
       - NodeLimit
+      - DefaultPlanCode
       - Type
       - LastLoginAt
 

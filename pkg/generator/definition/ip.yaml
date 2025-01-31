@@ -1,4 +1,5 @@
 description: IP related actions
+
 actions:
   history:
     api-call: admin.ListIPHistories

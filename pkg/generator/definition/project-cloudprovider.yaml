@@ -1,0 +1,146 @@
+description: Project cloud providers
+
+actions:
+  list:
+    api-call: cloud.ListProjectCloudProviders
+    description: List all cloud providers
+    root-key: CloudProviders
+
+  get:
+    api-call: cloud.GetProjectCloudProvider
+    description: Get cloud provider details
+    params:
+      - name: cloud_provider_id
+        type: string
+        description: Cloud Provider ID
+        required: true
+
+  update:
+    api-call: cloud.UpdateProjectCloudProvider
+    description: Update cloud provider details
+    params:
+      - name: cloud_provider_id
+        type: string
+        description: Cloud Provider ID
+        required: true
+      - name: name
+        type: string
+        description: Cloud Provider name
+        required: false
+      - name: region
+        type: string
+        description: Cloud Provider region
+        required: true
+      - name: api_key_id
+        type: string
+        description: Cloud Provider API Key ID
+        required: true
+      - name: api_key_secret
+        type: string
+        description: Cloud Provider API Key Secret
+        required: true
+
+  create:
+    api-call: cloud.CreateProjectCloudProvider
+    description: Create a new cloud provider
+    params:
+      - name: name
+        type: string
+        description: Cloud Provider name
+        required: true
+      - name: type
+        type: typev1.CloudProviderType
+        default: typev1.CLOUD_PROVIDER_TYPE_AWS
+        description: Cloud Provider type
+        required: true
+      - name: api_key_id
+        type: string
+        description: Cloud Provider API Key ID
+        required: true
+      - name: api_key_secret
+        type: string
+        description: Cloud Provider API Key Secret
+        required: true
+      - name: region
+        type: string
+        description: Cloud Provider region
+        required: true
+
+  delete:
+    api-call: cloud.DeleteProjectCloudProvider
+    description: Delete a cloud provider
+    params:
+      - name: cloud_provider_id
+        type: string
+        description: Cloud Provider ID
+        required: true
+
+  import:
+    api-call: cloud.ImportProjectCloudProviderResource
+    description: Import cloud provider resources
+    params:
+      - name: cloud_provider_id
+        type: string
+        description: Cloud Provider ID
+        required: true
+      - name: resource_id
+        type: string
+        description: Resource ID
+        required: true
+
+  list-resources:
+    api-call: cloud.ListProjectCloudProviderResources
+    description: List all cloud provider resources
+    root-key: Resources
+    params:
+      - name: cloud_provider_id
+        type: string
+        description: Cloud Provider ID
+        required: true
+
+  # TODO: Implement custom response type first
+  list-images:
+    api-call: admin.ListCloudProviderImages
+    description: List all cloud provider images
+    root-key: CloudProviderImages
+    no-pagination: true
+    identifier: nil
+    params:
+      - name: image_id
+        type: string
+        description: Cloud Provider ID
+        required: true
+
+  add-image:
+    api-call: admin.AddCloudProviderImage
+    description: Add a new image to cloud provider
+    identifier: nil
+    params:
+      - name: image_id
+        type: string
+        description: Cloud Provider image ID
+        required: true
+      - name: cloud_provider_type
+        type: typev1.CloudProviderType
+        default: typev1.CLOUD_PROVIDER_TYPE_AWS
+        description: Cloud Provider type
+        required: true
+      - name: cloud_provider_image_id
+        type: string
+        description: Cloud Provider image ID
+        required: true
+
+  delete-image:
+    api-call: admin.DeleteCloudProviderImage
+    description: Delete an image from cloud provider
+    identifier: nil
+    params:
+      - name: image_id
+        type: string
+        description: Cloud Provider image ID
+        required: true
+
+
+
+identifier: session.CurrentProject
+identifier-key: ProjectId

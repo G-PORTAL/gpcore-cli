@@ -1,11 +1,14 @@
 description: Timezones
+
 actions:
   list:
     api-call: cloud.ListTimezones
+    description: List all timezones
     root-key: Timezones
 
   update:
     api-call: cloud.UpdateTimezone
+    description: Update a timezone
     params:
       - name: timezone
         type: string

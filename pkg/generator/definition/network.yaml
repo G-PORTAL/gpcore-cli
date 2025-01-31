@@ -1,7 +1,9 @@
 description: Network management
+
 actions:
   list:
     api-call: admin.ListNetworks
+    description: List all networks
     root-key: Networks
     fields:
       - Id
@@ -17,6 +19,7 @@ actions:
 
   get:
     api-call: admin.GetNetwork
+    description: Get network details
     params:
       - name: id
         type: string
@@ -25,6 +28,7 @@ actions:
 
   create:
     api-call: admin.CreateNetwork
+    description: Create a new network
     params:
       - name: datacenter_id
         type: string
@@ -46,6 +50,7 @@ actions:
 
   update:
     api-call: admin.UpdateNetwork
+    description: Update network details
     params:
       - name: id
         type: string
@@ -62,6 +67,7 @@ actions:
 
   delete:
     api-call: admin.DeleteNetwork
+    description: Delete a network
     params:
       - name: id
         type: string

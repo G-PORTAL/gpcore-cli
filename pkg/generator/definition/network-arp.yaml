@@ -1,4 +1,5 @@
 description: Network ARP table
+
 actions:
   lookup:
     api-call: admin.LookupARP
@@ -8,3 +9,15 @@ actions:
         type: string
         description: IP address
         required: true
+
+  list:
+    api-call: admin.ListArpEntries
+    description: List all ARP entries
+    root-key: ArpEntries
+    fields:
+      - Status
+    # TODO: Implement Server type to include "Server"
+      - IpAddress
+      - MacAddress
+      - UpdatedAt.Date
+    # TODO: Implement SearchRequest/SearchOptions to include extended_search here
