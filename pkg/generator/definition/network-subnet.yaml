@@ -1,4 +1,5 @@
 description: Manage subnets
+
 actions:
   delete:
     api-call: admin.DeleteSubnet

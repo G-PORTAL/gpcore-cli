@@ -1,7 +1,9 @@
 description: Network Switches
+
 actions:
   list:
     api-call: admin.ListSwitches
+    description: List all network switches
     root-key: Switches
     fields:
       - Id
@@ -12,6 +14,7 @@ actions:
 
   get:
     api-call: admin.GetSwitch
+    description: Get switch details for a specific switch
     params:
       - name: id
         type: string

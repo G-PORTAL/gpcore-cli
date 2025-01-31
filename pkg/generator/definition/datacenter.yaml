@@ -1,7 +1,9 @@
 description: List or update datacenter colocations
+
 actions:
   list:
     api-call: cloud.ListDatacenters
+    description: List all datacenters
     root-key: Datacenters
     fields:
       - Id
@@ -11,6 +13,7 @@ actions:
 
   update:
     api-call: admin.UpdateDatacenter
+    description: Update a datacenter
     params:
       - name: id
         type: string

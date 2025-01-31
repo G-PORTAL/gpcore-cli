@@ -1,7 +1,9 @@
 description: Disk images to boot and install on the nodes
+
 actions:
   list:
     api-call: admin.ListImages
+    description: List all images
     root-key: Images
     fields:
       - Id
@@ -10,12 +12,18 @@ actions:
 
   list-public:
     api-call: cloud.ListPublicImages
+    description: List all public images
     root-key: OperatingSystems
     params:
       - name: flavour_id
         type: string
-        description: Flavour ID
+        description: Flavour ID (deprecated)
         required: true
+      - name: cloud_provider_type
+        type: typev1.CloudProviderType
+        default: typev1.CLOUD_PROVIDER_TYPE_AWS
+        description: Filter by cloud provider type
+        required: false
     fields:
       - Id
       - Name
@@ -23,6 +31,7 @@ actions:
 
   get:
     api-call: admin.GetImage
+    description: Get details for an image
     params:
       - name: id
         type: string
@@ -31,6 +40,7 @@ actions:
 
   update:
     api-call: admin.UpdateImage
+    description: Update image details
     params:
       - name: id
         type: string
@@ -52,7 +62,7 @@ actions:
         type: cloudv1.ImageRelease
         default: cloudv1.IMAGE_RELEASE_STABLE
         description: Release of the image
-        required: false
+        required: true
       - name: name
         type: string
         description: Name of the image
@@ -68,6 +78,7 @@ actions:
 
   create:
     api-call: admin.CreateImage
+    description: Create a new image
     params:
       - name: operating_system_id
         type: string
@@ -97,14 +108,19 @@ actions:
         type: cloudv1.ImageRelease
         default: cloudv1.IMAGE_RELEASE_STABLE
         description: Release of the image
-        required: false
+        required: true
       - name: authentication_types
         type: "[]cloudv1.AuthenticationType"
         description: Authentication types
         required: true
+      - name: contains_spla_license
+        type: bool
+        description: Contains SPLA license
+        required: true
 
   delete:
     api-call: admin.DeleteImage
+    description: Delete an image
     params:
       - name: id
         type: string
@@ -113,6 +129,7 @@ actions:
 
   delete-version:
     api-call: admin.DeleteImageVersion
+    description: Delete an image version
     params:
       - name: id
         type: string

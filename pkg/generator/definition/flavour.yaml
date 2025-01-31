@@ -1,4 +1,5 @@
 description: Flavours (images/sizes) the customer can choose from
+
 actions:
   list:
     api-call: admin.ListFlavours

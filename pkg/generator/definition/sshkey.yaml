@@ -1,11 +1,14 @@
-description: SSH Keys
+description: SSH Key management
+
 actions:
   list:
     api-call: cloud.ListUserSSHKeys
+    description: List all SSH keys
     root-key: SshKeys
 
   list-project:
     api-call: cloud.ListProjectSSHKeys
+    description: List all SSH keys in the project
     root-key: Keys
     params:
       - name: id
@@ -28,6 +31,7 @@ actions:
 
   delete:
     api-call: cloud.DeleteUserSSHKey
+    description: Delete an SSH key
     params:
       - name: id
         type: string

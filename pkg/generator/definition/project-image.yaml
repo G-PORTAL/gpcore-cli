@@ -1,11 +1,19 @@
-description: Project Images
+description: Project images
+
 actions:
   list:
     api-call: cloud.ListProjectImages
+    description: List all images in the project
     root-key: Images
+    params:
+      - name: only_available
+        type: bool
+        description: Only list available images
+        required: false
 
   get:
     api-call: cloud.GetProjectImage
+    description: Get project image details
     identifier: nil
     params:
       - name: id
@@ -36,6 +44,7 @@ actions:
 
   delete:
     api-call: cloud.DeleteProjectImage
+    description: Delete an project image
     identifier: nil
     params:
       - name: id
@@ -49,6 +58,7 @@ actions:
 
   delete-version:
     api-call: cloud.DeleteProjectImageVersion
+    description: Delete an project image version
     identifier: nil
     params:
       - name: id

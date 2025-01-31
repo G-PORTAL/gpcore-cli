@@ -1,4 +1,5 @@
 description: Physical servers
+
 actions:
   list:
     api-call: admin.ListServers

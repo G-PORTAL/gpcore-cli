@@ -1,7 +1,9 @@
-description: Network Switche related operations
+description: Operating system related operations
+
 actions:
   list:
     api-call: admin.ListOperatingSystems
+    description: List all operating systems
     root-key: OperatingSystems
     fields:
       - Id
@@ -10,6 +12,7 @@ actions:
 
   get:
     api-call: admin.GetOperatingSystem
+    description: Get details for an operating system
     params:
       - name: id
         type: string
@@ -18,6 +21,7 @@ actions:
 
   create:
     api-call: admin.CreateOperatingSystem
+    description: Create a new operating system
     params:
       - name: name
         type: string
@@ -27,9 +31,11 @@ actions:
         type: cloudv1.OperatingSystemFamily
         default: cloudv1.OPERATING_SYSTEM_FAMILY_LINUX
         description: Operating system family
+        required: true
 
   update:
     api-call: admin.UpdateOperatingSystem
+    description: Update operating system details
     params:
       - name: id
         type: string
@@ -43,6 +49,7 @@ actions:
         type: cloudv1.OperatingSystemFamily
         default: cloudv1.OPERATING_SYSTEM_FAMILY_LINUX
         description: Operating system family
+        required: true
       - name: default_image_id
         type: string
         description: Default image ID
@@ -54,6 +61,7 @@ actions:
 
   delete:
     api-call: admin.DeleteOperatingSystem
+    description: Delete an operating system
     params:
       - name: id
         type: string
