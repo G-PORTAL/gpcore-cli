@@ -3,7 +3,7 @@ module github.com/G-PORTAL/gpcore-cli
 go 1.22
 
 require (
-	buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250120104711-3db29961bd7b.2
+	buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250128133116-6735b85bd101.2
 	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.4-20250128133116-6735b85bd101.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240606091943-3d0109c39129
 	github.com/charmbracelet/log v0.4.0
