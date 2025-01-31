@@ -1,4 +1,6 @@
 description: SPLA Reporting
+
 actions:
   get:
     api-call: admin.GetSplaReporting
+    description: Get SPLA reporting details

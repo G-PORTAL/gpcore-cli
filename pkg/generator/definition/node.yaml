@@ -1,3 +1,5 @@
+description: Node related actions
+
 actions:
   list:
     api-call: cloudv2.ListNodes
@@ -14,9 +16,11 @@ actions:
 
   search-options:
     api-call: cloud.GetNodeSearchOptions
+    description: Get search options for nodes
 
   get:
     api-call: cloud.GetNode
+    description: Get details for a node
     identifier: nil
     params:
       - name: id
@@ -168,6 +172,7 @@ actions:
 
   change-billing-period:
     api-call: cloud.ChangeNodeBillingPeriod
+    description: Change the billing period of a node
     params:
       - name: project_id
         type: string

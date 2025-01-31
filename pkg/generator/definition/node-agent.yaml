@@ -1,7 +1,9 @@
 description: Agents, which are deployed on the nodes
+
 actions:
   list:
     api-call: admin.ListAgents
+    description: List all agents
     root-key: Agents
     fields:
       - Id
@@ -30,6 +32,7 @@ actions:
 
   delete:
     api-call: admin.DeleteAgent
+    description: Delete an agent
     params:
       - name: id
         type: string

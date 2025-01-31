@@ -146,6 +146,17 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		}
 	}
 
+	// The identifier key is the key used in the request to identify the
+	// resource. By default, this is "Id". This can be overridden globally
+	// on the file or on a specific action.
+	identifierKey := "Id"
+	if metadata.Definition.IdentifierKey != "" {
+		identifierKey = metadata.Definition.IdentifierKey
+	}
+	if metadata.Action.IdentifierKey != "" {
+		identifierKey = metadata.Action.IdentifierKey
+	}
+
 	if identifier != "" {
 		c = append(c, Id("session").Op(":=").
 			Id("ctx").
@@ -175,7 +186,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	apiCallParams := Dict{}
 	// Do we have an identifier?
 	if identifier != "" {
-		apiCallParams[Id("Id")] = Op("*").Id(identifier)
+		apiCallParams[Id(identifierKey)] = Op("*").Id(identifier)
 	}
 
 	// Specific parameters set?
@@ -184,7 +195,11 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		var val *Statement
 		if isEnumType(param.Type) && !isArrayType(param.Type) {
 			// Enum helper function call
-			val = Qual("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", stripPackage(param.Type)+"ToProto").Call(Id(variable))
+			if !param.Required {
+				val = Op("&").Id(variable)
+			} else {
+				val = Qual("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", stripPackage(param.Type)+"ToProto").Call(Id(variable))
+			}
 		} else {
 			// Optional pointer type
 			if !param.Required && param.Default == nil {
@@ -197,7 +212,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	}
 
 	// Pagination
-	if hasListOutput(metadata.Action.APICall) {
+	if hasListOutput(metadata.Action.APICall) && !metadata.Action.NoPagination {
 		apiCallParams[Id("Pagination")] = Id("pagination")
 		c = append(c, Var().Id("totalPages").Int32())
 		c = append(c, Id("pagination").Op(":=").Op("&").Qual(apiTypesImport, "PaginationRequest").Values(
@@ -206,6 +221,17 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	}
 
 	respC := make([]Code, 0)
+
+	// Special variables for pointer usage
+	for _, param := range metadata.Action.Params {
+		if isEnumType(param.Type) && !param.Required {
+			variable := strcase.LowerCamelCase(name) + title(strcase.LowerCamelCase(param.Name))
+			respC = append(respC, Id(variable).
+				Op(":=").
+				Qual("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", stripPackage(param.Type)+"ToProto").Call(Id(variable)))
+		}
+	}
+
 	respC = append(respC, List(Id("resp"), Id("err")).Op(":=").
 		Id("client").Dot(metadata.Action.APICall.Endpoint).Call(
 		Id("cobraCmd").Dot("Context").Call(),
@@ -220,14 +246,16 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 
 		c = append(c, Var().Id("combinedData").Index().Interface())
 
-		respC = append(respC, Line())
-		respC = append(respC, If(Id("resp.Pagination").Op("==").Nil().Block(
-			Break())))
-		respC = append(respC, Id("totalPages").Op("=").
-			Id("resp").Dot("GetPagination").Call().Dot("GetTotal").Call())
-		respC = append(respC, Id("pagination").Dot("Page").Op("++"))
-		respC = append(respC, If(Id("resp").Dot("Pagination").Dot("Page").Op(">=").Id("totalPages")).Block(
-			Break()))
+		if !metadata.Action.NoPagination {
+			respC = append(respC, Line())
+			respC = append(respC, If(Id("resp.Pagination").Op("==").Nil().Block(
+				Break())))
+			respC = append(respC, Id("totalPages").Op("=").
+				Id("resp").Dot("GetPagination").Call().Dot("GetTotal").Call())
+			respC = append(respC, Id("pagination").Dot("Page").Op("++"))
+			respC = append(respC, If(Id("resp").Dot("Pagination").Dot("Page").Op(">=").Id("totalPages")).Block(
+				Break()))
+		}
 	} else {
 		// Single response
 		respC = append(respC, singleResponse(metadata)...)
@@ -251,7 +279,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 			Call(Op("*").Id("sshSession")))
 		c = append(c, Defer().Id("cobraCmd").Dot("SetOut").Call(Nil()))
 
-		if hasListOutput(metadata.Action.APICall) {
+		if hasListOutput(metadata.Action.APICall) && !metadata.Action.NoPagination {
 			c = append(c, For().Block(respC...))
 		} else {
 			c = append(c, respC...)
@@ -342,7 +370,7 @@ func listResponse(metadata SubcommandMetadata) []Code {
 			Qual("github.com/jedib0t/go-pretty/v6/table", "Row").Values())
 
 		headerCondition := Id("j").Op("==").Lit(0)
-		if hasListOutput(metadata.Action.APICall) {
+		if hasListOutput(metadata.Action.APICall) && !metadata.Action.NoPagination {
 			headerCondition = headerCondition.Op("&&").Id("pagination").Dot("Page").Op("==").Lit(1)
 		}
 
@@ -398,7 +426,7 @@ func listResponse(metadata SubcommandMetadata) []Code {
 		}
 		headerCode = append(headerCode, Id("tbl").Dot("AppendHeader").Call(Id("headerRow")))
 
-		if hasListOutput(metadata.Action.APICall) {
+		if hasListOutput(metadata.Action.APICall) && !metadata.Action.NoPagination {
 			c = append(c, If(Id("pagination").Dot("Page").Op("==").Lit(1)).Block(headerCode...))
 		} else {
 			c = append(c, headerCode...)

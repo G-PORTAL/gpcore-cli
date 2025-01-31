@@ -1,4 +1,5 @@
 description: Server and admin logs
+
 actions:
   server:
     api-call: admin.ListServerLogs

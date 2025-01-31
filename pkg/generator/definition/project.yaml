@@ -1,6 +1,9 @@
+description: Project related actions
+
 actions:
   list:
     api-call: cloud.ListProjects
+    description: List all projects
     identifier: nil
     root-key: Projects
     fields:
@@ -12,6 +15,7 @@ actions:
 
   get:
     api-call: cloud.GetProject
+    description: Get details for a project
     identifier: nil
     params:
       - name: id
@@ -22,6 +26,7 @@ actions:
   # TODO: Fix after dependency upgrade
   update:
     api-call: cloud.UpdateProject
+    description: Update project details
     params:
       - name: name
         type: string
@@ -67,6 +72,7 @@ actions:
 
   delete:
     api-call: cloud.DeleteProject
+    description: Delete a project
     identifier: nil
     params:
       - name: id
@@ -76,6 +82,7 @@ actions:
 
   flavours:
     api-call: cloud.ListProjectFlavours
+    description: List all flavours in the project
     params:
       - name: datacenter_id
         description: Datacenter to fetch the flavours from
@@ -90,6 +97,7 @@ actions:
 
   networks:
     api-call: admin.ListProjectNetworks
+    description: List all networks in the project
 
   # network-create is implemented in code, because it is a special case
   # where we need to create a network and then attach it to the project.
@@ -98,6 +106,7 @@ actions:
 
   logs:
     api-call: cloudv2.ListProjectLogs
+    description: List all logs in the project
     fields:
       - CreatedAt.DateTime
       - User.BasicUser
@@ -106,6 +115,7 @@ actions:
   # Join/Leave project
   join:
     api-call: cloud.JoinProject
+    description: Join a project
     params:
       - name: accept
         type: bool
@@ -113,9 +123,11 @@ actions:
 
   leave:
     api-call: cloud.LeaveProject
+    description: Leave a project
 
   invite-member:
     api-call: cloud.InviteMemberToProject
+    description: Invite a member to the project
     identifier: nil
     params:
       - name: id
@@ -129,6 +141,7 @@ actions:
 
   remove-member:
     api-call: cloud.RemoveMemberFromProject
+    description: Remove a member from the project
     params:
       - name: user_id
         type: string
@@ -136,6 +149,7 @@ actions:
 
   default-project:
     api-call: cloud.ChangeDefaultProject
+    description: Change the default project
     identifier: nil
     params:
       - name: id
@@ -150,6 +164,7 @@ actions:
 
   usage:
     api-call: cloud.GetProjectUsage
+    description: Get project usage
     params:
       - name: detailed
         type: bool
@@ -157,10 +172,12 @@ actions:
 
   images:
     api-call: cloud.ListProjectImages
+    description: List all images in the project
 
   # TODO: Custom formatter to output keys in authorized_keys format
   ssh-keys:
     api-call: cloud.ListProjectSSHKeys
+    description: List all SSH keys in the project
     root-key: Keys
     fields:
       - User.BasicUser

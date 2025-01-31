@@ -9,14 +9,16 @@ import (
 )
 
 type Action struct {
-	Name        string
-	Client      string
-	APICall     APICall  `yaml:"api-call"`
-	Params      []Param  `yaml:"params"`
-	Description string   `yaml:"description"`
-	RootKey     string   `yaml:"root-key"`
-	Identifier  string   `yaml:"identifier"`
-	Fields      []string `yaml:"fields"`
+	Name          string
+	Client        string
+	APICall       APICall  `yaml:"api-call"`
+	Params        []Param  `yaml:"params"`
+	Description   string   `yaml:"description"`
+	RootKey       string   `yaml:"root-key"`
+	Identifier    string   `yaml:"identifier"`
+	IdentifierKey string   `yaml:"identifier-key"`
+	Fields        []string `yaml:"fields"`
+	NoPagination  bool     `yaml:"no-pagination"`
 }
 
 func (action *Action) CanCall() bool {
@@ -61,10 +63,11 @@ func (api *APICall) UnmarshalYAML(value *yaml.Node) error {
 }
 
 type SubcommandDefinition struct {
-	Name        string
-	Actions     map[string]Action `yaml:"actions"`
-	Identifier  string            `yaml:"identifier"`
-	Description string            `yaml:"description"`
+	Name          string
+	Actions       map[string]Action `yaml:"actions"`
+	Identifier    string            `yaml:"identifier"`
+	IdentifierKey string            `yaml:"identifier-key"`
+	Description   string            `yaml:"description"`
 }
 
 type SubcommandMetadata struct {
