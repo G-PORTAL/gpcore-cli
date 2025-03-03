@@ -15,7 +15,7 @@ require (
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/melbahja/goph v1.4.0
-	github.com/spf13/cobra v1.8.1
+	github.com/spf13/cobra v1.9.1
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/zalando/go-keyring v0.2.6
 	golang.org/x/crypto v0.34.0
@@ -70,7 +70,7 @@ require (
 	github.com/pkg/sftp v1.13.6 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/segmentio/ksuid v1.0.4 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/ulikunitz/xz v0.5.12 // indirect
 	github.com/xanzy/go-gitlab v0.115.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
