@@ -1,7 +1,7 @@
 module github.com/G-PORTAL/gpcore-cli
 
 go 1.22
-toolchain go1.23.6
+toolchain go1.24.1
 
 require (
 	buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250128133116-6735b85bd101.2
@@ -20,7 +20,7 @@ require (
 	github.com/zalando/go-keyring v0.2.6
 	golang.org/x/crypto v0.34.0
 	google.golang.org/grpc v1.70.0
-	google.golang.org/protobuf v1.36.4
+	google.golang.org/protobuf v1.36.6
 	gopkg.in/op/go-logging.v1 v1.0.0-20160315200505-970db520ece7
 	gopkg.in/yaml.v3 v3.0.1
 )
