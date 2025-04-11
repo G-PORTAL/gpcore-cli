@@ -25,7 +25,12 @@ actions:
 
   import:
     api-call: admin.ImportServer
-    description: Import a new server
+    description: Import a new server from NetBox to GPCORE
+    params:
+      - name: netbox_ids
+        type: "[]int64"
+        description: NetBox IDs of the servers to import
+        required: true
 
   trigger-action:
     api-call: admin.TriggerServerAction
