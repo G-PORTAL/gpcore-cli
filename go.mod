@@ -1,12 +1,13 @@
 module github.com/G-PORTAL/gpcore-cli
 
-go 1.22
-toolchain go1.23.6
+go 1.23.0
+
+toolchain go1.24.0
 
 require (
-	buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250128133116-6735b85bd101.2
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.4-20250128133116-6735b85bd101.1
-	github.com/G-PORTAL/gpcore-go v0.0.0-20240606091943-3d0109c39129
+	buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250328120542-e27aa6ca5ccf.2
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.6-20250328120542-e27aa6ca5ccf.1
+	github.com/G-PORTAL/gpcore-go v0.0.0-20240703125604-2cc907e0b5ef
 	github.com/charmbracelet/log v0.4.0
 	github.com/charmbracelet/ssh v0.0.0-20250128164007-98fd5ae11894
 	github.com/charmbracelet/wish v1.4.6
@@ -20,14 +21,14 @@ require (
 	github.com/zalando/go-keyring v0.2.6
 	golang.org/x/crypto v0.34.0
 	google.golang.org/grpc v1.70.0
-	google.golang.org/protobuf v1.36.4
+	google.golang.org/protobuf v1.36.6
 	gopkg.in/op/go-logging.v1 v1.0.0-20160315200505-970db520ece7
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
 	al.essio.dev/pkg/shellescape v1.5.1 // indirect
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.4-20240401165935-b983156c5e99.1 // indirect
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20240401165935-b983156c5e99.1 // indirect
 	code.gitea.io/sdk/gitea v0.20.0 // indirect
 	github.com/42wim/httpsig v1.2.1 // indirect
 	github.com/Masterminds/semver/v3 v3.3.1 // indirect
