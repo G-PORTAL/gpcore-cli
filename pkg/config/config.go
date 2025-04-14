@@ -11,7 +11,7 @@ import (
 // default value is ~/.config/gpcore/config.yaml. This can be overwritten by setting the
 // environment variable GPCORE_CONFIG or by passing the --config flag to the
 // gpc command.
-var ConfigFilePath = ""
+var FilePath = ""
 
 // JSONOutput is a global flag that can be used to output the result of a command
 // as JSON. This can be enabled by passing the --json flag to the gpc command.
@@ -34,22 +34,18 @@ var Endpoint = client.DefaultEndpoint
 var sessionConfig *SessionConfig
 
 func HasConfig() bool {
-	if _, err := os.Stat(ConfigFilePath); err == nil {
+	if _, err := os.Stat(FilePath); err == nil {
 		return true
 	}
 	return false
 }
 
 func HasAdminConfig() bool {
-	return true
-	//// No session config, no admin config
-	//config, err := GetSessionConfig()
-	//if err != nil {
-	//	return false
-	//}
+	if config, err := GetSessionConfig(); err == nil {
+		return config.Username != nil && config.Password != nil
+	}
 
-	//// No username and password, no admin config
-	//return config.Username != nil && config.Password != nil
+	return false
 }
 
 func AskForCredentials() (string, string) {
@@ -109,7 +105,7 @@ func GetSessionConfig() (*SessionConfig, error) {
 
 	// No config file found?
 	if !HasConfig() {
-		log.Errorf("No config file found at %s", ConfigFilePath)
+		log.Errorf("No config file found at %s", FilePath)
 		log.Errorf("Create a new config file with \"gpcore agent setup\"")
 		return nil, errors.New("no config file found")
 	}
@@ -126,6 +122,6 @@ func GetSessionConfig() (*SessionConfig, error) {
 
 func init() {
 	if os.Getenv("GPCORE_CONFIG") != "" {
-		ConfigFilePath = os.Getenv("GPCORE_CONFIG")
+		FilePath = os.Getenv("GPCORE_CONFIG")
 	}
 }

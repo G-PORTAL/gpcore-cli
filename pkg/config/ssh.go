@@ -14,7 +14,8 @@ import (
 // is stored in the users home directory and the public key is stored in the
 // config. The private key is secured with the SSHKeyPassword password.
 func SetupSSHKey() {
-	sessionConfig, err := GetSessionConfig()
+	var err error
+	sessionConfig, err = GetSessionConfig()
 	if err != nil {
 		log.Errorf("Can not get session config: %v", err)
 		return

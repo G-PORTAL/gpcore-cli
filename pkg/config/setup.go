@@ -18,7 +18,7 @@ func SetupConfig() error {
 	}
 
 	// Check if directory exists, if not, create it recursively
-	directory := path.Dir(ConfigFilePath)
+	directory := path.Dir(FilePath)
 	if _, err := os.Stat(directory); os.IsNotExist(err) {
 		log.Debugf("Creating directory %s", directory)
 		if err := os.MkdirAll(directory, 0700); err != nil {
@@ -45,8 +45,8 @@ func SetupConfig() error {
 
 func CleanupConfig() error {
 	// Remove config file
-	if _, err := os.Stat(ConfigFilePath); err == nil {
-		err = os.Remove(ConfigFilePath)
+	if _, err := os.Stat(FilePath); err == nil {
+		err = os.Remove(FilePath)
 		if err != nil {
 			return err
 		}

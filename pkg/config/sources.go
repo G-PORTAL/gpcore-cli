@@ -16,7 +16,7 @@ func init() {
 		panic(err)
 	}
 
-	ConfigFilePath = path.Join(dirname, ".config", consts.BinaryName, "config.yaml")
+	FilePath = path.Join(dirname, ".config", consts.BinaryName, "config.yaml")
 }
 
 func GetSecretsFromKeyring(config *SessionConfig) error {

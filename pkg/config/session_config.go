@@ -35,7 +35,7 @@ type SessionConfig struct {
 // struct. Sensitive data will be loaded from the keyring. If username and password
 // is set, these fields will also filled up and can be used for admin endpoints.
 func (c *SessionConfig) Read() error {
-	data, err := os.ReadFile(ConfigFilePath)
+	data, err := os.ReadFile(FilePath)
 	if err != nil {
 		return err
 	}
@@ -69,5 +69,5 @@ func (c *SessionConfig) Write() error {
 	}
 
 	// Save config to disk
-	return os.WriteFile(ConfigFilePath, data, 0600)
+	return os.WriteFile(FilePath, data, 0600)
 }

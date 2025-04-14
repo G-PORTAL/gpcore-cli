@@ -49,6 +49,8 @@ func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
 		endpoint = os.Getenv("GPCORE_ENDPOINT")
 	}
 
+	var credentials client.AuthProviderOption
+
 	// We have two different connection methods available, depending on the
 	// type of credentials we get. For "normal" usage, we need the ClientID
 	// and the ClientSecret, which can be used by every user.
@@ -60,12 +62,13 @@ func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
 	// credentials, we use it for login.
 	if config.HasAdminConfig() {
 		log.Info("Using admin credentials")
-		credentials := &auth.ProviderKeycloakUserPassword{
-			Username:     *session.config.Username,
-			Password:     *session.config.Password,
+		credentials = &auth.ProviderKeycloakUserPassword{
 			ClientID:     session.config.ClientID,
 			ClientSecret: session.config.ClientSecret,
+			Username:     *session.config.Username,
+			Password:     *session.config.Password,
 		}
+
 		return api.NewGRPCConnection(
 			credentials,
 			client.EndpointOverrideOption(endpoint),
@@ -74,7 +77,7 @@ func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
 
 	// Otherwise, we just use the client credentials. With this login, the
 	// admin endpoints will not work and result in an error.
-	credentials := &auth.ProviderKeycloakClientAuth{
+	credentials = &auth.ProviderKeycloakClientAuth{
 		ClientID:     session.config.ClientID,
 		ClientSecret: session.config.ClientSecret,
 	}
@@ -131,8 +134,8 @@ var startCmd = &cobra.Command{
 						session.ssh = &s
 						ctx := session.ContextWithSession(context.Background())
 						if err := rootCmd.ExecuteContext(ctx); err != nil {
-							log.Errorf("Error executing command: %v", err)
-							rootCmd.Printf("Error executing command: %v\n", err)
+							log.Errorf("Error executing command on agent: %v", err)
+							rootCmd.Printf("Error executing command on agent: %v\n", err)
 							return
 						}
 

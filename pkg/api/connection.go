@@ -6,6 +6,7 @@ import (
 	"github.com/G-PORTAL/gpcore-go/pkg/gpcore/client"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"log"
 )
 
 // NewGRPCConnection creates a new gRPC connection. We can not use the NewClient
@@ -23,9 +24,8 @@ func NewGRPCConnection(extraOptions ...interface{}) (*grpc.ClientConn, error) {
 
 	// User Agent
 	options = append(options, grpc.WithUserAgent(fmt.Sprintf("GPCORE CLI [%s]", grpc.Version)))
-
 	endpoint := client.DefaultEndpoint
-	authenticationDefined := false
+
 	for _, option := range extraOptions {
 		if opt, ok := option.(grpc.DialOption); ok {
 			options = append(options, opt)
@@ -35,16 +35,16 @@ func NewGRPCConnection(extraOptions ...interface{}) (*grpc.ClientConn, error) {
 			endpoint = string(opt)
 			continue
 		}
-		if opt, ok := option.(client.AuthProviderOption); ok && !authenticationDefined {
+		if opt, ok := option.(client.AuthProviderOption); ok {
 			options = append(options, grpc.WithPerRPCCredentials(&client.AuthOption{
 				Provider: &opt,
 			}))
-			authenticationDefined = true
 			continue
 		}
+		log.Printf("Unknown option type: %T", option)
 	}
 
-	clientConn, err := grpc.Dial(endpoint, options...)
+	clientConn, err := grpc.NewClient(endpoint, options...)
 	if err != nil {
 		return nil, err
 	}
