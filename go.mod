@@ -8,7 +8,7 @@ require (
 	buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250328120542-e27aa6ca5ccf.2
 	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.6-20250328120542-e27aa6ca5ccf.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20240703125604-2cc907e0b5ef
-	github.com/charmbracelet/log v0.4.0
+	github.com/charmbracelet/log v0.4.1
 	github.com/charmbracelet/ssh v0.0.0-20250128164007-98fd5ae11894
 	github.com/charmbracelet/wish v1.4.6
 	github.com/creativeprojects/go-selfupdate v1.4.1
@@ -65,7 +65,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
-	github.com/muesli/termenv v0.15.3-0.20240509142007-81b8f94111d5 // indirect
+	github.com/muesli/termenv v0.16.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/sftp v1.13.6 // indirect
