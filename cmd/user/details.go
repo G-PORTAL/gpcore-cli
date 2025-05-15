@@ -1,9 +1,9 @@
 package user
 
 import (
-	"encoding/json"
 	"github.com/G-PORTAL/gpcore-cli/pkg/client"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
+	"github.com/G-PORTAL/gpcore-cli/pkg/protobuf"
 	"github.com/charmbracelet/ssh"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
@@ -39,7 +39,7 @@ var detailsCmd = &cobra.Command{
 		}
 
 		if config.JSONOutput {
-			jsonData, err := json.MarshalIndent(user, "", "  ")
+			jsonData, err := protobuf.MarshalIndent(user)
 			if err != nil {
 				return err
 			}
