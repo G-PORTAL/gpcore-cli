@@ -203,27 +203,21 @@ func FormatCurrency(currency cloudv1.Currency) string {
 	return strings.TrimPrefix(currency.String(), "CURRENCY_")
 }
 
-func FormatProjectEnvironment(env cloudv1.ProjectEnvironment) string {
-	s := strings.TrimPrefix(env.String(), "PROJECT_ENVIRONMENT_")
-	switch s {
-	case "PRODUCTION":
-		return text.FgRed.Sprintf(s)
-	case "STAGING":
-		return text.FgYellow.Sprintf(s)
-	case "DEVELOPMENT":
-		return text.FgGreen.Sprintf(s)
-	default:
-		return s
-	}
-}
-
 func FormatServerProvisioningState(state cloudv1.ServerProvisioningState) string {
 	s := strings.TrimPrefix(state.String(), "SERVER_PROVISIONING_STATE_")
+	if strings.HasSuffix(s, "_FAIL") {
+		return text.FgRed.Sprint(s)
+	}
+
 	switch s {
+	case "ERROR":
+		return text.FgHiRed.Sprint(s)
 	case "ACTIVE":
-		return text.FgGreen.Sprintf(s)
+		return text.FgHiGreen.Sprint(s)
+	case "AVAILABLE":
+		return text.FgGreen.Sprint(s)
 	default:
-		return s
+		return text.FgYellow.Sprint(s)
 	}
 }
 
