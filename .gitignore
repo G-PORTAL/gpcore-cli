@@ -2,3 +2,5 @@
 *.iml
 *_gen.go
 /gpc
+/id_ed25519*
+/tools/
