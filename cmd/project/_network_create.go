@@ -52,7 +52,7 @@ var networkCreateCmd = &cobra.Command{
 		}
 		respData := resp
 		if config.JSONOutput {
-			jsonData, err := json.MarshalIndent(respData, "", "  ")
+			jsonData, err := protobuf.MarshalIndent(respData)
 			if err != nil {
 				return err
 			}

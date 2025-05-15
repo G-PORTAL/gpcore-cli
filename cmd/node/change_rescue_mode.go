@@ -3,9 +3,9 @@ package node
 import (
 	"buf.build/gen/go/gportal/gpcore/grpc/go/gpcore/api/cloud/v1/cloudv1grpc"
 	cloudv1 "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/cloud/v1"
-	"encoding/json"
 	"github.com/G-PORTAL/gpcore-cli/pkg/client"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
+	"github.com/G-PORTAL/gpcore-cli/pkg/protobuf"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -36,7 +36,7 @@ var changeRescueModeCmd = &cobra.Command{
 		}
 		respData := resp
 		if config.JSONOutput {
-			jsonData, err := json.MarshalIndent(respData, "", "  ")
+			jsonData, err := protobuf.MarshalIndent(respData)
 			if err != nil {
 				return err
 			}

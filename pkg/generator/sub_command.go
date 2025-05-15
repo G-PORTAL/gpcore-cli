@@ -244,7 +244,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		// List response
 		respC = append(respC, listResponse(metadata)...)
 
-		c = append(c, Var().Id("combinedData").Index().Interface())
+		c = append(c, Var().Id("combinedData").Index().Qual("google.golang.org/protobuf/proto", "Message"))
 
 		if !metadata.Action.NoPagination {
 			respC = append(respC, Line())
@@ -309,10 +309,8 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	jsonOutputFormatCode = append(jsonOutputFormatCode,
 		List(Id("jsonData"), Id("err")).
 			Op(":=").
-			Qual("encoding/json", "MarshalIndent").Call(
-			Id(respData),
-			Lit(""),
-			Lit("  ")),
+			Qual("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", "MarshalIndent").Call(
+			Id(respData)),
 		If(Id("err").Op("!=").Nil()).Block(
 			Return(Id("err"))),
 		Id("cobraCmd").Dot("Println").Call(

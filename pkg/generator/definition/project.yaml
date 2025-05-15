@@ -11,7 +11,6 @@ actions:
       - Name
       - Description
       - Currency.Currency
-      - Environment.ProjectEnvironment
 
   get:
     api-call: cloud.GetProject
