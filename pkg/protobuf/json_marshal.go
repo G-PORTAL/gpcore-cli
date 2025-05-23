@@ -13,12 +13,12 @@ var protoJson = protojson.MarshalOptions{
 }
 
 func MarshalIndent(msg any) ([]byte, error) {
-	if protoMsg, ok := msg.(proto.Message); ok {
-		return protoJson.Marshal(protoMsg)
-	}
-	if protoMsgs, ok := msg.([]proto.Message); ok {
+	switch msg.(type) {
+	case proto.Message:
+		return protoJson.Marshal(msg.(proto.Message))
+	case []proto.Message:
 		var jsonObjects []json.RawMessage
-		for _, protoMsg := range protoMsgs {
+		for _, protoMsg := range msg.([]proto.Message) {
 			jsonObject, err := protoJson.Marshal(protoMsg)
 			if err != nil {
 				return nil, err
@@ -27,7 +27,7 @@ func MarshalIndent(msg any) ([]byte, error) {
 		}
 
 		return json.MarshalIndent(jsonObjects, "", "  ")
+	default:
+		return json.MarshalIndent(msg, "", "  ")
 	}
-
-	return json.MarshalIndent(msg, "", "  ")
 }

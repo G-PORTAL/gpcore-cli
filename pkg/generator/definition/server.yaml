@@ -12,6 +12,11 @@ actions:
       - PowerState.ServerPowerState
       - ProvisionState.ServerProvisioningState
       - CreatedAt.Date
+    params:
+      - name: search
+        type: string
+        description: Optional search term
+        required: false
 
   list-available:
     api-call: admin.ListAvailableServer
