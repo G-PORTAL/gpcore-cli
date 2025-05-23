@@ -74,7 +74,7 @@ func main() {
 	// agent start is a special command, because we do not have a server at
 	// that moment, so we can not connect to anything. For that, we need to handle
 	// that special case and bypass the normal command execution.
-	if command == "agent start" {
+	if strings.HasPrefix(command, "agent start") {
 		RunCommandWithoutClient()
 		return
 	}

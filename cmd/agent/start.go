@@ -88,11 +88,10 @@ func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
 }
 
 var startCmd = &cobra.Command{
-	Use:                   "start",
-	Short:                 "Start the agent",
-	Long:                  "Start the agent",
-	DisableFlagsInUseLine: true,
-	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
+	Use:   "start",
+	Short: "Start the agent",
+	Long:  "Start the agent",
+	Args:  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
 	RunE: func(cobraCmd *cobra.Command, args []string) error {
 		// Initialize a new session
 		sessionConfig, err := config.GetSessionConfig()
