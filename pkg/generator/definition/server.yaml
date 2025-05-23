@@ -107,3 +107,8 @@ actions:
   platform-management:
     api-call: admin.GetServerPlatformManagement
     description: Get server platform management details
+    params:
+      - name: id
+        type: string
+        description: Server UUID
+        required: true
