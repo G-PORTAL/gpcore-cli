@@ -7,7 +7,9 @@ import (
 )
 
 var protoJson = protojson.MarshalOptions{
-	Indent: "  ",
+	Indent:            "  ",
+	EmitDefaultValues: true,
+	EmitUnpopulated:   true,
 }
 
 func MarshalIndent(msg any) ([]byte, error) {
