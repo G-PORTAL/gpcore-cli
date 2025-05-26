@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -112,7 +113,11 @@ func main() {
 	}
 	defer c.Close()
 
-	client.Execute(c, command)
+	err = client.Execute(c, command)
+	if err != nil {
+		log.Errorf(err.Error())
+		syscall.Exit(1)
+	}
 }
 
 func RunCommandWithoutClient() {

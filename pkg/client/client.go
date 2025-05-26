@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 	"github.com/charmbracelet/log"
@@ -59,11 +60,10 @@ func NewClient() (*goph.Client, error) {
 
 // Execute executes a command on the agent and prints the result to stdout. If
 // there is an error, it will panic.
-func Execute(client *goph.Client, command string) {
+func Execute(client *goph.Client, command string) error {
 	session, err := client.NewSession()
 	if err != nil {
-		log.Errorf("Error creating session: %s", err)
-		return
+		return fmt.Errorf("failed to create new session: %w", err)
 	}
 	defer func(session *ssh.Session) {
 		err := session.Close()
@@ -90,9 +90,5 @@ func Execute(client *goph.Client, command string) {
 	session.Stderr = os.Stderr
 
 	// Executing the command on the agent
-	err = session.Run(command)
-
-	if err != nil {
-		log.Error(err)
-	}
+	return session.Run(command)
 }
