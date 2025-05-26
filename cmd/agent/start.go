@@ -135,6 +135,7 @@ var startCmd = &cobra.Command{
 						if err := rootCmd.ExecuteContext(ctx); err != nil {
 							log.Errorf("Error executing command on agent: %v", err)
 							rootCmd.Printf("Error executing command on agent: %v\n", err)
+							_ = s.Exit(1) // send cmd exit code to the client
 							return
 						}
 
