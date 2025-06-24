@@ -14,6 +14,7 @@ import (
 	"github.com/charmbracelet/wish"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"math"
 	"net/http"
 	"os"
 	"os/signal"
@@ -71,6 +72,8 @@ func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
 
 		return api.NewGRPCConnection(
 			credentials,
+			grpc.MaxCallRecvMsgSize(math.MaxInt64),
+			grpc.MaxCallSendMsgSize(math.MaxInt64),
 			client.EndpointOverrideOption(endpoint),
 		)
 	}
@@ -83,6 +86,8 @@ func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
 	}
 	return api.NewGRPCConnection(
 		credentials,
+		grpc.MaxCallRecvMsgSize(math.MaxInt64),
+		grpc.MaxCallSendMsgSize(math.MaxInt64),
 		client.EndpointOverrideOption(endpoint),
 	)
 }
