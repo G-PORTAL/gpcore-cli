@@ -72,8 +72,10 @@ func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
 
 		return api.NewGRPCConnection(
 			credentials,
-			grpc.MaxCallRecvMsgSize(math.MaxInt32),
-			grpc.MaxCallSendMsgSize(math.MaxInt32),
+			grpc.WithDefaultCallOptions(
+				grpc.MaxCallRecvMsgSize(math.MaxInt32),
+				grpc.MaxCallSendMsgSize(math.MaxInt32),
+			),
 			client.EndpointOverrideOption(endpoint),
 		)
 	}
@@ -86,8 +88,10 @@ func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
 	}
 	return api.NewGRPCConnection(
 		credentials,
-		grpc.MaxCallRecvMsgSize(math.MaxInt32),
-		grpc.MaxCallSendMsgSize(math.MaxInt32),
+		grpc.WithDefaultCallOptions(
+			grpc.MaxCallRecvMsgSize(math.MaxInt32),
+			grpc.MaxCallSendMsgSize(math.MaxInt32),
+		),
 		client.EndpointOverrideOption(endpoint),
 	)
 }
