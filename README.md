@@ -13,7 +13,7 @@ latest release from GitHub and replace the current binary.
 
 To use shell completion for the gpcore command, you can generate the completion
 script with the ```gpcore completion``` command. Supported shells are bash, zsh
-fish and powershell. It will print the script to stdout, so pipe it in a file
+fish and PowerShell. It will print the script to stdout, so pipe it in a file
 and source it in your shell.
 
 ```
@@ -31,23 +31,42 @@ to the server and sends commands to it. The server executes the commands and
 returns the result to the client. With this architecture, the client does not
 open up a new connection for every command, which saves time and resources.
 
-On first run, it asks for credentials (client-id, client-secret, username and
+On the first run, it asks for credentials (client-id, client-secret, username and
 password). Non-critical information will be stored in a config file
-( ~/.config/gportal/config.json ). Sensitive information will be stored in the
+(~/.config/gportal/config.json). Sensitive information will be stored in the
 keyring (if supported by the OS). The keyring is encrypted with the user's
-password. To secure the connection between client and server, a SSH public/private
+password. To secure the connection between client and server, an SSH public/private
 key pair will be generated and secured with a passphrase. The passphrase is
 the same as the password for the GPCORE account. This way, the connection
-between client and server is secured and no other ssh client can connect to it.
+between client and server is secured, and no other ssh client can connect to it.
 
 If you messed up your config, the sensitive data in the keyring or the public/private
-key, you can reset everything with the ```gpcore agent setup``` command. Use the
-```--admin``` flag to setup the admin credentials as well.
+key, you can reset everything with the ```gpcore agent setup``` command.
 
-The agent (SSH server) will start automatically and place it in the background,
+### Admin permissions
+
+The GPCORE API has a concept of admin permissions. Several actions can only
+be executed with admin permissions. Use the ```--admin``` flag on the agent
+setup to set the admin credentials as well. Use your normal GPCORE account
+credentials for that. The admin credentials will be stored in the keyring
+and used to execute admin actions.
+
+To make sure that you have admin permissions, you can use the ```user details```
+command, which will show the admin flag. You also see more actions with
+the ```help``` command, if you have admin permissions. If you have the admin
+flag but get an unauthorized error, you probably have to set the ```super-admin```
+role on your service account in Keycloak. Ask a GPCORE administrator for help.
+
+If you logged in as a normal user and want to switch to admin mode, you first
+need to stop the agent with ```gpcore agent stop```, then run the agent setup
+again with ```gpcore agent setup --admin```. 
+
+The agent (SSH server) will start automatically and place itself in the background,
 until the user actively stops it with ```gpcore agent stop```. So the first command will
 take a little longer (because the agent has to start), but all following commands
-will be executed immediately.
+will be executed immediately. If you want to see the output of the agent,
+you can run the agent in the foreground with ```gpcore agent start``` in a separate
+terminal.
 
 The client itself is a simple SSH client. It connects to the agent and sends
 commands to it. The result is printed to stdout. You can use the standard
@@ -91,9 +110,3 @@ action but before the output is printed. As an example, see ```project/list_post
 
 To increase the log level verbosity, you can set it with the ```loglevel```
 command (```gpcore loglevel debug```).
-
-### Ongoing tasks
-
-* catch unauthorized error and ask for user/pass
-* Pagination support for long lists (pending because of Jennifer migration)
-* Complete the API endpoints, so everything is accessible through the CLI tool
