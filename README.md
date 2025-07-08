@@ -51,6 +51,9 @@ setup to set the admin credentials as well. Use your normal GPCORE account
 credentials for that. The admin credentials will be stored in the keyring
 and used to execute admin actions.
 
+NOTE: The tool does not support 2FA at the moment, so you have to disable it
+for your GPCORE account to use the CLI. You still can use Passkey.
+
 To make sure that you have admin permissions, you can use the ```user details```
 command, which will show the admin flag. You also see more actions with
 the ```help``` command, if you have admin permissions. If you have the admin
