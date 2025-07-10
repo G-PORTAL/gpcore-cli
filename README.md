@@ -86,8 +86,12 @@ just the subcommand without any arguments, you will get a list of all available
 actions for that subcommand.
 
 Some commands need flags or specific parameters. To get a list of all flags and
-parameters, run ```gpcore help <subcommand> <action>```. For example, to change
-the active project, run ```gpcore project set-active --id <project-uuid>```.
+parameters, run ```gpcore help <subcommand> <action>```.
+
+A lot of commands need a project ID to work with. To make the commandline tool
+more convenient, you can set the active project with the
+```gpcore project use --id <project-uuid>``` command. This will set the active
+project for all commands which need a project ID.
 
 By default, the output is formatted as a ASCII table. If you want to pass the
 output to other tools for processing, you can append the flag ```--csv``` or
