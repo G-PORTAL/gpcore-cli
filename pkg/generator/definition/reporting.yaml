@@ -1,0 +1,16 @@
+description: Reporting
+
+actions:
+  list:
+    api-call: admin.GetUsageReporting
+    description: Returns the user usage reporting for a specified month
+    root-key: Reporting
+    params:
+      - name: year
+        type: int32
+        description: The year for which to retrieve the reporting data
+        required: true
+      - name: month
+        type: int32
+        description: The month for which to retrieve the reporting data
+        required: true
