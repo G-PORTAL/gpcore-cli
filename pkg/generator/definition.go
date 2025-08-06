@@ -23,7 +23,7 @@ type Action struct {
 
 func (action *Action) CanCall() bool {
 	adminCall := strings.HasPrefix(action.APICall.Client, "admin")
-	return !adminCall || adminCall && config.HasAdminConfig()
+	return !adminCall || config.HasAdminConfig()
 }
 
 type Param struct {
