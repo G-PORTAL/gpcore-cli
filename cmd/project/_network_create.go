@@ -78,7 +78,5 @@ func init() {
 	networkCreateCmd.MarkFlagRequired("type")
 	networkCreateCmd.MarkFlagRequired("subnets")
 
-	if config.HasAdminConfig() {
-		RootProjectCommand.AddCommand(networkCreateCmd)
-	}
+	RootProjectCommand.AddCommand(networkCreateCmd)
 }
