@@ -101,18 +101,18 @@ func FormatSshKey(sshKey *typesv1.SSHKey) string {
 }
 
 func FormatOperatingSystemFamily(family cloudv1.OperatingSystemFamily) string {
-	return text.FgYellow.Sprintf(strings.TrimPrefix(family.String(), "OPERATING_SYSTEM_FAMILY_"))
+	return text.FgYellow.Sprint(strings.TrimPrefix(family.String(), "OPERATING_SYSTEM_FAMILY_"))
 }
 
 func FormatBillStatus(status cloudv1.BillStatus) string {
 	s := strings.TrimPrefix(status.String(), "BILL_STATUS_")
 	switch s {
 	case "FAILED":
-		return text.FgRed.Sprintf(s)
+		return text.FgRed.Sprint(s)
 	case "SUCCEEDED":
-		return text.FgGreen.Sprintf(s)
+		return text.FgGreen.Sprint(s)
 	case "PENDING":
-		return text.FgYellow.Sprintf(s)
+		return text.FgYellow.Sprint(s)
 	}
 
 	return s
@@ -121,11 +121,11 @@ func FormatDatacenterStatus(status cloudv1.DatacenterStatus) string {
 	s := strings.TrimPrefix(status.String(), "DATACENTER_STATUS_")
 	switch s {
 	case "AVAILABLE":
-		return text.FgGreen.Sprintf(s)
+		return text.FgGreen.Sprint(s)
 	case "UNAVAILABLE":
-		return text.FgRed.Sprintf(s)
+		return text.FgRed.Sprint(s)
 	case "COMMING_SOON":
-		return text.FgYellow.Sprintf(s)
+		return text.FgYellow.Sprint(s)
 	default:
 		return s
 	}
@@ -135,15 +135,15 @@ func FormatFlavourAvailability(flavour cloudv1.FlavourAvailability) string {
 	f := strings.TrimPrefix(flavour.String(), "FLAVOUR_AVAILABILITY_")
 	switch f {
 	case "HIGH":
-		return text.FgGreen.Sprintf(f)
+		return text.FgGreen.Sprint(f)
 	case "MIDDLE":
-		return text.FgYellow.Sprintf(f)
+		return text.FgYellow.Sprint(f)
 	case "LOW":
-		return text.FgRed.Sprintf(f)
+		return text.FgRed.Sprint(f)
 	case "PREORDER":
-		return text.FgCyan.Sprintf(f)
+		return text.FgCyan.Sprint(f)
 	case "OUT_OF_STOCK":
-		return text.FgRed.Sprintf(f)
+		return text.FgRed.Sprint(f)
 	default:
 		return "?"
 	}
@@ -153,13 +153,13 @@ func FormatServerLogLevel(level cloudv1.ServerLogLevelType) string {
 	l := strings.TrimPrefix(level.String(), "SERVER_LOG_LEVEL_TYPE_")
 	switch l {
 	case "DEBUG":
-		return text.FgCyan.Sprintf(l)
+		return text.FgCyan.Sprint(l)
 	case "INFO":
-		return text.FgGreen.Sprintf(l)
+		return text.FgGreen.Sprint(l)
 	case "WARNING":
-		return text.FgYellow.Sprintf(l)
+		return text.FgYellow.Sprint(l)
 	case "ERROR":
-		return text.FgRed.Sprintf(l)
+		return text.FgRed.Sprint(l)
 	default:
 		return l
 	}
@@ -169,11 +169,11 @@ func FormatServerLogSource(source cloudv1.ServerLogSourceType) string {
 	s := strings.TrimPrefix(source.String(), "SERVER_LOG_SOURCE_TYPE_")
 	switch s {
 	case "INTERNAL":
-		return text.FgCyan.Sprintf(s)
+		return text.FgCyan.Sprint(s)
 	case "IRONIC":
-		return text.FgYellow.Sprintf(s)
+		return text.FgYellow.Sprint(s)
 	case "NETBOX":
-		return text.FgBlue.Sprintf(s)
+		return text.FgBlue.Sprint(s)
 	default:
 		return s
 	}
@@ -183,9 +183,9 @@ func FormatNetworkType(network cloudv1.NetworkType) string {
 	n := strings.TrimPrefix(network.String(), "NETWORK_TYPE_")
 	switch n {
 	case "PUBLIC":
-		return text.FgCyan.Sprintf(n)
+		return text.FgCyan.Sprint(n)
 	case "MANAGEMENT":
-		return text.FgGreen.Sprintf(n)
+		return text.FgGreen.Sprint(n)
 	default:
 		return n
 	}

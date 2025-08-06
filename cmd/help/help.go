@@ -1,6 +1,7 @@
 package help
 
 import (
+	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
 )
@@ -22,5 +23,5 @@ func UnknownSubcommandAction(cobraCmd *cobra.Command, args []string) error {
 	}
 	cobraCmd.Println(err)
 
-	return fmt.Errorf(err)
+	return errors.New(err)
 }
