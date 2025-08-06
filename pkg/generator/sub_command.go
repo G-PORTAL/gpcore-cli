@@ -620,13 +620,7 @@ func initFunc(name string, metadata SubcommandMetadata) []Code {
 		Dot("AddCommand").
 		Call(Id(name + "Cmd"))
 
-	if metadata.Action.APICall.Client == "admin" {
-		c = append(c, If(
-			Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "HasAdminConfig").Call().Block(
-				addCommand)))
-	} else {
-		c = append(c, addCommand)
-	}
+	c = append(c, addCommand)
 
 	return c
 }
