@@ -115,7 +115,7 @@ func main() {
 
 	err = client.Execute(c, command)
 	if err != nil {
-		log.Errorf(err.Error())
+		log.Error(err.Error())
 		syscall.Exit(1)
 	}
 }
