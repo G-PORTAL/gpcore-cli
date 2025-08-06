@@ -1,8 +1,6 @@
 module github.com/G-PORTAL/gpcore-cli
 
-go 1.23.0
-
-toolchain go1.24.0
+go 1.24.0
 
 require (
 	buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250804091548-289250b42883.2
@@ -39,10 +37,10 @@ require (
 	github.com/charmbracelet/colorprofile v0.3.1 // indirect
 	github.com/charmbracelet/keygen v0.5.3 // indirect
 	github.com/charmbracelet/lipgloss v1.1.0 // indirect
-	github.com/charmbracelet/x/ansi v0.9.3 // indirect
+	github.com/charmbracelet/x/ansi v0.10.1 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect
 	github.com/charmbracelet/x/conpty v0.1.0 // indirect
-	github.com/charmbracelet/x/errors v0.0.0-20250725211024-d60e1b0112b2 // indirect
+	github.com/charmbracelet/x/errors v0.0.0-20250805141217-38fb69db254f // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
 	github.com/charmbracelet/x/termios v0.1.1 // indirect
 	github.com/creack/pty v1.1.24 // indirect
@@ -84,5 +82,5 @@ require (
 	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/text v0.27.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250728155136-f173205681a0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250804133106-a7a43d27e69b // indirect
 )
