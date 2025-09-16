@@ -1,9 +1,10 @@
 package config
 
 import (
+	"os"
+
 	"github.com/charmbracelet/log"
 	"gopkg.in/yaml.v3"
-	"os"
 )
 
 // SessionConfig holds session related credentials and other information
@@ -23,6 +24,10 @@ type SessionConfig struct {
 	// For admin usage (admin endpoints)
 	Username *string `yaml:"username,omitempty"`
 	Password *string `yaml:"password,omitempty"`
+
+	// Impersonate another user (admin only)
+	ImpersonateAccessToken *string `yaml:"impersonate_access_token,omitempty"`
+	ImpersonateExpiresIn   *int    `yaml:"impersonate_expires_in,omitempty"`
 
 	// Session related stuff
 	CurrentProject *string `yaml:"current_project"`
@@ -57,13 +62,16 @@ func (c *SessionConfig) Write() error {
 		return err
 	}
 
+	cleanedSessionConfig := c
+
 	// Remove sensitive data from struct
-	c.PrivateKeyPassword = nil
-	c.Password = nil
-	c.ClientSecret = ""
+	cleanedSessionConfig.PrivateKeyPassword = nil
+	cleanedSessionConfig.Password = nil
+	cleanedSessionConfig.ClientSecret = ""
+	cleanedSessionConfig.ImpersonateAccessToken = nil
 
 	// Convert to yaml
-	data, err := yaml.Marshal(c)
+	data, err := yaml.Marshal(cleanedSessionConfig)
 	if err != nil {
 		return err
 	}
