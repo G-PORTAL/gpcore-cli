@@ -17,7 +17,7 @@ var detailsCmd = &cobra.Command{
 	Args:                  cobra.NoArgs,
 	RunE: func(cobraCmd *cobra.Command, args []string) error {
 		ctx := client.ExtractContext(cobraCmd)
-		user := client.GetUser(ctx)
+		user := client.GetUserFromContext(ctx)
 		sshSession := ctx.Value("ssh").(*ssh.Session)
 
 		tbl := table.NewWriter()
@@ -35,6 +35,13 @@ var detailsCmd = &cobra.Command{
 		tbl.AppendRow([]interface{}{"Is locked?", user.GetLocked()})
 
 		if !config.JSONOutput {
+			// If the user is impersonated, we add a warning to the output, so
+			// the admin knows that this is just the impersonated user, not the
+			// own user.
+			if client.IsImpersonated() {
+				cobraCmd.Println("Impersonated user")
+			}
+
 			tbl.Render()
 		}
 

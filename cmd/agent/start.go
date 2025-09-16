@@ -4,97 +4,24 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/G-PORTAL/gpcore-cli/pkg/api"
-	"github.com/G-PORTAL/gpcore-cli/pkg/config"
-	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
-	"github.com/G-PORTAL/gpcore-go/pkg/gpcore/client"
-	"github.com/G-PORTAL/gpcore-go/pkg/gpcore/client/auth"
-	"github.com/charmbracelet/log"
-	"github.com/charmbracelet/ssh"
-	"github.com/charmbracelet/wish"
-	"github.com/spf13/cobra"
-	"google.golang.org/grpc"
-	"math"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/G-PORTAL/gpcore-cli/pkg/api"
+	"github.com/G-PORTAL/gpcore-cli/pkg/config"
+	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
+	"github.com/charmbracelet/log"
+	"github.com/charmbracelet/ssh"
+	"github.com/charmbracelet/wish"
+	"github.com/spf13/cobra"
 )
 
 var rootCmd *cobra.Command
 
-type Session struct {
-	config *config.SessionConfig
-	conn   *grpc.ClientConn
-	ssh    *ssh.Session
-}
-
-var session Session
-
 var DoneChan = make(chan os.Signal, 1)
 var IsRunning = false
-
-func (s *Session) ContextWithSession(ctx context.Context) context.Context {
-	ctx = context.WithValue(ctx, "config", s.config)
-	ctx = context.WithValue(ctx, "ssh", s.ssh)
-	ctx = context.WithValue(ctx, "conn", s.conn)
-	return ctx
-}
-
-// ConnectToAPI connects to the API with the given credentials, depending
-// on what credentials we have.
-func ConnectToAPI(session *Session) (*grpc.ClientConn, error) {
-	// Endpoint
-	endpoint := config.Endpoint
-	if os.Getenv("GPCORE_ENDPOINT") != "" {
-		endpoint = os.Getenv("GPCORE_ENDPOINT")
-	}
-
-	var credentials client.AuthProviderOption
-
-	// We have two different connection methods available, depending on the
-	// type of credentials we get. For "normal" usage, we need the ClientID
-	// and the ClientSecret, which can be used by every user.
-	// Some endpoints need admin privileges, tho. For that, we need the
-	// username and password of the user. We can not use the same connection
-	// for that, so we need to reconnect with admin credentials.
-
-	// First, we check if we have user/pass for admin login. If we have the
-	// credentials, we use it for login.
-	if config.HasAdminConfig() {
-		log.Info("Using admin credentials")
-		credentials = &auth.ProviderKeycloakUserPassword{
-			ClientID:     session.config.ClientID,
-			ClientSecret: session.config.ClientSecret,
-			Username:     *session.config.Username,
-			Password:     *session.config.Password,
-		}
-
-		return api.NewGRPCConnection(
-			credentials,
-			grpc.WithDefaultCallOptions(
-				grpc.MaxCallRecvMsgSize(math.MaxInt32),
-				grpc.MaxCallSendMsgSize(math.MaxInt32),
-			),
-			client.EndpointOverrideOption(endpoint),
-		)
-	}
-
-	// Otherwise, we just use the client credentials. With this login, the
-	// admin endpoints will not work and result in an error.
-	credentials = &auth.ProviderKeycloakClientAuth{
-		ClientID:     session.config.ClientID,
-		ClientSecret: session.config.ClientSecret,
-	}
-	return api.NewGRPCConnection(
-		credentials,
-		grpc.WithDefaultCallOptions(
-			grpc.MaxCallRecvMsgSize(math.MaxInt32),
-			grpc.MaxCallSendMsgSize(math.MaxInt32),
-		),
-		client.EndpointOverrideOption(endpoint),
-	)
-}
 
 var startCmd = &cobra.Command{
 	Use:   "start",
@@ -107,18 +34,7 @@ var startCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-
-		session = Session{
-			config: sessionConfig,
-		}
-
-		// Open new connection
-		session.conn, err = ConnectToAPI(&session)
-		if err != nil {
-			log.Errorf("Can not connect to GPCORE API: %v", err)
-			log.Fatal("Check your config file and/or reset it with \"gpcore agent setup\"")
-			panic(err)
-		}
+		api.RenewAPISession()
 
 		server, err := wish.NewServer(
 			wish.WithAddress(fmt.Sprintf("%s:%d", consts.AgentHost, consts.AgentPort)),
@@ -139,8 +55,9 @@ var startCmd = &cobra.Command{
 						rootCmd.SetErr(s.Stderr())
 						rootCmd.CompletionOptions.DisableDefaultCmd = true
 
-						session.ssh = &s
-						ctx := session.ContextWithSession(context.Background())
+						api.ActiveSession.SSH = &s
+						ctx := api.ActiveSession.ContextWithSession(context.Background())
+
 						if err := rootCmd.ExecuteContext(ctx); err != nil {
 							log.Errorf("Error executing command on agent: %v", err)
 							rootCmd.Printf("Error executing command on agent: %v\n", err)

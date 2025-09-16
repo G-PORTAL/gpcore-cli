@@ -2,12 +2,13 @@ package config
 
 import (
 	"errors"
+	"os"
+
 	"github.com/G-PORTAL/gpcore-go/pkg/gpcore/client"
 	"github.com/charmbracelet/log"
-	"os"
 )
 
-// ConfigFilePath is the path to the config file used to store the session config. The
+// FilePath is the path to the config file used to store the session config. The
 // default value is ~/.config/gpcore/config.yaml. This can be overwritten by setting the
 // environment variable GPCORE_CONFIG or by passing the --config flag to the
 // gpc command.
@@ -96,24 +97,33 @@ func AskForAdminCredentials() (string, string) {
 	return username, password
 }
 
-func GetSessionConfig() (*SessionConfig, error) {
-	if sessionConfig != nil {
-		return sessionConfig, nil
-	}
-
+func RefreshSessionConfig() error {
 	sessionConfig = &SessionConfig{}
 
 	// No config file found?
 	if !HasConfig() {
 		log.Errorf("No config file found at %s", FilePath)
 		log.Errorf("Create a new config file with \"gpcore agent setup\"")
-		return nil, errors.New("no config file found")
+		return errors.New("no config file found")
 	}
 
 	// Read in config file
 	err := sessionConfig.Read()
 	if err != nil {
 		log.Errorf("Error reading config: %s", err)
+		return err
+	}
+
+	return nil
+}
+
+func GetSessionConfig() (*SessionConfig, error) {
+	if sessionConfig != nil {
+		return sessionConfig, nil
+	}
+	err := RefreshSessionConfig()
+	if err != nil {
+		log.Errorf("Error refreshing session config: %s", err)
 		return nil, err
 	}
 
