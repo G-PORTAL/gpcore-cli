@@ -12,7 +12,7 @@ func ListHookPost(resp *cloudv1.ListProjectsResponse, cobraCmd *cobra.Command) (
 
 	ctx := client.ExtractContext(cobraCmd)
 	cfg := ctx.Value("config").(*config.SessionConfig)
-	user := client.GetUser(ctx)
+	user := client.GetUserFromContext(ctx)
 
 	for i := range resp.Projects {
 		name := resp.Projects[i].Name

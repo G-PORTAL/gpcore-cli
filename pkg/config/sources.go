@@ -3,11 +3,12 @@ package config
 import (
 	"bufio"
 	"errors"
-	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
-	"github.com/G-PORTAL/gpcore-cli/pkg/secret"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
+	"github.com/G-PORTAL/gpcore-cli/pkg/secret"
 )
 
 func init() {
@@ -40,6 +41,12 @@ func GetSecretsFromKeyring(config *SessionConfig) error {
 		config.Password = &password
 	}
 
+	// Impersonate access token
+	impersonateAccessToken, err := ring.Get("impersonate_access_token")
+	if err == nil {
+		config.ImpersonateAccessToken = &impersonateAccessToken
+	}
+
 	return nil
 }
 
@@ -64,6 +71,19 @@ func StoreSecretsInKeyring(config *SessionConfig) error {
 	// Private Key Password
 	if config.PrivateKeyPassword != nil {
 		err := ring.Set("private_key_password", *config.PrivateKeyPassword)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Impersonate access token
+	if config.ImpersonateAccessToken != nil {
+		err := ring.Set("impersonate_access_token", *config.ImpersonateAccessToken)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := ring.Remove("impersonate_access_token")
 		if err != nil {
 			return err
 		}

@@ -43,6 +43,15 @@ between client and server is secured, and no other ssh client can connect to it.
 If you messed up your config, the sensitive data in the keyring or the public/private
 key, you can reset everything with the ```gpcore agent setup``` command.
 
+As the client ID and client secret, you can use a service account, created in
+the GPCORE panel under https://panel.gpcore.io/user/settings/clients.
+
+A special case is the ```user impersonate``` command, which allows you to impersonate
+another user. This command needs admin permissions, and you need to use the
+```gpcore-cli``` client ID for that (see Keycloak for the client secret). This
+client is preconfigured to have the impersonate role. To stop impersonating
+a user, use the `user logout` command.
+
 ### Admin permissions
 
 The GPCORE API has a concept of admin permissions. Several actions can only
