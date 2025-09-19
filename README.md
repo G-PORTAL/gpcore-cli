@@ -48,9 +48,10 @@ the GPCORE panel under https://panel.gpcore.io/user/settings/clients.
 
 A special case is the ```user impersonate``` command, which allows you to impersonate
 another user. This command needs admin permissions, and you need to use the
-```gpcore-cli``` client ID for that (see Keycloak for the client secret). This
-client is preconfigured to have the impersonate role. To stop impersonating
-a user, use the `user logout` command.
+```gpcore-cli``` client ID for that (see Bitwarden or Keycloak for the client
+secret). This client is preconfigured to have the impersonate role. Further, your
+admin user need the "impersonate-user" permission set in Keycloak. To stop
+impersonating a user, use the `user logout` command.
 
 ### Admin permissions
 

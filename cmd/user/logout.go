@@ -22,7 +22,12 @@ var logoutCmd = &cobra.Command{
 
 		// If the impersonate access token is already nil, we no longer
 		// impersonating anybody.
-		if !client.IsImpersonated() {
+		isImpersonated, err := client.IsImpersonated()
+		if err != nil {
+			return err
+		}
+
+		if !isImpersonated {
 			cobraCmd.Println("No need to logout, you do not impersonate anybody.")
 			return nil
 		}
@@ -32,11 +37,6 @@ var logoutCmd = &cobra.Command{
 		sessionConfig.CurrentProject = nil
 
 		err = sessionConfig.Write()
-		if err != nil {
-			return err
-		}
-
-		err = config.RefreshSessionConfig()
 		if err != nil {
 			return err
 		}

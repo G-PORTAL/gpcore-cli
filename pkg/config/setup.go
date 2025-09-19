@@ -2,11 +2,12 @@ package config
 
 import (
 	"errors"
+	"os"
+	"path"
+
 	"github.com/G-PORTAL/gpcore-cli/pkg/secret"
 	"github.com/charmbracelet/log"
 	"gopkg.in/op/go-logging.v1"
-	"os"
-	"path"
 )
 
 func SetupConfig() error {

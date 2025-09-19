@@ -83,9 +83,13 @@ func StoreSecretsInKeyring(config *SessionConfig) error {
 			return err
 		}
 	} else {
-		err := ring.Remove("impersonate_access_token")
-		if err != nil {
-			return err
+		// If we do not have set the access token, we also need to remove it
+		// from the keyring if still set there.
+		if _, err := ring.Get("impersonate_access_token"); err == nil {
+			err := ring.Remove("impersonate_access_token")
+			if err != nil {
+				return err
+			}
 		}
 	}
 

@@ -38,7 +38,12 @@ var detailsCmd = &cobra.Command{
 			// If the user is impersonated, we add a warning to the output, so
 			// the admin knows that this is just the impersonated user, not the
 			// own user.
-			if client.IsImpersonated() {
+			isImpersonated, err := client.IsImpersonated()
+			if err != nil {
+				return err
+			}
+
+			if isImpersonated {
 				cobraCmd.Println("Impersonated user")
 			}
 
