@@ -32,10 +32,10 @@ func GetUser(conn *grpc.ClientConn) *cloudv1.User {
 
 // IsImpersonated return true if the current acting user is an impersonated
 // user and not the real user.
-func IsImpersonated() bool {
+func IsImpersonated() (bool, error) {
 	cfg, err := config.GetSessionConfig()
 	if err != nil {
-		return false
+		return false, err
 	}
-	return cfg.ImpersonateAccessToken != nil
+	return cfg.ImpersonateAccessToken != nil, nil
 }

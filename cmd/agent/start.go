@@ -34,6 +34,17 @@ var startCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+
+		// If we have impersonated a user before the agent was stopped, we remove
+		// the access token and the expiry time, so the user start with his own
+		// user.
+		sessionConfig.ImpersonateAccessToken = nil
+		sessionConfig.ImpersonateExpiresIn = nil
+		err = sessionConfig.Write()
+		if err != nil {
+			panic(err)
+		}
+
 		api.RenewAPISession()
 
 		server, err := wish.NewServer(
