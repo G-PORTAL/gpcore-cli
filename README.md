@@ -119,7 +119,7 @@ You can always add custom subcommands without generating it. Just add a new
 file to ```cmd/```. The file name will be the name of the subcommand.
 
 With hooks, you can inject code at some points in auto generated code. For
-example, if you want to remove some colums, format certain colums or validate
+example, if you want to remove some columns, format certain columns or validate
 input, you can do this with hooks. Create a file in the same package with the
 same name of the action (auto generated file), but with the prefix ```_pre.go```
 to execute code before the action and ```_post.go``` to execute code after the
