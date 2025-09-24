@@ -170,10 +170,17 @@ actions:
         description: Node ID
         required: true
 
+  # DEPRECATED: This endpoint is no longer needed (just for migration), because
+  # We removed HOURLY billing and only support MONTHLY billing from now on.
   change-billing-period:
     api-call: cloud.ChangeNodeBillingPeriod
     description: Change the billing period of a node
+    identifier: nil
     params:
+      - name: id
+        type: string
+        description: Node ID
+        required: true
       - name: project_id
         type: string
         required: true
@@ -181,6 +188,17 @@ actions:
         type: cloudv1.BillingPeriod
         default: cloudv1.BILLING_PERIOD_MONTHLY
         required: true
+    # TODO: This has currently no effect. We need a way to manipulate the JSON
+    # output for non nist endpoints when fields are specified. The output of this
+    # particular endpoint is mostly useless and is would be nice if we can limit
+    # the output to a limited set of fields of manipulate the output completely
+    # without rewriting the whole endpoint itself.
+    fields:
+      - ID
+      - FQDN
+      - PaidUntilAt
+      - BillingPeriod
+      - TargetBillingPeriod
 
   # change-rescue-mode is implemented in code, because rescue_mode is an object,
   # which is not supported by the generator.
