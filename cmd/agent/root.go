@@ -2,15 +2,16 @@ package agent
 
 import (
 	"fmt"
+	"net"
+	"strconv"
+	"time"
+
 	"github.com/G-PORTAL/gpcore-cli/cmd"
 	"github.com/G-PORTAL/gpcore-cli/cmd/help"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 	"github.com/G-PORTAL/gpcore-go/pkg/gpcore/client"
 	"github.com/spf13/cobra"
-	"net"
-	"strconv"
-	"time"
 )
 
 var printVersion = false
@@ -44,9 +45,10 @@ func New() *cobra.Command {
 	// Application information
 	rootCmd.Flags().BoolVarP(&printVersion, "version", "V", false, "print version information and quit")
 
-	// GPCORE API
+	// GPCORE API + Authentication/Authorization
 	// TODO: Will set on first run (when agent starts),the following client calls will ignore these, so, move this to the agent only or reconnect the API on every change
 	rootCmd.PersistentFlags().StringVarP(&config.Endpoint, "endpoint", "e", client.DefaultEndpoint, "set API endpoint")
+	rootCmd.PersistentFlags().StringVarP(&config.AuthRealm, "auth-realm", "r", "master", "set auth realm to use")
 
 	// Output formats and verbosity
 	rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "v", false, "verbose mode")
