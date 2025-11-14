@@ -89,6 +89,12 @@ func ConnectToAPI() (*grpc.ClientConn, error) {
 		endpoint = os.Getenv("GPCORE_ENDPOINT")
 	}
 
+	// Auth realm
+	authRealm := config.AuthRealm
+	if os.Getenv("GPCORE_AUTH_REALM") != "" {
+		authRealm = os.Getenv("GPCORE_AUTH_REALM")
+	}
+
 	var credOptions client.AuthProviderOption
 
 	// We have two different connection methods available, depending on the
@@ -107,6 +113,7 @@ func ConnectToAPI() (*grpc.ClientConn, error) {
 			ClientSecret: ActiveSession.config.ClientSecret,
 			Username:     *ActiveSession.config.Username,
 			Password:     *ActiveSession.config.Password,
+			Realm:        &authRealm,
 		}
 
 		// If we currently impersonate a user, we need to add the access token

@@ -85,6 +85,22 @@ The client itself is a simple SSH client. It connects to the agent and sends
 commands to it. The result is printed to stdout. You can use the standard
 SSH command (ssh) to connect through it, but it is not that convenient.
 
+### Using different environments
+
+It is possible to use the CLI with different GPCORE environments, like
+staging or development. For that, you can set the API base URL and the
+auth realm when the agent starts (`agent start` or first command).
+
+* `--endpoint` (or `GPCORE_ENDPOINT` environment variable):
+  Set the API base URL, efault is the production API.
+* `--auth-realm` (or `GPCORE_AUTH_REALM` environment variable)
+ Set the auth realm, efault is set to the production realm (master).
+
+Remember, this will be set once the agent starts and will be used for all
+subsequent commands. If you want to change the environment, you need to
+stop the agent with `gpcore agent stop` and start it again with the new
+parameters.
+
 ## Usage
 
 The commandline tool is separated into subcommands. To get a list of all

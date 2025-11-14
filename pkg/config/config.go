@@ -32,6 +32,11 @@ var Verbose = false
 // not be changes for subsequent client calls (because the connection is open).
 var Endpoint = client.DefaultEndpoint
 
+// AuthRealm is the authentication realm used by the client. This can be
+// overwritten by setting the environment variable GPCORE_AUTH_REALM or by
+// passing the --auth-realm flag to the gpc command.
+var AuthRealm = "master"
+
 var sessionConfig *SessionConfig
 
 func HasConfig() bool {
