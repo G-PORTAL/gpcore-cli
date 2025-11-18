@@ -15,19 +15,20 @@ builds:
     ldflags:
       - "-s -w -X '{{ .ModulePath }}/cmd.version={{.Tag}}' -X '{{ .ModulePath }}/cmd.commit={{.Commit}}' -X '{{ .ModulePath }}/cmd.date={{.Date}}'"
 
-  - id: gpcore-macos
-    goos:
-      - darwin
-    ldflags:
-      - "-s -w -X '{{ .ModulePath }}/cmd.version={{.Tag}}' -X '{{ .ModulePath }}/cmd.commit={{.Commit}}' -X '{{ .ModulePath }}/cmd.date={{.Date}}'"
-    goarch:
-      - amd64
-      - arm64
-    hooks:
-      post:
-        - cmd: quill sign-and-notarize "{{ .Path }}" --dry-run={{ .IsSnapshot }} --ad-hoc={{ .IsSnapshot }} -vv
-          env:
-            - QUILL_LOG_FILE=/tmp/quill-{{ .Target }}.log
+# TODO: Disabled for now due to a missing agreement from apple developer account.
+#  - id: gpcore-macos
+#    goos:
+#      - darwin
+#    ldflags:
+#      - "-s -w -X '{{ .ModulePath }}/cmd.version={{.Tag}}' -X '{{ .ModulePath }}/cmd.commit={{.Commit}}' -X '{{ .ModulePath }}/cmd.date={{.Date}}'"
+#    goarch:
+#      - amd64
+#      - arm64
+#    hooks:
+#      post:
+#        - cmd: quill sign-and-notarize "{{ .Path }}" --dry-run={{ .IsSnapshot }} --ad-hoc={{ .IsSnapshot }} -vv
+#          env:
+#            - QUILL_LOG_FILE=/tmp/quill-{{ .Target }}.log
 
 archives:
   - formats:
