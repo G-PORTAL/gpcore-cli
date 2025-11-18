@@ -2,8 +2,8 @@ al.essio.dev/pkg/shellescape v1.6.0 h1:NxFcEqzFSEVCGN2yq7Huv/9hyCEGVa/TncnOOBBeX
 al.essio.dev/pkg/shellescape v1.6.0/go.mod h1:6sIqp7X2P6mThCQ7twERpZTuigpr6KbZWtls1U8I890=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.9-20250912141014-52f32327d4b0.1 h1:DQLS/rRxLHuugVzjJU5AvOwD57pdFl9he/0O7e5P294=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.9-20250912141014-52f32327d4b0.1/go.mod h1:aY3zbkNan5F+cGm9lITDP6oxJIwu0dn9KjJuJjWaHkg=
-buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250804091548-289250b42883.2 h1:6gjQy8rvNdpfbuzEPoimtQ2BD5hebvV9TMxiuNWQGCQ=
-buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20250804091548-289250b42883.2/go.mod h1:/rxp37k3p7xxCe1X1jfSNMtYowCkcEvhiDbL3tBpyWA=
+buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20251103085422-b156624a826d.2 h1:2mTDOUSt3hHaeAjxY5KljY2DXyMqO2iC15eiL4HK8nk=
+buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20251103085422-b156624a826d.2/go.mod h1:dTA7kNFwWSjEiP42gb1QA7V+B+aMi0Heq03BKqeULiU=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.9-20250804091548-289250b42883.1 h1:oUYlXzAMRIm/umpdF+7CxjDc5BrLJTAc+SDTXW3xSKE=
 buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.9-20250804091548-289250b42883.1/go.mod h1:9cZ5Dad/JncDI9XPW3QDXovAAL/bj/Ro+/fPcBL0uIw=
 code.gitea.io/sdk/gitea v0.22.0 h1:HCKq7bX/HQ85Nw7c/HAhWgRye+vBp5nQOE8Md1+9Ef0=
