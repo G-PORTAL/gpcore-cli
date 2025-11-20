@@ -21,7 +21,7 @@ require (
 	github.com/spf13/cobra v1.10.1
 	github.com/stoewer/go-strcase v1.3.1
 	github.com/zalando/go-keyring v0.2.6
-	golang.org/x/crypto v0.44.0
+	golang.org/x/crypto v0.45.0
 	google.golang.org/grpc v1.77.0
 	google.golang.org/protobuf v1.36.10
 	gopkg.in/op/go-logging.v1 v1.0.0-20160315200505-970db520ece7
