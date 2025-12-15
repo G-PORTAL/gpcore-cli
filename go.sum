@@ -1,11 +1,11 @@
 al.essio.dev/pkg/shellescape v1.6.0 h1:NxFcEqzFSEVCGN2yq7Huv/9hyCEGVa/TncnOOBBeXHA=
 al.essio.dev/pkg/shellescape v1.6.0/go.mod h1:6sIqp7X2P6mThCQ7twERpZTuigpr6KbZWtls1U8I890=
-buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250912141014-52f32327d4b0.1 h1:31on4W/yPcV4nZHL4+UCiCvLPsMqe/vJcNg8Rci0scc=
-buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250912141014-52f32327d4b0.1/go.mod h1:fUl8CEN/6ZAMk6bP8ahBJPUJw7rbp+j4x+wCcYi2IG4=
+buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20240401165935-b983156c5e99.1 h1:mNVDJpDa1NrtMj7oS6ZNLr+SDIGb444I4G5gQg3uWIU=
+buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20240401165935-b983156c5e99.1/go.mod h1:tvtbpgaVXZX4g6Pn+AnzFycuRK3MOz5HJfEGeEllXYM=
 buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20251103085422-b156624a826d.2 h1:2mTDOUSt3hHaeAjxY5KljY2DXyMqO2iC15eiL4HK8nk=
 buf.build/gen/go/gportal/gpcore/grpc/go v1.5.1-20251103085422-b156624a826d.2/go.mod h1:dTA7kNFwWSjEiP42gb1QA7V+B+aMi0Heq03BKqeULiU=
-buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.10-20251103085422-b156624a826d.1 h1:4eZgyGoegoDwt1ZT9cR3f2oE/8Ys/csbiKnMYmxQ9xg=
-buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.10-20251103085422-b156624a826d.1/go.mod h1:L7GAI5uJLx5y5vl+4w/x9kNWt0YaOZ6LfUEbhyv9Udg=
+buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.11-20251103085422-b156624a826d.1 h1:O66HGIt3igJB7DbDnBrjUd4IWz7bKB4MKDVOJFGqpZA=
+buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.11-20251103085422-b156624a826d.1/go.mod h1:P8EapWY+m/+4oATK4HFxRi9zB1QyW1oAz+yvxT4ckt4=
 code.gitea.io/sdk/gitea v0.22.1 h1:7K05KjRORyTcTYULQ/AwvlVS6pawLcWyXZcTr7gHFyA=
 code.gitea.io/sdk/gitea v0.22.1/go.mod h1:yyF5+GhljqvA30sRDreoyHILruNiy4ASufugzYg0VHM=
 github.com/42wim/httpsig v1.2.3 h1:xb0YyWhkYj57SPtfSttIobJUPJZB9as1nsfo7KWVcEs=
@@ -249,8 +249,8 @@ google.golang.org/genproto/googleapis/rpc v0.0.0-20251111163417-95abcf5c77ba h1:
 google.golang.org/genproto/googleapis/rpc v0.0.0-20251111163417-95abcf5c77ba/go.mod h1:7i2o+ce6H/6BluujYR+kqX3GKH+dChPTQU19wjRPiGk=
 google.golang.org/grpc v1.77.0 h1:wVVY6/8cGA6vvffn+wWK5ToddbgdU3d8MNENr4evgXM=
 google.golang.org/grpc v1.77.0/go.mod h1:z0BY1iVj0q8E1uSQCjL9cppRj+gnZjzDnzV0dHhrNig=
-google.golang.org/protobuf v1.36.10 h1:AYd7cD/uASjIL6Q9LiTjz8JLcrh/88q5UObnmY3aOOE=
-google.golang.org/protobuf v1.36.10/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
+google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
+google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/op/go-logging.v1 v1.0.0-20160315200505-970db520ece7 h1:wO6teAQa+/6NqTzys8iAd3kWzcWWzrIhLZOdTGfDYAo=
