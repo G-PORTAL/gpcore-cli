@@ -25,6 +25,7 @@ actions:
         default: typev1.CLOUD_PROVIDER_TYPE_AWS
         description: Filter by cloud provider type
         required: false
+        optional: true
     fields:
       - Id
       - Name
