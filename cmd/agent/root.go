@@ -54,6 +54,10 @@ func New() *cobra.Command {
 	rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "v", false, "verbose mode")
 	rootCmd.PersistentFlags().BoolVarP(&config.JSONOutput, "json", "j", false, "output as JSON")
 	rootCmd.PersistentFlags().BoolVarP(&config.CSVOutput, "csv", "x", false, "output as CSV")
+	rootCmd.MarkFlagsMutuallyExclusive("json", "csv")
+
+	// Disable file completions globally (no flag in this CLI takes a file path)
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
 
 	// Special client commands
 	cmd.SelfupdateCommand(&rootCmd)

@@ -1,4 +1,5 @@
 description: User management
+group: admin
 
 actions:
   ssh-keys:

@@ -1,4 +1,5 @@
 description: Manage billing profiles for your account
+group: billing
 
 actions:
   list:

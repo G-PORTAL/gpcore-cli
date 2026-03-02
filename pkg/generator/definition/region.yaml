@@ -1,4 +1,5 @@
 description: Manage regions in which datacenters are located
+group: admin
 
 actions:
   list:

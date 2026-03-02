@@ -68,6 +68,7 @@ type SubcommandDefinition struct {
 	Identifier    string            `yaml:"identifier"`
 	IdentifierKey string            `yaml:"identifier-key"`
 	Description   string            `yaml:"description"`
+	Group         string            `yaml:"group"`
 }
 
 type SubcommandMetadata struct {

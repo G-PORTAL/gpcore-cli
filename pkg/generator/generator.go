@@ -62,9 +62,9 @@ func main() {
 				log.Fatal(err)
 			}
 		}
-		// Create root command if not exist
+		// Generate root command if no custom root.go exists (always regenerate root_gen.go)
 		if _, err := os.Stat("./cmd/" + subcommandName + "/root.go"); os.IsNotExist(err) {
-			log.Printf("  Create root command ./cmd/%s/root"+generatedFileSuffix+".go ...\n", subcommandName)
+			log.Printf("  Generate root command ./cmd/%s/root"+generatedFileSuffix+".go ...\n", subcommandName)
 			targetFilename := "./cmd/" + subcommandName + "/root" + generatedFileSuffix + ".go"
 			err = generator.GenerateRootCommand(metadata, targetFilename)
 			if err != nil {

@@ -1,4 +1,5 @@
 description: Project related actions
+group: admin
 
 actions:
   list:
