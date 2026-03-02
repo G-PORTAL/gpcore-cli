@@ -1,4 +1,5 @@
 description: List or update datacenter colocations
+group: admin
 
 actions:
   list:

@@ -1,28 +1,28 @@
 module github.com/G-PORTAL/gpcore-cli
 
-go 1.25.5
+go 1.26.0
 
 // For development
 //replace github.com/G-PORTAL/gpcore-go => ../gpcore-go
 
 require (
-	buf.build/gen/go/gportal/gpcore/grpc/go v1.6.0-20251103085422-b156624a826d.1
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.11-20251103085422-b156624a826d.1
+	buf.build/gen/go/gportal/gpcore/grpc/go v1.6.1-20260115091005-9b1a7a0cbe2d.1
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.11-20260115091005-9b1a7a0cbe2d.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20250923094355-04f2fe445e8f
 	github.com/Nerzal/gocloak/v13 v13.9.0
 	github.com/charmbracelet/log v0.4.2
 	github.com/charmbracelet/ssh v0.0.0-20250826160808-ebfa259c7309
 	github.com/charmbracelet/wish v1.4.7
-	github.com/creativeprojects/go-selfupdate v1.5.1
+	github.com/creativeprojects/go-selfupdate v1.5.2
 	github.com/dave/jennifer v1.7.1
 	github.com/gertd/go-pluralize v0.2.1
-	github.com/jedib0t/go-pretty/v6 v6.7.7
-	github.com/melbahja/goph v1.4.0
+	github.com/jedib0t/go-pretty/v6 v6.7.8
+	github.com/melbahja/goph v1.5.0
 	github.com/spf13/cobra v1.10.2
 	github.com/stoewer/go-strcase v1.3.1
 	github.com/zalando/go-keyring v0.2.6
-	golang.org/x/crypto v0.47.0
-	google.golang.org/grpc v1.77.0
+	golang.org/x/crypto v0.48.0
+	google.golang.org/grpc v1.79.1
 	google.golang.org/protobuf v1.36.11
 	gopkg.in/op/go-logging.v1 v1.0.0-20160315200505-970db520ece7
 	gopkg.in/yaml.v3 v3.0.1
@@ -57,7 +57,7 @@ require (
 	github.com/go-resty/resty/v2 v2.17.1 // indirect
 	github.com/godbus/dbus/v5 v5.2.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
-	github.com/google/go-github/v30 v30.1.0 // indirect
+	github.com/google/go-github/v74 v74.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
@@ -78,13 +78,13 @@ require (
 	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/ulikunitz/xz v0.5.15 // indirect
-	github.com/xanzy/go-gitlab v0.115.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+	gitlab.com/gitlab-org/api/client-go v1.9.1 // indirect
 	golang.org/x/exp v0.0.0-20251209150349-8475f28825e9 // indirect
-	golang.org/x/net v0.48.0 // indirect
+	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
-	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/text v0.33.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
 	golang.org/x/time v0.14.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251213004720-97cd9d5aeac2 // indirect
 )

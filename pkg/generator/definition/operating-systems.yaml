@@ -1,4 +1,5 @@
 description: Operating system related operations
+group: resources
 
 actions:
   list:

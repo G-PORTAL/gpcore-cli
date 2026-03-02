@@ -1,4 +1,5 @@
 description: Network management
+group: networking
 
 actions:
   list:

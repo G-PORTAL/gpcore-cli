@@ -1,4 +1,5 @@
 description: Project cloud providers
+group: admin
 
 actions:
   list:

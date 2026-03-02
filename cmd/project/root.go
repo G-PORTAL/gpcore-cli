@@ -10,6 +10,7 @@ var RootProjectCommand = &cobra.Command{
 	Use:                   "project",
 	Short:                 "Utility to combine multiple project api actions",
 	Long:                  `Utility to combine multiple project api actions`,
+	GroupID:               "admin",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
 	RunE: func(cobraCmd *cobra.Command, args []string) error {

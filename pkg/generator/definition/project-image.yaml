@@ -1,4 +1,5 @@
 description: Project images
+group: resources
 
 actions:
   list:

@@ -85,20 +85,11 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 		Id("Long"):          Lit(metadata.Action.Description),
 		Id("SilenceUsage"):  True(),
 		Id("SilenceErrors"): True(),
-		Id("Args"):          Qual("github.com/spf13/cobra", "OnlyValidArgs"),
+		Id("Args"):          Qual("github.com/spf13/cobra", "NoArgs"),
 		Id("RunE"): Func().Params(
 			Id("cobraCmd").Op("*").Qual("github.com/spf13/cobra", "Command"),
 			Id("args").Index().String()).Error().
 			Block(runCommand(name, metadata)...),
-	}
-
-	// Add flags and params
-	if len(metadata.Action.Params) > 0 {
-		var args []Code
-		for _, v := range metadata.Action.Params {
-			args = append(args, Lit(strcase.KebabCase(v.Name)))
-		}
-		values[Id("ValidArgs")] = Index().String().Values(args...)
 	}
 
 	// Final command
@@ -613,6 +604,40 @@ func initFunc(name string, metadata SubcommandMetadata) []Code {
 	if containsRequiredFields {
 		c = append(c, Line())
 	}
+
+	// Register shell completion functions for enum-typed flags
+	for _, param := range metadata.Action.Params {
+		paramType := param.Type
+		if isArrayType(paramType) {
+			paramType = strings.TrimPrefix(paramType, "[]")
+		}
+		if isEnumType(paramType) {
+			enumPrefix := strings.ToUpper(strcase.SnakeCase(stripEnum(stripPackage(paramType)))) + "_"
+			c = append(c,
+				Id(strcase.LowerCamelCase(name)+"Cmd").
+					Dot("RegisterFlagCompletionFunc").Call(
+					Lit(strcase.KebabCase(param.Name)),
+					Func().Params(
+						Id("cmd").Op("*").Qual("github.com/spf13/cobra", "Command"),
+						Id("args").Index().String(),
+						Id("toComplete").String(),
+					).Params(Index().String(), Qual("github.com/spf13/cobra", "ShellCompDirective")).Block(
+						Var().Id("completions").Index().String(),
+						For(List(Id("_"), Id("v")).Op(":=").Range().Qual(clientPackageName(paramType), stripPackage(paramType)+"_name")).Block(
+							If(Qual("strings", "HasSuffix").Call(Id("v"), Lit("UNSPECIFIED"))).Block(Continue()),
+							Id("completions").Op("=").Append(
+								Id("completions"),
+								Qual("strings", "ToLower").Call(
+									Qual("strings", "TrimPrefix").Call(Id("v"), Lit(enumPrefix)),
+								),
+							),
+						),
+						Return(Id("completions"), Qual("github.com/spf13/cobra", "ShellCompDirectiveNoFileComp")),
+					),
+				))
+		}
+	}
+	c = append(c, Line())
 
 	// Add the command to the root command when the user has set up the admin
 	// configuration.

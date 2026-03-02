@@ -18,7 +18,7 @@ func GenerateRootCommand(metadata SubcommandDefinition, targetFilename string) e
 
 	commandName := "Root" + strcase.UpperCamelCase(metadata.Name) + "Command"
 	command := strings.ReplaceAll(metadata.Name, "_", "-")
-	f.Var().Add(Id(commandName).Op("=").Op("&").Qual("github.com/spf13/cobra", "Command").Values(Dict{
+	values := Dict{
 		Id("Use"):              Lit(command),
 		Id("Short"):            Lit(metadata.Description),
 		Id("Long"):             Lit(metadata.Description),
@@ -27,7 +27,11 @@ func GenerateRootCommand(metadata SubcommandDefinition, targetFilename string) e
 		Id("TraverseChildren"): True(),
 		Id("Args"):             Qual("github.com/spf13/cobra", "OnlyValidArgs"),
 		Id("RunE"):             Qual("github.com/G-PORTAL/gpcore-cli/cmd/help", "UnknownSubcommandAction"),
-	}))
+	}
+	if metadata.Group != "" {
+		values[Id("GroupID")] = Lit(metadata.Group)
+	}
+	f.Var().Add(Id(commandName).Op("=").Op("&").Qual("github.com/spf13/cobra", "Command").Values(values))
 
 	return f.Save(targetFilename)
 }
