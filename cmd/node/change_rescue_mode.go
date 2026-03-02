@@ -52,8 +52,8 @@ var changeRescueModeCmd = &cobra.Command{
 func init() {
 	changeRescueModeCmd.Flags().StringVar(&changeRescueModeId, "id", "", "Node ID (required)")
 	changeRescueModeCmd.Flags().StringVar(&changeRescueModeProjectId, "project-id", "", "Project ID (required)")
-	changeRescueModeCmd.Flags().BoolVar(&changeRescueModeEnabled, "enabled", false, "Enable or disable rescue mode (required)")
-	changeRescueModeCmd.Flags().StringVar(&changeRescueModePassword, "password", "", "Password for rescue mode (required)")
+	changeRescueModeCmd.Flags().BoolVar(&changeRescueModeEnabled, "enabled", false, "Enable or disable rescue mode")
+	changeRescueModeCmd.Flags().StringVar(&changeRescueModePassword, "password", "", "Password for rescue mode")
 
 	changeRescueModeCmd.MarkFlagRequired("id")
 	changeRescueModeCmd.MarkFlagRequired("project-id")

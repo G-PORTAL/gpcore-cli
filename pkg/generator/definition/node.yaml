@@ -146,7 +146,7 @@ actions:
       - name: user_data
         type: string
         description: User data
-        required: true
+        default: ""
 
   power-action:
     api-call: cloud.PowerActionNode
