@@ -32,6 +32,7 @@ type Param struct {
 	Description string      `yaml:"description"`
 	Required    bool        `yaml:"required"`
 	Default     interface{} `yaml:"default"`
+	Optional    bool        `yaml:"optional"` // Proto field is a pointer type (oneof/optional)
 }
 
 type APICall struct {
