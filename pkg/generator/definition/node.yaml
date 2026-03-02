@@ -38,7 +38,12 @@ actions:
   update:
     api-call: admin.UpdateNode
     description: Update node details
+    identifier: nil
     params:
+      - name: id
+        type: string
+        description: Node UUID
+        required: true
       - name: managed
         type: bool
         required: true
