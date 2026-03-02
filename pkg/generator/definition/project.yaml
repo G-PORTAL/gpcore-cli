@@ -23,7 +23,6 @@ actions:
         description: Project ID
         required: true
 
-  # TODO: Fix after dependency upgrade
   update:
     api-call: cloud.UpdateProject
     description: Update project details
@@ -32,23 +31,22 @@ actions:
         type: string
         description: Project name
         required: true
-      - name: description
-        type: string
-        description: Project description
-        required: true
-      - name: environment
-        type: cloudv1.ProjectEnvironment
-        description: Project environment
-        default: cloudv1.PROJECT_ENVIRONMENT_DEVELOPMENT
-        required: true
       - name: credit_card_id
         type: string
         description: Credit card ID
         required: true
       - name: billing_address_id
         type: string
-        description: Billing address ID
+        description: Billing profile ID
         required: true
+      - name: description
+        type: string
+        description: Project description (deprecated)
+        default: ""
+      - name: environment
+        type: cloudv1.ProjectEnvironment
+        description: Project environment (deprecated)
+        default: cloudv1.PROJECT_ENVIRONMENT_DEVELOPMENT
 
   create:
     api-call: cloud.CreateProject
@@ -59,16 +57,18 @@ actions:
         type: string
         description: Project name
         required: true
+      - name: billing_address_id
+        type: string
+        description: Billing profile ID
+        required: true
       - name: description
         type: string
+        description: Project description (deprecated)
         default: ""
       - name: environment
         type: cloudv1.ProjectEnvironment
+        description: Project environment (deprecated)
         default: cloudv1.PROJECT_ENVIRONMENT_DEVELOPMENT
-        required: true
-      - name: billing_address_id
-        type: string
-        required: true
 
   delete:
     api-call: cloud.DeleteProject

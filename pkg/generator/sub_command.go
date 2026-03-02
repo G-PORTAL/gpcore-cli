@@ -185,8 +185,11 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		variable := strcase.LowerCamelCase(name) + title(strcase.LowerCamelCase(param.Name))
 		var val *Statement
 		if isEnumType(param.Type) && !isArrayType(param.Type) {
-			// Enum helper function call
-			if !param.Required {
+			// Enum helper function call. Use a pointer when the proto field
+			// is explicitly marked as optional (oneof/optional pointer type).
+			if param.Optional {
+				// Variable is shadowed and converted before the API call,
+				// take its address for the pointer proto field.
 				val = Op("&").Id(variable)
 			} else {
 				val = Qual("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", stripPackage(param.Type)+"ToProto").Call(Id(variable))
@@ -213,9 +216,11 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 
 	respC := make([]Code, 0)
 
-	// Special variables for pointer usage
+	// For enum params marked as optional, the proto field is a pointer type
+	// (oneof/optional). We need to convert the string to the enum value and
+	// take its address.
 	for _, param := range metadata.Action.Params {
-		if isEnumType(param.Type) && !param.Required {
+		if isEnumType(param.Type) && param.Optional {
 			variable := strcase.LowerCamelCase(name) + title(strcase.LowerCamelCase(param.Name))
 			respC = append(respC, Id(variable).
 				Op(":=").
