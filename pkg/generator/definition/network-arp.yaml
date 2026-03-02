@@ -8,7 +8,7 @@ actions:
     params:
       - name: mac_address
         type: string
-        description: IP address
+        description: MAC address
         required: true
 
   list:
