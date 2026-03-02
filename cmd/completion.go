@@ -15,13 +15,13 @@ func CompletionCommand(rootCmd *cobra.Command) {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			switch args[0] {
 			case "bash":
-				_ = rootCmd.GenBashCompletion(cmd.OutOrStdout())
+				_ = rootCmd.GenBashCompletionV2(cmd.OutOrStdout(), true)
 			case "zsh":
 				_ = rootCmd.GenZshCompletion(cmd.OutOrStdout())
 			case "fish":
 				_ = rootCmd.GenFishCompletion(cmd.OutOrStdout(), true)
 			case "powershell":
-				_ = rootCmd.GenPowerShellCompletion(cmd.OutOrStdout())
+				_ = rootCmd.GenPowerShellCompletionWithDesc(cmd.OutOrStdout())
 			}
 
 			return nil

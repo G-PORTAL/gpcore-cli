@@ -10,6 +10,7 @@ var RootNodeCommand = &cobra.Command{
 	Use:                   "node",
 	Short:                 "Utility to combine multiple nodes api actions",
 	Long:                  `Utility to combine multiple nodes api actions`,
+	GroupID:               "resources",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
 	PersistentPreRunE: func(cobraCmd *cobra.Command, args []string) error {

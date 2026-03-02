@@ -1,4 +1,5 @@
 description: Network Switches
+group: networking
 
 actions:
   list:

@@ -1,4 +1,5 @@
 description: SPLA Reporting
+group: billing
 
 actions:
   get:
