@@ -1,4 +1,5 @@
 description: Reporting
+group: billing
 
 actions:
   list:

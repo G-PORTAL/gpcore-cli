@@ -1,4 +1,5 @@
 description: Agents, which are deployed on the nodes
+group: resources
 
 actions:
   list:

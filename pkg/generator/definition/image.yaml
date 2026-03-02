@@ -1,4 +1,5 @@
 description: Disk images to boot and install on the nodes
+group: resources
 
 actions:
   list:

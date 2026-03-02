@@ -1,4 +1,5 @@
 description: Manage subnets
+group: networking
 
 actions:
   delete:

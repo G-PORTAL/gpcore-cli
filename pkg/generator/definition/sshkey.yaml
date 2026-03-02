@@ -1,4 +1,5 @@
 description: SSH Key management
+group: admin
 
 actions:
   list:

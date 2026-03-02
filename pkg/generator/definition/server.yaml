@@ -1,4 +1,5 @@
 description: Physical servers
+group: resources
 
 actions:
   list:
