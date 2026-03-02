@@ -56,7 +56,7 @@ func New() *cobra.Command {
 	rootCmd.PersistentFlags().BoolVarP(&config.CSVOutput, "csv", "x", false, "output as CSV")
 	rootCmd.MarkFlagsMutuallyExclusive("json", "csv")
 
-	// Disable Cobra's built-in "completion" subcommand (a custom one is registered below)
+	// Disable file completions globally (no flag in this CLI takes a file path)
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 
 	// Special client commands
