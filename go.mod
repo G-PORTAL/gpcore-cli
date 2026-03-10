@@ -7,7 +7,7 @@ go 1.26.0
 
 require (
 	buf.build/gen/go/gportal/gpcore/grpc/go v1.6.1-20260115091005-9b1a7a0cbe2d.1
-	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.11-20260115091005-9b1a7a0cbe2d.1
+	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.11-20260310072103-6af64bf8201e.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20250923094355-04f2fe445e8f
 	github.com/Nerzal/gocloak/v13 v13.9.0
 	github.com/charmbracelet/log v0.4.2
