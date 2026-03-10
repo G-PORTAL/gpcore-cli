@@ -10,7 +10,7 @@ require (
 	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.11-20260115091005-9b1a7a0cbe2d.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20250923094355-04f2fe445e8f
 	github.com/Nerzal/gocloak/v13 v13.9.0
-	github.com/charmbracelet/log v0.4.2
+	github.com/charmbracelet/log v1.0.0
 	github.com/charmbracelet/ssh v0.0.0-20250826160808-ebfa259c7309
 	github.com/charmbracelet/wish v1.4.7
 	github.com/creativeprojects/go-selfupdate v1.5.2
