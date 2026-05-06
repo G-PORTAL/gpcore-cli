@@ -630,13 +630,17 @@ func initFunc(name string, metadata SubcommandMetadata) []Code {
 						Var().Id("completions").Index().String(),
 						For(List(Id("_"), Id("v")).Op(":=").Range().Qual(clientPackageName(paramType), stripPackage(paramType)+"_name")).Block(
 							If(Qual("strings", "HasSuffix").Call(Id("v"), Lit("UNSPECIFIED"))).Block(Continue()),
-							Id("completions").Op("=").Append(
-								Id("completions"),
-								Qual("strings", "ToLower").Call(
-									Qual("strings", "TrimPrefix").Call(Id("v"), Lit(enumPrefix)),
+							Id("name").Op(":=").Qual("strings", "ToLower").Call(
+								Qual("strings", "TrimPrefix").Call(Id("v"), Lit(enumPrefix)),
+							),
+							If(Qual("strings", "HasPrefix").Call(Id("name"), Id("toComplete"))).Block(
+								Id("completions").Op("=").Append(
+									Id("completions"),
+									Id("name"),
 								),
 							),
 						),
+						Qual("sort", "Strings").Call(Id("completions")),
 						Return(Id("completions"), Qual("github.com/spf13/cobra", "ShellCompDirectiveNoFileComp")),
 					),
 				))
