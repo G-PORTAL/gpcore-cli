@@ -6,7 +6,7 @@ go 1.26.2
 //replace github.com/G-PORTAL/gpcore-go => ../gpcore-go
 
 require (
-	buf.build/gen/go/gportal/gpcore/grpc/go v1.6.1-20260316135506-01d4d7c6b8fb.1
+	buf.build/gen/go/gportal/gpcore/grpc/go v1.6.2-20260316135506-01d4d7c6b8fb.1
 	buf.build/gen/go/gportal/gpcore/protocolbuffers/go v1.36.11-20260316135506-01d4d7c6b8fb.1
 	github.com/G-PORTAL/gpcore-go v0.0.0-20250923094355-04f2fe445e8f
 	github.com/Nerzal/gocloak/v13 v13.9.0
