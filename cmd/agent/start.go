@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/G-PORTAL/gpcore-cli/pkg/api"
+	"github.com/G-PORTAL/gpcore-cli/pkg/client"
 	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"github.com/G-PORTAL/gpcore-cli/pkg/consts"
 	"github.com/charmbracelet/log"
@@ -71,7 +72,7 @@ var startCmd = &cobra.Command{
 
 						if err := rootCmd.ExecuteContext(ctx); err != nil {
 							log.Errorf("Error executing command on agent: %v", err)
-							rootCmd.Printf("Error executing command on agent: %v\n", err)
+							rootCmd.Printf("Error: %s\n", client.FormatCommandError(err))
 							_ = s.Exit(1) // send cmd exit code to the client
 							return
 						}
