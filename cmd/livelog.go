@@ -4,7 +4,7 @@ import (
 	"buf.build/gen/go/gportal/gpcore/grpc/go/gpcore/api/admin/v1/adminv1grpc"
 	adminv1 "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/admin/v1"
 	cloudv1 "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/cloud/v1"
-	"github.com/charmbracelet/ssh"
+	"github.com/G-PORTAL/gpcore-cli/pkg/api"
 	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -18,37 +18,16 @@ func LiveLogCommand(rootCmd *cobra.Command) {
 		DisableFlagsInUseLine: true,
 		Args:                  cobra.OnlyValidArgs,
 		RunE: func(cobraCmd *cobra.Command, args []string) error {
-			sshSession := cobraCmd.Context().Value("ssh").(*ssh.Session)
-			cobraCmd.SetOut(*sshSession)
-
 			conn := cobraCmd.Context().Value("conn").(*grpc.ClientConn)
 			admin := adminv1grpc.NewAdminServiceClient(conn)
-			res, err := admin.SubscribeServerLogs(cobraCmd.Context(), &adminv1.SubscribeServerLogsRequest{})
+			stream, err := admin.SubscribeServerLogs(cobraCmd.Context(), &adminv1.SubscribeServerLogsRequest{})
 			if err != nil {
 				return err
 			}
 
-			connectionClosed := false
-			go func() {
-				breakChan := make(chan bool)
-				(*sshSession).Break(breakChan)
-				<-breakChan
-				connectionClosed = true
-			}()
-
-			cobraCmd.Printf("\033[33mWaiting for new notifications ...\033[0m\n")
 			// We wait for (and print out) relevant notifications until the break
 			// request is received.
-			for {
-				if connectionClosed {
-					break
-				}
-
-				msg, err := res.Recv() // Blocking
-				if err != nil {
-					return err
-				}
-
+			return api.StreamMessages(cobraCmd, stream, func(msg *adminv1.SubscribeServerLogsResponse) {
 				// TODO: Filter for source/server/datacenter
 				// TODO: Only above level ...
 
@@ -78,9 +57,7 @@ func LiveLogCommand(rootCmd *cobra.Command) {
 
 					cobraCmd.Printf("%s: [%s] [%s] [%s] ->  %s\n", color.Sprint(time), datacenter, server, source, color.Sprint(m.GetMessage()))
 				}
-			}
-
-			return nil
+			})
 		},
 	})
 }

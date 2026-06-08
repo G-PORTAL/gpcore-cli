@@ -1,0 +1,60 @@
+description: Administrative project actions (cross-tenant, requires admin credentials)
+group: admin
+
+# NOTE: This resource intentionally exposes the admin.* project endpoints under
+# a dedicated "admin-project" command, separate from the user-facing "project"
+# command (which is bound to cloud.* endpoints). The two cannot be merged
+# because:
+#   - The gRPC connection is session-global (admin OR client-credentials, see
+#     pkg/api/connection.go), so we cannot switch credentials per-call.
+#   - Generated init() functions register subcommands unconditionally, so two
+#     actions with the same name under one root command would collide in cobra.
+# The admin.UpdateProject action is implemented manually in update.go, because
+# its request contains a nested BillingProfile message which the generator
+# cannot express as command flags.
+
+actions:
+  list:
+    api-call: admin.ListProjects
+    description: List all projects (admin)
+    root-key: Projects
+    params:
+      - name: search
+        type: string
+        description: Optional search term
+        required: false
+      - name: user_id
+        type: string
+        description: Optional filter by user UUID
+        required: false
+    fields:
+      - Id
+      - Name
+      - Currency.Currency
+      - CanForceDeleteNodes.Boolean
+      - CreatedAt.Date
+
+  get:
+    api-call: admin.GetProject
+    description: Get details for a project (admin)
+    params:
+      - name: id
+        type: string
+        description: Project UUID
+        required: true
+
+  nodes:
+    api-call: admin.ListProjectNodes
+    description: List all nodes in a project (admin)
+    root-key: Nodes
+    params:
+      - name: id
+        type: string
+        description: Project UUID
+        required: true
+    fields:
+      - Id
+      - Fqdn
+      - Status.ServerProvisioningState
+      - Flavour.Flavour
+      - Datacenter.Datacenter

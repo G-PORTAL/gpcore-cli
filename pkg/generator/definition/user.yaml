@@ -81,3 +81,11 @@ actions:
         type: string
         description: User ID
         required: true
+      - name: reason
+        type: string
+        description: Reason for unlocking the user
+        required: true
+
+  stats:
+    api-call: admin.GetUserStats
+    description: Get aggregated user statistics
