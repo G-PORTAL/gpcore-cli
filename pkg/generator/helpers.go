@@ -216,6 +216,11 @@ func defaultValue(param Param) *Statement {
 			if isArrayType(param.Type) {
 				return Index().Id(strings.TrimPrefix(param.Type, "[]")).Values(Dict{})
 			}
+			// Enum-typed flags are bound to string variables, so an empty
+			// string is the correct zero value when no default is given.
+			if isEnumType(param.Type) {
+				return Lit("")
+			}
 		}
 	} else {
 		// TODO: Fileupload
@@ -252,6 +257,11 @@ func defaultValue(param Param) *Statement {
 // parameterDescription returns the description of a parameter. If the parameter
 // has a default value, the default value is added to the description.
 func parameterDescription(param Param) string {
+	// Session-sourced params are optional flags with a session fallback.
+	if param.Source == "session.CurrentProject" {
+		return fmt.Sprintf("%s (defaults to the project selected via \"project use\")", param.Description)
+	}
+
 	var flags []string
 	if param.Required {
 		flags = append(flags, "required")
