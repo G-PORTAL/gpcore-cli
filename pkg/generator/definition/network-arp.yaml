@@ -22,3 +22,9 @@ actions:
       - MacAddress
       - UpdatedAt.Date
     # TODO: Implement SearchRequest/SearchOptions to include extended_search here
+
+  # search-options returns the valid extended-search filter fields for ARP
+  # entries (the counterpart to "server search-options").
+  search-options:
+    api-call: admin.GetArpEntriesSearchOptions
+    description: List available extended-search filter options for ARP entries

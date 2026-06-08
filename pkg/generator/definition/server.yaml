@@ -19,6 +19,14 @@ actions:
         description: Optional search term
         required: false
 
+  # search-options returns the set of valid extended-search filter fields and
+  # their allowed values. Use it to discover the --filter keys accepted by the
+  # "server filter" command (which calls the same ListServers RPC with an
+  # ExtendedSearch payload).
+  search-options:
+    api-call: admin.GetServerSearchOptions
+    description: List available extended-search filter options for servers
+
   list-available:
     api-call: admin.ListAvailableServer
     description: List all available servers
@@ -132,6 +140,55 @@ actions:
     description: Get server platform management details
     params:
       - name: id
+        type: string
+        description: Server UUID
+        required: true
+
+  issues:
+    api-call: admin.ListServerIssues
+    description: List server issues across all servers
+    root-key: Issues
+    params:
+      - name: source
+        type: cloudv1.ServerIssueSource
+        description: Filter by issue source
+        optional: true
+        required: false
+      - name: datacenter_id
+        type: string
+        description: Filter by datacenter UUID
+        required: false
+      - name: include_resolved
+        type: bool
+        description: Include resolved issues
+        required: false
+        optional: true
+      - name: check_name
+        type: string
+        description: Filter by check name (e.g. device_exists, primary_interface, pm_offline)
+        required: false
+    fields:
+      - Id
+      - ServerId
+      - Source.ServerIssueSource
+      - CheckName
+      - Message
+      - Resolved.Boolean
+
+  server-issues:
+    api-call: admin.GetServerIssues
+    description: Get all issues for a specific server
+    params:
+      - name: server_id
+        type: string
+        description: Server UUID
+        required: true
+
+  validate:
+    api-call: admin.ValidateServer
+    description: Validate a server and trigger a sync if needed
+    params:
+      - name: server_id
         type: string
         description: Server UUID
         required: true
