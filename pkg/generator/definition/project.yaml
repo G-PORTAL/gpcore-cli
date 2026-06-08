@@ -88,6 +88,11 @@ actions:
         description: Datacenter to fetch the flavours from
         type: string
         required: true
+      - name: include_sold_out
+        type: bool
+        description: Include sold-out flavours in the result
+        required: false
+        optional: true
     fields:
       - Id
       - Name
@@ -107,6 +112,15 @@ actions:
   logs:
     api-call: cloudv2.ListProjectLogs
     description: List all logs in the project
+    params:
+      - name: search
+        type: string
+        description: Optional search term
+        default: ""
+      - name: user_id
+        type: string
+        description: Filter by user UUID
+        default: ""
     fields:
       - CreatedAt.DateTime
       - User.BasicUser
@@ -173,6 +187,12 @@ actions:
   images:
     api-call: cloud.ListProjectImages
     description: List all images in the project
+    params:
+      - name: only_available
+        type: bool
+        description: Only include available images
+        required: false
+        optional: true
 
   # TODO: Custom formatter to output keys in authorized_keys format
   ssh-keys:

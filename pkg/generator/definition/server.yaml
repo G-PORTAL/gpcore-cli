@@ -77,6 +77,19 @@ actions:
         type: string
         description: Server Pool UUID
         required: false
+      # is_broken is deprecated in the gRPC API and intentionally not exposed.
+      - name: autofix
+        type: bool
+        description: Enable the automated monitoring fix job for this server
+        default: false
+      - name: maintenance
+        type: bool
+        description: Set or clear maintenance mode
+        required: false
+      - name: maintenance_reason
+        type: string
+        description: Reason for maintenance (used when maintenance is true)
+        required: false
 
   delete:
     api-call: admin.DeleteServer
@@ -91,6 +104,10 @@ actions:
         description: Force destroy the server, even if the server is unresponsive
         default: false
         required: true
+      - name: skip_clean
+        type: bool
+        description: Allow deletion without cleaning the device
+        default: false
 
   replace:
     api-call: admin.ReplaceServer
