@@ -46,6 +46,11 @@ var impersonateCmd = &cobra.Command{
 		expiresIn := int(resp.GetToken().GetExpiresAt().GetSeconds())
 		sessionConfig.ImpersonateExpiresIn = &expiresIn
 
+		// The active project belongs to the previous user context and is not
+		// valid for the impersonated user. Clear it so project-scoped commands
+		// don't operate on a project that does not belong to the new context.
+		sessionConfig.CurrentProject = nil
+
 		err = sessionConfig.Write()
 		if err != nil {
 			return err
