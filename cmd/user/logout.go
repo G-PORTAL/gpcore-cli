@@ -28,6 +28,19 @@ var logoutCmd = &cobra.Command{
 		}
 
 		if !isImpersonated {
+			// Even when not impersonating, clear any lingering active project so
+			// a selection left over from a previous (expired) impersonation does
+			// not leak into the current user context.
+			if sessionConfig.CurrentProject != nil {
+				sessionConfig.CurrentProject = nil
+				if err = sessionConfig.Write(); err != nil {
+					return err
+				}
+				if err = config.RefreshSessionConfig(); err != nil {
+					return err
+				}
+				cobraCmd.Println("Cleared a lingering active project from a previous session.")
+			}
 			cobraCmd.Println("No need to logout, you do not impersonate anybody.")
 			return nil
 		}
