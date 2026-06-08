@@ -24,7 +24,7 @@ actions:
       - name: project_id
         type: string
         description: Project ID
-        required: true
+        source: session.CurrentProject
 
   create:
     api-call: cloud.CreateProjectImage
@@ -55,7 +55,7 @@ actions:
       - name: project_id
         type: string
         description: Project ID
-        required: true
+        source: session.CurrentProject
 
   delete-version:
     api-call: cloud.DeleteProjectImageVersion
@@ -69,6 +69,6 @@ actions:
       - name: project_id
         type: string
         description: Project ID
-        required: true
+        source: session.CurrentProject
 
 identifier: session.CurrentProject

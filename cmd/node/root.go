@@ -1,11 +1,13 @@
 package node
 
 import (
-	"fmt"
-	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"github.com/spf13/cobra"
 )
 
+// Note: node subcommands no longer require a globally selected project here.
+// Each subcommand accepts an optional --project-id that falls back to the
+// project selected via "project use" (and errors if neither is set). This
+// avoids forcing "project use" when the project is passed explicitly.
 var RootNodeCommand = &cobra.Command{
 	Use:                   "node",
 	Short:                 "Utility to combine multiple nodes api actions",
@@ -13,17 +15,6 @@ var RootNodeCommand = &cobra.Command{
 	GroupID:               "resources",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MatchAll(cobra.ExactArgs(0), cobra.OnlyValidArgs),
-	PersistentPreRunE: func(cobraCmd *cobra.Command, args []string) error {
-		// Context is not set in PersistentPreRunE, so we need to get the session config manually
-		config, err := config.GetSessionConfig()
-		if err != nil {
-			return err
-		}
-		if config.CurrentProject == nil {
-			return fmt.Errorf("no project selected")
-		}
-		return nil
-	},
 	RunE: func(cobraCmd *cobra.Command, args []string) error {
 		return cobraCmd.Usage()
 	},
