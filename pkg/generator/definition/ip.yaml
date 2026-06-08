@@ -6,6 +6,11 @@ actions:
     api-call: admin.ListIPHistories
     description: List all IP history entries
     root-key: IpHistories
+    params:
+      - name: search
+        type: string
+        description: Optional search term
+        required: false
     fields:
       - CreatedAt.DateTime
       - User

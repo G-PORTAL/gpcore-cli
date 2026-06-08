@@ -31,6 +31,11 @@ actions:
         type: string
         description: Datacenter UUID
         required: true
+      - name: include_sold_out
+        type: bool
+        description: Include sold-out flavours in the result
+        required: false
+        optional: true
     fields:
       - Id
       - Name
@@ -106,6 +111,9 @@ actions:
   update:
     api-call: admin.UpdateFlavour
     description: Update flavour details
+    # NOTE: UpdateFlavourRequest also has a repeated "mappings"
+    # ([]FlavourMapping) field. It is intentionally not exposed because the
+    # generator cannot express a repeated nested message as command flags.
     params:
       - name: id
         type: string

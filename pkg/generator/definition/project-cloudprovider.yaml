@@ -138,6 +138,10 @@ actions:
     params:
       - name: image_id
         type: string
+        description: Image UUID
+        required: true
+      - name: cloud_provider_image_id
+        type: string
         description: Cloud Provider image ID
         required: true
 

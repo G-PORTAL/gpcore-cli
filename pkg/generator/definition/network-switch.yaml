@@ -6,6 +6,11 @@ actions:
     api-call: admin.ListSwitches
     description: List all network switches
     root-key: Switches
+    params:
+      - name: search
+        type: string
+        description: Optional search term
+        required: false
     fields:
       - Id
       - Name
