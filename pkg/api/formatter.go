@@ -37,6 +37,7 @@ var SpecialFormatters = []string{
 	"ServerProvisioningState",
 	"ServerPowerState",
 	"BillingPeriod",
+	"ServerIssueSource",
 }
 
 func FormatPrice(price *typesv1.Price) string {
@@ -228,4 +229,8 @@ func FormatBillingPeriod(period cloudv1.BillingPeriod) string {
 func FormatServerPowerState(state cloudv1.ServerPowerState) string {
 	return strings.TrimPrefix(state.String(), "SERVER_POWER_STATE_")
 	// TODO: More colors here
+}
+
+func FormatServerIssueSource(source cloudv1.ServerIssueSource) string {
+	return strings.TrimPrefix(source.String(), "SERVER_ISSUE_SOURCE_")
 }
