@@ -44,6 +44,11 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 	for _, param := range metadata.Action.Params {
 		f.Var().Add(variableDefinition(name, param))
 	}
+	// When the identifier is the current-project session value, declare the
+	// optional --project-id override variable.
+	if resolveIdentifier(metadata) == "session.CurrentProject" {
+		f.Var().Id(strcase.LowerCamelCase(name) + "ProjectIdOverride").String()
+	}
 	f.Line()
 
 	// Enum helper functions
@@ -121,21 +126,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	// Identifiers can be set on the action or the definition. If the action
 	// is set, the action identifier is used. If not, the definition identifier
 	// is used.
-	identifier := ""
-	// "Global identifier for all actions present?
-	if metadata.Definition.Identifier != "" {
-		identifier = metadata.Definition.Identifier
-	}
-	// Override with action identifier
-	if metadata.Action.Identifier != "" {
-		// Reset identifier on purpose (override) global identifier
-		if metadata.Action.Identifier == "nil" {
-			identifier = ""
-		} else {
-			// Action specific identifier
-			identifier = metadata.Action.Identifier
-		}
-	}
+	identifier := resolveIdentifier(metadata)
 
 	// The identifier key is the key used in the request to identify the
 	// resource. By default, this is "Id". This can be overridden globally
@@ -148,6 +139,13 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 		identifierKey = metadata.Action.IdentifierKey
 	}
 
+	// When the identifier comes from the current project session value, we also
+	// expose an optional --project-id flag that overrides it. This lets the
+	// command be used either after "project use" or by passing --project-id
+	// explicitly (mirroring the source: session.CurrentProject params).
+	identifierProjectOverride := identifier == "session.CurrentProject"
+	identifierOverrideVar := strcase.LowerCamelCase(name) + "ProjectIdOverride"
+
 	if identifier != "" {
 		c = append(c, Id("session").Op(":=").
 			Id("ctx").
@@ -155,8 +153,56 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 			Assert(Op("*").Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "SessionConfig")))
 		c = append(c, If(Id("session").Op("==").Nil()).Block(
 			Return(Qual("fmt", "Errorf").Call(Lit("no session found, please login first")))))
-		c = append(c, If(Id(identifier).Op("==").Nil()).Block(
-			Return(Qual("fmt", "Errorf").Call(Lit("no identifier found, please set the identifier first")))))
+
+		if identifierProjectOverride {
+			// resolvedProjectId := <override flag>
+			// if resolvedProjectId == "" { if session.CurrentProject == nil { err } else { resolvedProjectId = *session.CurrentProject } }
+			c = append(c, Id("resolvedProjectId").Op(":=").Id(identifierOverrideVar))
+			c = append(c, If(Id("resolvedProjectId").Op("==").Lit("")).Block(
+				If(Id(identifier).Op("==").Nil()).Block(
+					Return(Qual("fmt", "Errorf").Call(
+						Lit("no project selected: pass --project-id or select one with \"project use\"")))),
+				Id("resolvedProjectId").Op("=").Op("*").Id(identifier),
+			))
+		} else {
+			c = append(c, If(Id(identifier).Op("==").Nil()).Block(
+				Return(Qual("fmt", "Errorf").Call(Lit("no identifier found, please set the identifier first")))))
+		}
+		c = append(c, Line())
+	}
+
+	// Session-sourced params (e.g. --project-id falling back to the project
+	// selected via "project use"). The flag is optional; when empty we fall
+	// back to the session value and error if that is unset as well.
+	sourceParams := make([]Param, 0)
+	for _, param := range metadata.Action.Params {
+		if param.Source != "" {
+			sourceParams = append(sourceParams, param)
+		}
+	}
+	if len(sourceParams) > 0 {
+		// Declare the session once (it may already be declared above when an
+		// identifier is used).
+		if identifier == "" {
+			c = append(c, Id("session").Op(":=").
+				Id("ctx").
+				Dot("Value").Call(Lit("config")).
+				Assert(Op("*").Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "SessionConfig")))
+			c = append(c, If(Id("session").Op("==").Nil()).Block(
+				Return(Qual("fmt", "Errorf").Call(Lit("no session found, please login first")))))
+		}
+		for _, param := range sourceParams {
+			variable := strcase.LowerCamelCase(name) + title(strcase.LowerCamelCase(param.Name))
+			sessionField := strings.TrimPrefix(param.Source, "session.")
+			flagName := strcase.KebabCase(param.Name)
+			// if <var> == "" { if session.<Field> == nil { error } else { var = *session.<Field> } }
+			c = append(c, If(Id(variable).Op("==").Lit("")).Block(
+				If(Id("session").Dot(sessionField).Op("==").Nil()).Block(
+					Return(Qual("fmt", "Errorf").Call(
+						Lit("no project selected: pass --"+flagName+" or select one with \"project use\"")))),
+				Id(variable).Op("=").Op("*").Id("session").Dot(sessionField),
+			))
+		}
 		c = append(c, Line())
 	}
 
@@ -177,7 +223,11 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 	apiCallParams := Dict{}
 	// Do we have an identifier?
 	if identifier != "" {
-		apiCallParams[Id(identifierKey)] = Op("*").Id(identifier)
+		if identifierProjectOverride {
+			apiCallParams[Id(identifierKey)] = Id("resolvedProjectId")
+		} else {
+			apiCallParams[Id(identifierKey)] = Op("*").Id(identifier)
+		}
 	}
 
 	// Specific parameters set?
@@ -194,6 +244,10 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 			} else {
 				val = Qual("github.com/G-PORTAL/gpcore-cli/pkg/protobuf", stripPackage(param.Type)+"ToProto").Call(Id(variable))
 			}
+		} else if param.Source != "" {
+			// Session-sourced param: the variable is resolved (flag or session
+			// fallback) before the API call and always passed by value.
+			val = Id(variable)
 		} else {
 			// Optional pointer type
 			if !param.Required && param.Default == nil {
@@ -556,6 +610,24 @@ func tableColValue(col string, structPrefix string) []Code {
 	return c
 }
 
+// resolveIdentifier returns the effective identifier for an action, taking the
+// definition-level identifier and any action-level override (including the
+// "nil" reset) into account. An empty string means no identifier is used.
+func resolveIdentifier(metadata SubcommandMetadata) string {
+	identifier := ""
+	if metadata.Definition.Identifier != "" {
+		identifier = metadata.Definition.Identifier
+	}
+	if metadata.Action.Identifier != "" {
+		if metadata.Action.Identifier == "nil" {
+			identifier = ""
+		} else {
+			identifier = metadata.Action.Identifier
+		}
+	}
+	return identifier
+}
+
 // initFunc generates the init function, which will add all flags and params to
 // the command and add it to the root command. Required flags are marked as
 // such.
@@ -595,10 +667,28 @@ func initFunc(name string, metadata SubcommandMetadata) []Code {
 		c = append(c, Line())
 	}
 
-	// Required fields
+	// Optional --project-id override for commands whose identifier is the
+	// current-project session value. Lets the command run either after
+	// "project use" or with an explicit --project-id.
+	if resolveIdentifier(metadata) == "session.CurrentProject" {
+		c = append(c,
+			Id(name+"Cmd").
+				Dot("Flags").Call().
+				Dot("StringVar").Params(
+				Op("&").Id(strcase.LowerCamelCase(name)+"ProjectIdOverride"),
+				Lit("project-id"),
+				Lit(""),
+				Lit("Project UUID (defaults to the project selected via \"project use\")"),
+			))
+		c = append(c, Line())
+	}
+
+	// Required fields. Session-sourced params (param.Source set) are never
+	// marked required: they fall back to the session value (e.g. the project
+	// selected via "project use") when the flag is omitted.
 	containsRequiredFields := false
 	for _, param := range metadata.Action.Params {
-		if param.Required {
+		if param.Required && param.Source == "" {
 			c = append(c,
 				Id(strcase.LowerCamelCase(name)+"Cmd").
 					Dot("MarkFlagRequired").
