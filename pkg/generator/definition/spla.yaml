@@ -5,3 +5,12 @@ actions:
   get:
     api-call: admin.GetSplaReporting
     description: Get SPLA reporting details
+    params:
+      - name: year
+        type: int32
+        description: Reporting year
+        required: true
+      - name: month
+        type: int32
+        description: Reporting month (1-12)
+        required: true

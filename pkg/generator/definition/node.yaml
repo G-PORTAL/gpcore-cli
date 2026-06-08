@@ -6,6 +6,11 @@ actions:
     api-call: cloudv2.ListNodes
     description: List all nodes in the project
     root-key: Nodes
+    params:
+      - name: search
+        type: string
+        description: Optional search term
+        required: false
     fields:
       - Id
       - Fqdn

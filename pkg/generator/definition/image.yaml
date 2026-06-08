@@ -77,6 +77,10 @@ actions:
         type: "[]cloudv1.AuthenticationType"
         description: Authentication types
         required: true
+      - name: contains_spla_license
+        type: bool
+        description: Contains SPLA license
+        required: true
 
   create:
     api-call: admin.CreateImage
