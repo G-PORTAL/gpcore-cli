@@ -37,6 +37,9 @@ actions:
   update:
     api-call: admin.UpdateOperatingSystem
     description: Update operating system details
+    # NOTE: UpdateOperatingSystemRequest also has an optional "icon" (File)
+    # field. It is intentionally not exposed because the generator cannot
+    # express a nested File message (file upload) as command flags.
     params:
       - name: id
         type: string

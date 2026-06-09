@@ -6,6 +6,11 @@ actions:
     api-call: cloudv2.ListNodes
     description: List all nodes in the project
     root-key: Nodes
+    params:
+      - name: search
+        type: string
+        description: Optional search term
+        required: false
     fields:
       - Id
       - Fqdn
@@ -31,7 +36,7 @@ actions:
       - name: project_id
         description: Project ID
         type: string
-        required: true
+        source: session.CurrentProject
 
   # There is an update actions in the cloud API as well. Not sure which
   # update node actions we should use here.
@@ -56,7 +61,7 @@ actions:
       - name: project_id
         type: string
         description: Project ID
-        required: true
+        source: session.CurrentProject
       - name: flavour_id
         type: string
         description: Flavour ID
@@ -102,7 +107,7 @@ actions:
       - name: project_id
         type: string
         description: Project UUID
-        required: true
+        source: session.CurrentProject
 
   destroy-immediately:
     api-call: admin.DestroyNode
@@ -126,7 +131,7 @@ actions:
       - name: project_id
         type: string
         description: Project ID
-        required: true
+        source: session.CurrentProject
       - name: fqdn
         type: string
         description: Fully qualified domain name
@@ -160,7 +165,7 @@ actions:
       - name: project_id
         description: Project ID
         type: string
-        required: true
+        source: session.CurrentProject
       - name: power_state
         type: cloudv1.ServerPowerState
         default: cloudv1.SERVER_POWER_STATE_REBOOT
@@ -189,7 +194,8 @@ actions:
         required: true
       - name: project_id
         type: string
-        required: true
+        description: Project ID
+        source: session.CurrentProject
       - name: billing_period
         type: cloudv1.BillingPeriod
         default: cloudv1.BILLING_PERIOD_MONTHLY
