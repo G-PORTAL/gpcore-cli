@@ -17,7 +17,7 @@ require (
 	github.com/dave/jennifer v1.7.1
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/jedib0t/go-pretty/v6 v6.7.10
-	github.com/melbahja/goph v1.5.0
+	github.com/melbahja/goph v1.5.1
 	github.com/spf13/cobra v1.10.2
 	github.com/stoewer/go-strcase v1.3.1
 	github.com/zalando/go-keyring v0.2.8
