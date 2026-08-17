@@ -12,6 +12,15 @@ import (
 )
 
 func init() {
+	// The GPCORE_CONFIG environment variable overrides the default config
+	// file location. This must live in a single init function: with two
+	// init functions in this package, the file processed later would
+	// silently overwrite the value set by the other one.
+	if env := os.Getenv("GPCORE_CONFIG"); env != "" {
+		FilePath = env
+		return
+	}
+
 	dirname, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)

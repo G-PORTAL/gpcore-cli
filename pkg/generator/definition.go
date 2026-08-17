@@ -2,10 +2,8 @@ package generator
 
 import (
 	"fmt"
-	"github.com/G-PORTAL/gpcore-cli/pkg/config"
 	"gopkg.in/yaml.v3"
 	"regexp"
-	"strings"
 )
 
 type Action struct {
@@ -19,11 +17,27 @@ type Action struct {
 	IdentifierKey string   `yaml:"identifier-key"`
 	Fields        []string `yaml:"fields"`
 	NoPagination  bool     `yaml:"no-pagination"`
+	// Fallback, when set on an admin.* action, declares a semantically
+	// equivalent user-facing (cloud.*) endpoint that is called at runtime
+	// instead of the admin endpoint when the session has no admin credentials
+	// (config.HasAdminConfig() == false). Only true equivalents may be wired
+	// up here: the fallback must accept the same parameters (params marked
+	// admin-only are rejected in user sessions) and return the same response
+	// item type.
+	Fallback *Fallback `yaml:"fallback"`
+	// FallbackHint customizes the error shown when an admin.* action without
+	// a Fallback is invoked in a user session (e.g. pointing to an existing
+	// user-facing command like "flavour list-project").
+	FallbackHint string `yaml:"fallback-hint"`
 }
 
-func (action *Action) CanCall() bool {
-	adminCall := strings.HasPrefix(action.APICall.Client, "admin")
-	return !adminCall || config.HasAdminConfig()
+// Fallback describes the user-facing endpoint used instead of an admin.*
+// api-call when the session has no admin credentials. RootKey and Fields
+// default to the action's values when left empty.
+type Fallback struct {
+	APICall APICall  `yaml:"api-call"`
+	RootKey string   `yaml:"root-key"`
+	Fields  []string `yaml:"fields"`
 }
 
 type Param struct {
@@ -40,6 +54,10 @@ type Param struct {
 	// command errors out. This lets project-scoped commands omit --project-id
 	// once a project has been selected.
 	Source string `yaml:"source"`
+	// AdminOnly marks a param that only the admin endpoint understands. On
+	// actions with a Fallback, setting such a flag in a user session is a
+	// runtime error (the fallback request has no matching field).
+	AdminOnly bool `yaml:"admin-only"`
 }
 
 // APICall maps a CLI action to a gRPC endpoint via the "api-call" field in the

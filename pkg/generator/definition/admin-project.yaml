@@ -3,12 +3,15 @@ group: admin
 
 # NOTE: This resource intentionally exposes the admin.* project endpoints under
 # a dedicated "admin-project" command, separate from the user-facing "project"
-# command (which is bound to cloud.* endpoints). The two cannot be merged
-# because:
-#   - The gRPC connection is session-global (admin OR client-credentials, see
-#     pkg/api/connection.go), so we cannot switch credentials per-call.
-#   - Generated init() functions register subcommands unconditionally, so two
-#     actions with the same name under one root command would collide in cobra.
+# command (which is bound to cloud.* endpoints). The two command groups stay
+# separate because generated init() functions register subcommands
+# unconditionally, so two actions with the same name under one root command
+# would collide in cobra. However, actions here declare a "fallback" to the
+# equivalent cloud.* endpoint: in a session without admin credentials the
+# fallback is used at runtime (scoped to the user's own projects), so the
+# commands work for normal users too. The gRPC connection is session-global
+# (admin OR client-credentials, see pkg/api/connection.go) — the fallback
+# switches the called service, not the credentials.
 # The admin.UpdateProject action is implemented manually in update.go, because
 # its request contains a nested BillingProfile message which the generator
 # cannot express as command flags.
@@ -16,17 +19,21 @@ group: admin
 actions:
   list:
     api-call: admin.ListProjects
-    description: List all projects (admin)
+    fallback:
+      api-call: cloud.ListProjects
+    description: List all projects (admin sees all, users their own)
     root-key: Projects
     params:
       - name: search
         type: string
         description: Optional search term
         required: false
+        admin-only: true
       - name: user_id
         type: string
         description: Optional filter by user UUID
         required: false
+        admin-only: true
     fields:
       - Id
       - Name
@@ -36,7 +43,9 @@ actions:
 
   get:
     api-call: admin.GetProject
-    description: Get details for a project (admin)
+    fallback:
+      api-call: cloud.GetProject
+    description: Get details for a project
     params:
       - name: id
         type: string
@@ -45,7 +54,9 @@ actions:
 
   nodes:
     api-call: admin.ListProjectNodes
-    description: List all nodes in a project (admin)
+    fallback:
+      api-call: cloud.ListNodes
+    description: List all nodes in a project
     root-key: Nodes
     params:
       - name: id

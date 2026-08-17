@@ -4,6 +4,10 @@ group: resources
 actions:
   list:
     api-call: admin.ListOperatingSystems
+    # cloud.ListPublicImages returns the same OperatingSystems list for normal
+    # users (its request-only FlavourId field is deprecated and sent empty).
+    fallback:
+      api-call: cloud.ListPublicImages
     description: List all operating systems
     root-key: OperatingSystems
     fields:

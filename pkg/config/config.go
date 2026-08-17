@@ -135,8 +135,3 @@ func GetSessionConfig() (*SessionConfig, error) {
 	return sessionConfig, nil
 }
 
-func init() {
-	if os.Getenv("GPCORE_CONFIG") != "" {
-		FilePath = os.Getenv("GPCORE_CONFIG")
-	}
-}
