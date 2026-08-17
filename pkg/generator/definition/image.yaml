@@ -4,6 +4,10 @@ group: resources
 actions:
   list:
     api-call: admin.ListImages
+    # No fallback: admin.ListImages is the global image catalog, while
+    # cloud.ListProjectImages only covers a project's own images — not the
+    # same operation.
+    fallback-hint: use "image list-public" for public images or "project-image list" for your project's images
     description: List all images
     root-key: Images
     fields:
@@ -33,6 +37,7 @@ actions:
 
   get:
     api-call: admin.GetImage
+    fallback-hint: use "project-image get" for your project's images
     description: Get details for an image
     params:
       - name: id
@@ -126,6 +131,7 @@ actions:
 
   delete:
     api-call: admin.DeleteImage
+    fallback-hint: use "project-image delete" for your project's images
     description: Delete an image
     params:
       - name: id
@@ -135,6 +141,7 @@ actions:
 
   delete-version:
     api-call: admin.DeleteImageVersion
+    fallback-hint: use "project-image delete-version" for your project's images
     description: Delete an image version
     params:
       - name: id

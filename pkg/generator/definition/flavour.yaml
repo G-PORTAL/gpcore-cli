@@ -4,6 +4,10 @@ group: resources
 actions:
   list:
     api-call: admin.ListFlavours
+    # No fallback: admin.ListFlavours is the global flavour catalog, while
+    # cloud.ListProjectFlavours is the project-scoped offer (with availability
+    # and prices) — not the same operation.
+    fallback-hint: use "flavour list-project --datacenter-id <id>" to list the flavours available to your project
     description: List all available flavours
     root-key: Flavours
     fields:

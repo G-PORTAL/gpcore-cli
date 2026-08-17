@@ -72,8 +72,10 @@ func main() {
 			}
 		}
 
-		// Generate all subcommands
-		addedSubcommands := len(metadata.Actions)
+		// Generate all subcommands. All commands are registered regardless of
+		// the local admin configuration: admin-only commands guard themselves
+		// at runtime (or fall back to a user-facing endpoint), so one binary
+		// serves both session types.
 		for action, meta := range metadata.Actions {
 			// Check if the subcommand is overwritten by the user
 			if _, err := os.Stat("./cmd/" + subcommandName + "/" + strcase.SnakeCase(action) + ".go"); !os.IsNotExist(err) {
@@ -90,15 +92,9 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			if !meta.CanCall() {
-				addedSubcommands--
-			}
 		}
 
-		if addedSubcommands > 0 {
-			commandList = append(commandList, subcommandName)
-		}
+		commandList = append(commandList, subcommandName)
 	}
 
 	// Generate the Helper functions file

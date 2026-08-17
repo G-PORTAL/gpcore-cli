@@ -64,9 +64,18 @@ and used to execute admin actions.
 NOTE: The tool does not support 2FA at the moment, so you have to disable it
 for your GPCORE account to use the CLI. You still can use Passkey.
 
+Commands that have a user-facing equivalent on the API (for example
+```admin-project list```, ```admin-project get```, ```admin-project nodes```
+and ```operating-systems list```) transparently use that equivalent when no
+admin credentials are configured, scoped to your own projects. All other
+admin-only commands are still visible in ```help``` but fail fast in user
+sessions with a hint (either the matching user command, such as
+```flavour list-project```, or how to set up admin credentials). Flags that
+only the admin endpoint understands (such as ```--search``` on
+```admin-project list```) are rejected in user sessions.
+
 To make sure that you have admin permissions, you can use the ```user details```
-command, which will show the admin flag. You also see more actions with
-the ```help``` command, if you have admin permissions. If you have the admin
+command, which will show the admin flag. If you have the admin
 flag but get an unauthorized error, you probably have to set the ```super-admin```
 role on your service account in Keycloak. Ask a GPCORE administrator for help.
 

@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"github.com/G-PORTAL/gpcore-cli/pkg/api"
 	. "github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
@@ -23,8 +24,7 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 	name := strcase.LowerCamelCase(metadata.Name)
 
 	// Imports
-	apiClientImport = "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/" + metadata.Action.APICall.Client + "/" + metadata.Action.APICall.Version
-	apiGRPCImport = "buf.build/gen/go/gportal/gpcore/grpc/go/gpcore/api/" + metadata.Action.APICall.Client + "/" + metadata.Action.APICall.Version + "/" + metadata.Action.APICall.Client + metadata.Action.APICall.Version + "grpc"
+	setAPIImports(metadata.Action.APICall)
 	apiTypesImport = "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/type/v1"
 
 	f.ImportName("github.com/spf13/cobra", "cobra")
@@ -39,6 +39,24 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 
 	f.ImportAlias(apiClientImport, apiClient(metadata))
 	f.ImportAlias(apiTypesImport, "typesv1")
+
+	// When the action declares a user-facing fallback endpoint, validate it
+	// and register the imports for the second (cloud.*) branch as well.
+	if fb := metadata.Action.Fallback; fb != nil {
+		if strings.HasPrefix(fb.APICall.Client, "admin") {
+			return fmt.Errorf("%s %s: fallback must point to a user-facing endpoint, got %s.%s",
+				metadata.Definition.Name, metadata.Name, fb.APICall.Client, fb.APICall.Endpoint)
+		}
+		if hasListOutput(fb.APICall) != hasListOutput(metadata.Action.APICall) {
+			return fmt.Errorf("%s %s: fallback %s.%s and api-call %s.%s disagree on list output",
+				metadata.Definition.Name, metadata.Name,
+				fb.APICall.Client, fb.APICall.Endpoint,
+				metadata.Action.APICall.Client, metadata.Action.APICall.Endpoint)
+		}
+		clientImport, grpcImport := apiImportsFor(fb.APICall)
+		f.ImportName(grpcImport, fb.APICall.Client+fb.APICall.Version+"grpc")
+		f.ImportAlias(clientImport, fb.APICall.Client+fb.APICall.Version)
+	}
 
 	// Parameters (variables)
 	for _, param := range metadata.Action.Params {
@@ -83,6 +101,27 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 		}
 	}
 
+	// RunE body. Three cases:
+	//   1. Action with a fallback: dispatch to <name>RunAdmin/<name>RunUser
+	//      based on the session credentials at runtime.
+	//   2. Admin-backed action without a fallback: fail fast in user sessions
+	//      with a friendly hint instead of a server-side role error.
+	//   3. Everything else: the plain command body.
+	var runE []Code
+	isAdminCall := strings.HasPrefix(metadata.Action.APICall.Client, "admin")
+	if metadata.Action.Fallback != nil {
+		runE = []Code{
+			If(Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "HasAdminConfig").Call()).Block(
+				Return(Id(name + "RunAdmin").Call(Id("cobraCmd"), Id("args")))),
+			Return(Id(name + "RunUser").Call(Id("cobraCmd"), Id("args"))),
+		}
+	} else {
+		if isAdminCall {
+			runE = append(runE, adminOnlyGuard(metadata))
+		}
+		runE = append(runE, runCommand(name, metadata)...)
+	}
+
 	// Build up the command
 	values := Dict{
 		Id("Use"):           Lit(metadata.Name),
@@ -94,7 +133,7 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 		Id("RunE"): Func().Params(
 			Id("cobraCmd").Op("*").Qual("github.com/spf13/cobra", "Command"),
 			Id("args").Index().String()).Error().
-			Block(runCommand(name, metadata)...),
+			Block(runE...),
 	}
 
 	// Final command
@@ -102,9 +141,134 @@ func GenerateSubCommand(metadata SubcommandMetadata, targetFilename string) erro
 		Op("&").Qual("github.com/spf13/cobra", "Command").
 		Values(values))
 
+	// For actions with a fallback, emit the two run functions: the admin
+	// branch uses the admin.* endpoint, the user branch the user-facing
+	// fallback endpoint (with admin-only flags rejected).
+	if metadata.Action.Fallback != nil {
+		runParams := func() (*Statement, *Statement) {
+			return Id("cobraCmd").Op("*").Qual("github.com/spf13/cobra", "Command"),
+				Id("args").Index().String()
+		}
+
+		setAPIImports(metadata.Action.APICall)
+		p1, p2 := runParams()
+		f.Func().Id(name + "RunAdmin").Params(p1, p2).Error().
+			Block(runCommand(name, metadata)...)
+
+		userMeta := userMetadata(metadata)
+		setAPIImports(userMeta.Action.APICall)
+		userBody := adminOnlyParamGuards(name, metadata)
+		userBody = append(userBody, runCommand(name, userMeta)...)
+		p1, p2 = runParams()
+		f.Func().Id(name + "RunUser").Params(p1, p2).Error().
+			Block(userBody...)
+	}
+
 	f.Func().Id("init").Params().Block(initFunc(name, metadata)...)
 
 	return f.Save(targetFilename)
+}
+
+// setAPIImports points the package-global import paths at the packages of the
+// given API call. runCommand() captures these while building code, so they
+// must be set right before generating each branch body.
+func setAPIImports(call APICall) {
+	apiClientImport, apiGRPCImport = apiImportsFor(call)
+}
+
+// apiImportsFor returns the protocolbuffers (message types) and grpc (service
+// client) import paths for a given API call.
+func apiImportsFor(call APICall) (string, string) {
+	clientImport := "buf.build/gen/go/gportal/gpcore/protocolbuffers/go/gpcore/api/" + call.Client + "/" + call.Version
+	grpcImport := "buf.build/gen/go/gportal/gpcore/grpc/go/gpcore/api/" + call.Client + "/" + call.Version + "/" + call.Client + call.Version + "grpc"
+	return clientImport, grpcImport
+}
+
+// userMetadata derives the metadata for the user (fallback) branch of an
+// action: the api-call is replaced by the fallback endpoint, root-key and
+// fields are overridden when set, and admin-only params are dropped from the
+// request (their flags stay registered and are rejected at runtime by
+// adminOnlyParamGuards). Note that there is no generation-time check that the
+// fallback request's required fields are all covered by the remaining params —
+// a fallback must only be declared for endpoints whose request is a subset of
+// (or equal to) the admin request.
+func userMetadata(metadata SubcommandMetadata) SubcommandMetadata {
+	fb := metadata.Action.Fallback
+	userMeta := metadata
+	userMeta.Action.APICall = fb.APICall
+	if fb.RootKey != "" {
+		userMeta.Action.RootKey = fb.RootKey
+	}
+	if len(fb.Fields) > 0 {
+		userMeta.Action.Fields = fb.Fields
+	}
+	params := make([]Param, 0, len(metadata.Action.Params))
+	for _, param := range metadata.Action.Params {
+		if !param.AdminOnly {
+			params = append(params, param)
+		}
+	}
+	userMeta.Action.Params = params
+	return userMeta
+}
+
+// adminOnlyGuard emits the fail-fast check for admin-backed actions without a
+// fallback: in a user session they return a friendly error (optionally the
+// action's fallback-hint) instead of a server-side Keycloak role error.
+func adminOnlyGuard(metadata SubcommandMetadata) Code {
+	commandName := strings.ReplaceAll(metadata.Definition.Name, "_", "-") + " " + metadata.Name
+	hint := "set up admin credentials with \"gpcore agent setup --admin\""
+	if metadata.Action.FallbackHint != "" {
+		hint = metadata.Action.FallbackHint
+	}
+	return If(Op("!").Qual("github.com/G-PORTAL/gpcore-cli/pkg/config", "HasAdminConfig").Call()).Block(
+		Return(Qual("errors", "New").Call(
+			Lit("\"" + commandName + "\" is an admin-only command; " + hint))))
+}
+
+// adminOnlyParamGuards emits runtime rejections for admin-only flags in the
+// user branch of an action with a fallback: the fallback request has no
+// matching field, so silently dropping the flag would return misleading
+// results.
+func adminOnlyParamGuards(name string, metadata SubcommandMetadata) []Code {
+	c := make([]Code, 0)
+	for _, param := range metadata.Action.Params {
+		if !param.AdminOnly {
+			continue
+		}
+		variable := strcase.LowerCamelCase(name) + title(strcase.LowerCamelCase(param.Name))
+		flagName := strcase.KebabCase(param.Name)
+
+		// NOTE: "flag was set" is approximated by "flag is not the zero
+		// value". For bool/int admin-only params a legitimate zero value is
+		// indistinguishable from an unset flag; only non-zero values get
+		// rejected in user sessions.
+		var condition *Statement
+		switch param.Type {
+		case "string":
+			condition = Id(variable).Op("!=").Lit("")
+		case "bool":
+			condition = Id(variable)
+		case "int", "int32", "int64":
+			condition = Id(variable).Op("!=").Lit(0)
+		default:
+			// Enum-typed flags are bound to string variables.
+			if isEnumType(param.Type) && !isArrayType(param.Type) {
+				condition = Id(variable).Op("!=").Lit("")
+			} else {
+				panic(fmt.Sprintf("%s %s: unsupported admin-only param type %q",
+					metadata.Definition.Name, metadata.Name, param.Type))
+			}
+		}
+
+		c = append(c, If(condition).Block(
+			Return(Qual("errors", "New").Call(
+				Lit("--"+flagName+" requires admin credentials; run \"gpcore agent setup --admin\" to use it")))))
+	}
+	if len(c) > 0 {
+		c = append(c, Line())
+	}
+	return c
 }
 
 // runCommand generates the code for the RunE function of the command. This
@@ -166,7 +330,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 			))
 		} else {
 			c = append(c, If(Id(identifier).Op("==").Nil()).Block(
-				Return(Qual("fmt", "Errorf").Call(Lit("no identifier found, please set the identifier first")))))
+				Return(Qual("fmt", "Errorf").Call(Lit("no project selected; run \"gpcore project use <name-or-id>\" first")))))
 		}
 		c = append(c, Line())
 	}
