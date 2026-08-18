@@ -420,7 +420,7 @@ func runCommand(name string, metadata SubcommandMetadata) []Code {
 				val = Id(variable)
 			}
 		}
-		apiCallParams[Id(title(strcase.LowerCamelCase(param.Name)))] = val
+		apiCallParams[Id(param.RequestField())] = val
 	}
 
 	// Pagination

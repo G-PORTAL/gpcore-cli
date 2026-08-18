@@ -20,13 +20,13 @@ actions:
     description: List all public images
     root-key: OperatingSystems
     params:
-      - name: flavour_id
-        type: string
-        description: Flavour ID (deprecated)
-        required: true
+      # flavour_id is marked deprecated ("no longer in use") in the proto and
+      # is intentionally not exposed as a flag.
+      # Default to UNSPECIFIED (no filter): the server then returns all public
+      # images, while e.g. AWS would silently narrow the list to cloud images.
       - name: cloud_provider_type
         type: typev1.CloudProviderType
-        default: typev1.CLOUD_PROVIDER_TYPE_AWS
+        default: typev1.CLOUD_PROVIDER_TYPE_UNSPECIFIED
         description: Filter by cloud provider type
         required: false
         optional: true
