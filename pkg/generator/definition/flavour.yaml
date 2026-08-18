@@ -7,7 +7,7 @@ actions:
     # No fallback: admin.ListFlavours is the global flavour catalog, while
     # cloud.ListProjectFlavours is the project-scoped offer (with availability
     # and prices) — not the same operation.
-    fallback-hint: use "flavour list-project --datacenter-id <id>" to list the flavours available to your project
+    fallback-hint: use "flavour list-project --datacenter-id <id>" (see "datacenter list") to list the flavours available to your project
     description: List all available flavours
     root-key: Flavours
     fields:
@@ -27,10 +27,13 @@ actions:
     description: List all available flavours for a project
     root-key: Flavours
     params:
-      - name: id
+      # The request field is called "id" but holds the project UUID; expose it
+      # as --project-id with the usual "project use" session fallback.
+      - name: project_id
         type: string
         description: Project UUID
-        required: true
+        field: Id
+        source: session.CurrentProject
       - name: datacenter_id
         type: string
         description: Datacenter UUID

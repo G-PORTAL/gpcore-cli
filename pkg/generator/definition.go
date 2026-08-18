@@ -2,8 +2,10 @@ package generator
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"regexp"
+
+	"github.com/stoewer/go-strcase"
+	"gopkg.in/yaml.v3"
 )
 
 type Action struct {
@@ -58,6 +60,19 @@ type Param struct {
 	// actions with a Fallback, setting such a flag in a user session is a
 	// runtime error (the fallback request has no matching field).
 	AdminOnly bool `yaml:"admin-only"`
+	// Field overrides the gRPC request field this param maps to. It defaults
+	// to the UpperCamelCase of Name; set it when the flag should be named
+	// differently than the proto field (e.g. a --project-id flag filling a
+	// request field called just "Id").
+	Field string `yaml:"field"`
+}
+
+// RequestField returns the gRPC request field the param maps to.
+func (p Param) RequestField() string {
+	if p.Field != "" {
+		return p.Field
+	}
+	return title(strcase.LowerCamelCase(p.Name))
 }
 
 // APICall maps a CLI action to a gRPC endpoint via the "api-call" field in the
